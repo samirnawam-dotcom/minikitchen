@@ -120,36 +120,15 @@
   // ==========================================================================
   // BACK OFFICE AUTHENTICATION & SESSION CONTROLLER
   // ==========================================================================
-  function getAuthToken() {
-    return (
-      localStorage.getItem('mk_bo_auth_token') ||
-      sessionStorage.getItem('mk_bo_auth_token') ||
-      ''
-    );
-  }
-
-  function setAuthToken(token, remember = true) {
-    if (remember) {
-      localStorage.setItem('mk_bo_auth_token', token);
-      sessionStorage.removeItem('mk_bo_auth_token');
-    } else {
-      sessionStorage.setItem('mk_bo_auth_token', token);
-      localStorage.removeItem('mk_bo_auth_token');
-    }
-  }
-
-  function clearAuthToken() {
+  // The session lives in an HttpOnly cookie that the browser sends automatically,
+  // so no token is ever stored in localStorage/sessionStorage.
+  try {
     localStorage.removeItem('mk_bo_auth_token');
     sessionStorage.removeItem('mk_bo_auth_token');
-  }
+  } catch (e) {}
 
   function getAuthHeaders(extra = {}) {
-    const headers = { 'Content-Type': 'application/json', ...extra };
-    const token = getAuthToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    return headers;
+    return { 'Content-Type': 'application/json', ...extra };
   }
 
   function setAuthenticatedUiState(isAuth, userObj) {
@@ -168,15 +147,8 @@
   }
 
   async function verifyBoSessionOnLoad() {
-    const token = getAuthToken();
-    if (!token) {
-      setAuthenticatedUiState(false);
-      return;
-    }
     try {
-      const res = await fetch('/api/auth/me', {
-        headers: getAuthHeaders()
-      });
+      const res = await fetch('/api/auth/me', { headers: getAuthHeaders() });
       if (res.ok) {
         const data = await res.json();
         if (data.authenticated) {
@@ -184,19 +156,8 @@
           return;
         }
       }
-      if (token.startsWith('local-fallback-')) {
-        setAuthenticatedUiState(true);
-        return;
-      }
-      clearAuthToken();
-      setAuthenticatedUiState(false);
-    } catch (e) {
-      if (token) {
-        setAuthenticatedUiState(true);
-      } else {
-        setAuthenticatedUiState(false);
-      }
-    }
+    } catch (e) {}
+    setAuthenticatedUiState(false);
   }
 
   window.submitBoLogin = async function (e) {
@@ -221,7 +182,7 @@
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password, remember })
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
@@ -230,24 +191,18 @@
           errEl.style.display = 'block';
         }
       } else {
-        setAuthToken(data.token, remember);
         setAuthenticatedUiState(true, data.user);
         if (passInp) passInp.value = '';
         await refreshFromServer(true);
-        showBoToast(`Welcome back, ${data.user?.displayName || 'Mini Kitchen Admin'}!`);
+        showBoToast(
+          data.user?.mustChangePassword
+            ? 'Please set a new password in the Security & Admin Login tab.'
+            : `Welcome back, ${data.user?.displayName || 'Mini Kitchen Admin'}!`
+        );
       }
     } catch (networkErr) {
-      // Offline / static file fallback check against default credentials
-      if (username.toLowerCase() === 'admin' && password === 'minikitchen2026') {
-        setAuthToken('local-fallback-' + Date.now(), remember);
-        setAuthenticatedUiState(true, {
-          username: 'admin',
-          displayName: 'Mini Kitchen Executive Admin',
-          role: 'Owner & Hospitality Director'
-        });
-        showBoToast('Signed in to Back Office!');
-      } else if (errEl) {
-        errEl.textContent = 'Invalid username or password. Default: admin / minikitchen2026';
+      if (errEl) {
+        errEl.textContent = 'Server unreachable. Please check your connection and try again.';
         errEl.style.display = 'block';
       }
     } finally {
@@ -265,7 +220,11 @@
         headers: getAuthHeaders()
       });
     } catch (e) {}
-    clearAuthToken();
+    // Cached orders contain customer names, phones and addresses; don't leave them behind.
+    try {
+      localStorage.removeItem('mk_backoffice_orders_v1');
+    } catch (e) {}
+    ORDERS = [];
     setAuthenticatedUiState(false);
     showBoToast('Back Office session locked.');
   };
@@ -279,15 +238,6 @@
     if (icon) {
       icon.className = isHidden ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
     }
-  };
-
-  window.quickFillBoDemoCredentials = function () {
-    const u = document.getElementById('boLoginUser');
-    const p = document.getElementById('boLoginPass');
-    if (u) u.value = 'admin';
-    if (p) p.value = 'minikitchen2026';
-    const errEl = document.getElementById('boAuthError');
-    if (errEl) errEl.style.display = 'none';
   };
 
   // Back Office Dark / Light Workspace Theme Toggle
@@ -456,23 +406,29 @@
     saveLocal('mk_custom_site_config_v3', SITE_CONFIG);
     localStorage.setItem('mk_custom_lbp_rate_v1', String(LBP_RATE));
     try {
-      await fetch('/api/site-config', {
+      const res = await fetch('/api/site-config', {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify({ siteConfig: SITE_CONFIG, lbpRate: LBP_RATE })
       });
-    } catch (e) {}
+      if (!res.ok) showBoToast('Website settings could not be saved to the server. Please sign in again and retry.');
+    } catch (e) {
+      showBoToast('Server unreachable. Website settings saved on this device only.');
+    }
   }
 
   async function persistMenuToServer() {
     saveLocal('mk_custom_menu_data_v3', MENU_CATEGORIES);
     try {
-      await fetch('/api/menu', {
+      const res = await fetch('/api/menu', {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify({ menuCategories: MENU_CATEGORIES, lbpRate: LBP_RATE })
       });
-    } catch (e) {}
+      if (!res.ok) showBoToast('Menu could not be saved to the server. Please sign in again and retry.');
+    } catch (e) {
+      showBoToast('Server unreachable. Menu saved on this device only.');
+    }
   }
 
   function updateNavBadges() {
@@ -3161,7 +3117,7 @@
                 />
               </div>
               <div class="bo-form-group">
-                <label>New Password (Min 6 characters — leave blank to keep current)</label>
+                <label>New Password (Min 10 characters — leave blank to keep current)</label>
                 <input
                   type="password"
                   id="secNewPass"

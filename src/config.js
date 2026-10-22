@@ -20,6 +20,13 @@ function bool(value, fallback = false) {
   return /^(1|true|yes|on)$/i.test(String(value).trim());
 }
 
+function hops(value) {
+  if (value === undefined || value === null || value === '') return 0;
+  const n = Number(value);
+  if (Number.isInteger(n) && n >= 0) return n;
+  return bool(value) ? 1 : 0;
+}
+
 function num(value, fallback) {
   const n = Number(value);
   return Number.isFinite(n) && n > 0 ? n : fallback;
@@ -27,11 +34,14 @@ function num(value, fallback) {
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const isProd = NODE_ENV === 'production';
+const DATA_DIR = path.resolve(ROOT, process.env.DATA_DIR || 'data');
 
 const config = Object.freeze({
   ROOT,
   PUBLIC_DIR: path.join(ROOT, 'public'),
-  DATA_DIR: path.resolve(ROOT, process.env.DATA_DIR || 'data'),
+  VIEWS_DIR: path.join(ROOT, 'views'),
+  DATA_DIR,
+  UPLOADS_DIR: path.join(DATA_DIR, 'uploads'),
 
   NODE_ENV,
   isProd,
@@ -40,13 +50,14 @@ const config = Object.freeze({
   HOST: process.env.HOST || '0.0.0.0',
   SITE_URL: String(process.env.SITE_URL || 'https://minikitchencatering.com').replace(/\/+$/, ''),
 
-  // Set TRUST_PROXY=true only when running behind a reverse proxy / load balancer
-  // (Nginx, Caddy, Render, Railway, Fly.io, Cloudflare...). Enables X-Forwarded-* parsing.
-  TRUST_PROXY: bool(process.env.TRUST_PROXY, false),
+  // Number of reverse proxies in front of the app (Nginx, Caddy, Render, Cloudflare...).
+  // `true` means 1. Enables X-Forwarded-* parsing; leave unset when exposed directly.
+  TRUST_PROXY: hops(process.env.TRUST_PROXY),
   // Redirect plain HTTP to HTTPS (requires TRUST_PROXY behind a TLS-terminating proxy).
   FORCE_HTTPS: bool(process.env.FORCE_HTTPS, false),
 
   // Initial Back Office administrator (used only when the database is first created).
+  // Required in production; in development a random password is generated and printed.
   ADMIN_USERNAME: String(process.env.ADMIN_USERNAME || 'admin').trim(),
   ADMIN_PASSWORD: String(process.env.ADMIN_PASSWORD || ''),
 

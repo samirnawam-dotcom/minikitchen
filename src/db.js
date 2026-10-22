@@ -10,7 +10,6 @@ const { getDemoOrders } = require('./demo-data');
 const SQLITE_FILE = path.join(config.DATA_DIR, 'minikitchen.sqlite');
 const LEGACY_JSON_FILE = path.join(config.DATA_DIR, 'backoffice-db.json');
 const BACKUP_DIR = path.join(config.DATA_DIR, 'backups');
-const DEFAULT_LEGACY_PASSWORD = 'minikitchen2026';
 
 let sqlite = null;
 
@@ -99,7 +98,7 @@ function peekNextOrderSeq() {
 }
 
 function nextOrderSeq(requestedId) {
-  let current = peekNextOrderSeq();
+  const current = peekNextOrderSeq();
   if (typeof requestedId === 'string') {
     const m = requestedId.trim().match(/^MK-(\d{4,8})$/);
     if (m && !getOrderById(requestedId.trim())) {
@@ -234,7 +233,24 @@ function getAdminAuth() {
   };
 }
 
+/** Runs fn atomically; uses a SAVEPOINT so it also nests inside an outer transaction. */
+function transaction(fn) {
+  sqlite.exec('SAVEPOINT tx');
+  try {
+    const result = fn();
+    sqlite.exec('RELEASE tx');
+    return result;
+  } catch (err) {
+    sqlite.exec('ROLLBACK TO tx; RELEASE tx');
+    throw err;
+  }
+}
+
 function saveAdminAuth(auth) {
+  transaction(() => writeAdminAuth(auth));
+}
+
+function writeAdminAuth(auth) {
   const now = new Date().toISOString();
   sqlite.exec('DELETE FROM admin_users');
   sqlite
@@ -261,9 +277,7 @@ function saveAdminAuth(auth) {
 
 function getSession(tokenHash) {
   if (!tokenHash) return null;
-  const row = sqlite
-    .prepare('SELECT * FROM admin_sessions WHERE token_hash = ?')
-    .get(String(tokenHash));
+  const row = sqlite.prepare('SELECT * FROM admin_sessions WHERE token_hash = ?').get(String(tokenHash));
   if (!row) return null;
   if (new Date(row.expires_at).getTime() <= Date.now()) {
     sqlite.prepare('DELETE FROM admin_sessions WHERE token_hash = ?').run(String(tokenHash));
@@ -318,9 +332,7 @@ function deleteOtherSessions(keepTokenHash) {
 
 function pruneSessions() {
   const nowIso = new Date().toISOString();
-  const res = sqlite
-    .prepare('DELETE FROM admin_sessions WHERE datetime(expires_at) <= datetime(?)')
-    .run(nowIso);
+  const res = sqlite.prepare('DELETE FROM admin_sessions WHERE datetime(expires_at) <= datetime(?)').run(nowIso);
   return res.changes > 0;
 }
 
@@ -356,6 +368,11 @@ function listAuditLogs(limit = 40) {
     .all(cleanLimit);
 }
 
+function displayPath(file) {
+  const rel = path.relative(config.ROOT, file);
+  return rel && !rel.startsWith('..') && !path.isAbsolute(rel) ? rel : file;
+}
+
 function getDatabaseStats() {
   let fileSizeBytes = 0;
   try {
@@ -375,7 +392,7 @@ function getDatabaseStats() {
   return {
     engine: `SQLite ${sqliteVersion} (Node.js native node:sqlite)`,
     journalMode: String(journalMode || 'wal').toUpperCase(),
-    filePath: 'data/minikitchen.sqlite',
+    filePath: displayPath(SQLITE_FILE),
     fileSizeKb: Math.round((fileSizeBytes / 1024) * 10) / 10,
     tables: {
       orders: ordersCount,
@@ -429,9 +446,7 @@ function importFullSnapshot(snapshot) {
     }
     if (snapshot.menuCategories !== undefined) {
       setMenuCategories(
-        Array.isArray(snapshot.menuCategories)
-          ? security.sanitizeContentTree(snapshot.menuCategories)
-          : null
+        Array.isArray(snapshot.menuCategories) ? security.sanitizeContentTree(snapshot.menuCategories) : null
       );
     }
     if (Array.isArray(snapshot.orders)) {
@@ -470,7 +485,16 @@ function importFullSnapshot(snapshot) {
 }
 
 async function createDefaultAdmin() {
-  const password = config.ADMIN_PASSWORD || DEFAULT_LEGACY_PASSWORD;
+  let password = config.ADMIN_PASSWORD;
+  if (!password) {
+    if (config.isProd) {
+      throw new Error('ADMIN_PASSWORD must be set to create the first Back Office administrator in production.');
+    }
+    password = security.generatePassword();
+    console.warn(`[db] Generated development admin password for '${config.ADMIN_USERNAME}': ${password}`);
+  } else if (security.validateNewPassword(password)) {
+    console.warn(`[db] ADMIN_PASSWORD is weak: ${security.validateNewPassword(password)}`);
+  }
   const { salt, hash, iterations } = await security.hashPassword(password);
   const username = /^[a-zA-Z0-9._-]{3,40}$/.test(config.ADMIN_USERNAME) ? config.ADMIN_USERNAME : 'admin';
   return {
@@ -648,10 +672,13 @@ async function init() {
   pruneSessions();
   dailyBackup();
 
-  const timer = setInterval(() => {
-    pruneSessions();
-    dailyBackup();
-  }, 60 * 60 * 1000);
+  const timer = setInterval(
+    () => {
+      pruneSessions();
+      dailyBackup();
+    },
+    60 * 60 * 1000
+  );
   if (timer.unref) timer.unref();
 
   return sqlite;

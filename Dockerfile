@@ -2,13 +2,15 @@ FROM node:24-alpine
 
 WORKDIR /app
 
-COPY package.json ./
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
 COPY server.js ./
 COPY src ./src
+COPY views ./views
 COPY public ./public
-COPY scripts ./scripts
 
-RUN node scripts/build-pages.js && mkdir -p /app/data && chown -R node:node /app
+RUN mkdir -p /app/data && chown -R node:node /app/data
 
 USER node
 

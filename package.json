@@ -1,16 +1,25 @@
 {
   "name": "mini-kitchen-catering",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Mini Kitchen — Multi-Brand Website (Catering, Restaurant & Delivery) & Executive Back Office CRM powered by Node.js + Native SQLite",
   "main": "server.js",
   "private": true,
   "engines": {
-    "node": ">=22.5.0"
+    "node": ">=22.13.0"
   },
   "scripts": {
-    "build": "node scripts/build-pages.js",
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "verify": "node scripts/build-pages.js && node -c server.js && node -c src/config.js && node -c src/security.js && node -c src/db.js && node -c src/api.js && node -c src/static.js && node -c public/js/app.js && node -c public/js/admin.js && node -c public/js/site-data.js && node -c public/js/menu-data.js"
+    "test": "node --test --test-reporter=spec \"test/**/*.test.js\"",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "globals": "17.13.0",
+    "prettier": "3.9.10"
   }
 }

@@ -47,13 +47,13 @@ mini-kitchen-catering/
 
 All website and Back Office data is persisted in `data/minikitchen.sqlite` using Node's native `node:sqlite` (`DatabaseSync`) with `PRAGMA journal_mode = WAL`:
 
-| Table | Purpose |
-| :--- | :--- |
-| **`orders`** | Stores all customer WhatsApp delivery orders, wedding/catering quote requests, restaurant table reservations, and manual phone orders. Indexed by `created_at DESC`, `status`, `type`, and `brand`. |
-| **`settings`** | Key-value JSON store for `lbpRate`, `orderSeq`, `siteConfig` (contacts, galleries, packages, live stations, SEO metadata), and `menuCategories` (22 categories / 239+ dishes). |
-| **`admin_users`** | Stores administrator credentials encrypted with **PBKDF2-SHA512 (210,000 iterations)** and per-user random salts. |
-| **`admin_sessions`** | Stores **SHA-256 hashes** of active session tokens (raw tokens are never stored on disk) with expiration timestamps, IP, and User-Agent metadata. |
-| **`audit_logs`** | Immutable security and operational audit trail recording logins, failed login attempts, password changes, order mutations, menu edits, and database exports. |
+| Table                | Purpose                                                                                                                                                                                             |
+| :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`orders`**         | Stores all customer WhatsApp delivery orders, wedding/catering quote requests, restaurant table reservations, and manual phone orders. Indexed by `created_at DESC`, `status`, `type`, and `brand`. |
+| **`settings`**       | Key-value JSON store for `lbpRate`, `orderSeq`, `siteConfig` (contacts, galleries, packages, live stations, SEO metadata), and `menuCategories` (22 categories / 239+ dishes).                      |
+| **`admin_users`**    | Stores administrator credentials encrypted with **PBKDF2-SHA512 (210,000 iterations)** and per-user random salts.                                                                                   |
+| **`admin_sessions`** | Stores **SHA-256 hashes** of active session tokens (raw tokens are never stored on disk) with expiration timestamps, IP, and User-Agent metadata.                                                   |
+| **`audit_logs`**     | Immutable security and operational audit trail recording logins, failed login attempts, password changes, order mutations, menu edits, and database exports.                                        |
 
 ---
 
@@ -71,6 +71,7 @@ All website and Back Office data is persisted in `data/minikitchen.sqlite` using
 ## 4. Running & Deploying
 
 ### Local Development / Production Server
+
 ```bash
 # 1. Sync & fingerprint HTML pages and verify syntax
 npm run verify
@@ -80,11 +81,13 @@ npm start
 ```
 
 ### Docker Deployment
+
 ```bash
 docker build -t mini-kitchen-catering .
 docker run -d -p 3000:3000 -v minikitchen_data:/app/data --name minikitchen mini-kitchen-catering
 ```
 
 ### Back Office Access
+
 - **URL:** `http://localhost:3000/admin.html`
 - **Default Login:** Username `admin` / Password `minikitchen2026` (can be updated anytime inside the **Security & Admin Login** tab or via `ADMIN_USERNAME` / `ADMIN_PASSWORD` in `.env`).

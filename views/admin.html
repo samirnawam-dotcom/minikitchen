@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Back Office Stylesheet -->
-  <link rel="stylesheet" href="css/admin.css?v=63ce1a40" />
+  <link rel="stylesheet" href="css/admin.css" />
 </head>
 <body>
 
@@ -88,9 +88,6 @@
             <input type="checkbox" id="boLoginRemember" checked />
             <span>Keep session active on this device</span>
           </label>
-          <button type="button" class="bo-auth-quickfill-btn" onclick="quickFillBoDemoCredentials()">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Fill Default Login
-          </button>
         </div>
 
         <button type="submit" class="bo-auth-submit-btn" id="boLoginSubmitBtn">
@@ -100,8 +97,7 @@
       </form>
 
       <div class="bo-auth-hint-box">
-        <div><i class="fa-solid fa-circle-info" style="color:#e3bc54;"></i> <b>Default Owner Credentials:</b> Username: <code>admin</code> • Password: <code>minikitchen2026</code></div>
-        <div style="font-size:0.72rem; opacity:0.7; margin-top:3px;">You can change your username & password anytime inside the <b>Security & Admin Login</b> tab.</div>
+        <div style="font-size:0.72rem; opacity:0.7;">You can change your username & password anytime inside the <b>Security & Admin Login</b> tab.</div>
       </div>
 
       <div class="bo-auth-footer-links">
@@ -226,8 +222,8 @@
   </div>
 
   <!-- SHARED DEFAULT DATA & BACK OFFICE CONTROLLER -->
-  <script src="js/site-data.js?v=8a148cc3"></script>
-  <script src="js/menu-data.js?v=e0fe12e4"></script>
-  <script src="js/admin.js?v=4ccb0e79"></script>
+  <script src="js/site-data.js"></script>
+  <script src="js/menu-data.js"></script>
+  <script src="js/admin.js"></script>
 </body>
 </html>

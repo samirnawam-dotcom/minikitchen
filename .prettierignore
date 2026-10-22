@@ -1,0 +1,6 @@
+node_modules
+data
+package-lock.json
+# Frontend is formatted as part of its restructure
+public
+views

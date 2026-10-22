@@ -54,12 +54,14 @@ function getDemoOrders() {
       eventDate: '2026-11-14',
       guests: 160,
       packageSelected: 'The Royal Mountain Wedding Feast ($45/guest)',
-      notes: 'We would love to add the Live Molten Cheddar Fountain station for the after-party and schedule a tasting in Aley.',
+      notes:
+        'We would love to add the Live Molten Cheddar Fountain station for the after-party and schedule a tasting in Aley.',
       items: [],
       totalUsd: 7200,
       lbpRate: 89500,
       staffNotes: 'Tasting scheduled for Saturday at 4:00 PM in Ain Al Remmaneh.',
-      whatsappText: 'NEW CATERING QUOTATION REQUEST — MINI KITCHEN CATERING\nClient: Nadine Karam & Marc Haddad\nEvent: Wedding Reception (160 Guests)'
+      whatsappText:
+        'NEW CATERING QUOTATION REQUEST — MINI KITCHEN CATERING\nClient: Nadine Karam & Marc Haddad\nEvent: Wedding Reception (160 Guests)'
     },
     {
       id: 'MK-1002',
