@@ -139,10 +139,13 @@ async function main() {
   for (const tab of tabs) {
     current = { url: `/admin#${tab}`, last: `tab ${tab}`, errors: [], actions: [] };
     report.pages[`admin-${tab}`] = current;
+    // Reload so dialogs opened while crawling the previous tab cannot cover the navigation.
+    await page.goto(base + '/admin', { waitUntil: 'load' });
+    await page.waitForTimeout(300);
     await page.click(`.bo-nav-btn[data-tab="${tab}"]`);
     await page.waitForTimeout(300);
     await page.screenshot({ path: path.join(OUT, `admin-${tab}.png`) });
-    const inTab = await page.$$(`main ${CLICKABLE}, .bo-main ${CLICKABLE}, #boTabContent ${CLICKABLE}`);
+    const inTab = await page.$$(`#boMainContainer :is(${CLICKABLE})`);
     for (const el of inTab.slice(0, 40)) {
       if (!(await el.isVisible().catch(() => false))) continue;
       const desc = await el
