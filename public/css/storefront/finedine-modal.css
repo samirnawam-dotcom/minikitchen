@@ -1,0 +1,366 @@
+/* storefront/finedine-modal.css — FineDine dish detail & modifier modal and the floating order bar.
+   Part 9 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+
+/* 4. FineDine Interactive Dish Detail & Modifier Modal */
+.fd-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 16, 0.72);
+  backdrop-filter: blur(5px);
+  z-index: 2600;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.fd-modal-backdrop.open {
+  display: flex;
+}
+
+.fd-modal-dialog {
+  background: #ffffff;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.45);
+  animation: fdModalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fdModalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fd-modal-hero {
+  position: relative;
+  height: 250px;
+  background: #14161b;
+  flex-shrink: 0;
+}
+
+.fd-modal-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fd-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(14, 16, 21, 0.8);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 4;
+}
+
+.fd-modal-close:hover {
+  background: #dc2626;
+  transform: scale(1.06);
+}
+
+.fd-modal-hero-badges {
+  position: absolute;
+  bottom: 14px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fd-modal-body {
+  padding: 22px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.fd-modal-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.fd-modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.25;
+}
+
+.fd-modal-base-price {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--brand-primary-dark);
+  white-space: nowrap;
+}
+
+.fd-modal-desc {
+  font-size: 0.92rem;
+  color: #4b5563;
+  line-height: 1.55;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* Modifier Groups inside FineDine Modal */
+.fd-mod-group {
+  margin-bottom: 20px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.fd-mod-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.fd-mod-name {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.fd-mod-pill {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.fd-mod-pill.required {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.fd-mod-pill.optional {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.fd-mod-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.fd-mod-option:hover {
+  background: #f3efe6;
+}
+
+.fd-mod-option-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.fd-mod-option-left input {
+  width: 17px;
+  height: 17px;
+  accent-color: #14161b;
+  cursor: pointer;
+}
+
+.fd-mod-option-price {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #4b5563;
+  white-space: nowrap;
+}
+
+.fd-modal-notes-wrap {
+  margin-top: 8px;
+}
+
+.fd-modal-notes-wrap label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.fd-modal-footer {
+  padding: 16px 24px;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.fd-qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.fd-qty-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: #ffffff;
+  color: #111827;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.fd-qty-btn:hover {
+  background: #14161b;
+  color: var(--brand-primary);
+}
+
+.fd-qty-val {
+  min-width: 34px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.98rem;
+  color: #111827;
+}
+
+.fd-modal-submit-btn {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: none;
+  background: #14161b;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.fd-modal-submit-btn:hover {
+  background: var(--brand-primary);
+  color: #0e1015;
+}
+
+/* 5. FineDine Persistent Floating Bottom Order Bar */
+.fd-floating-order-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 680px;
+  background: #14161b;
+  color: #ffffff;
+  border: 1.5px solid var(--brand-primary);
+  border-radius: 18px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  z-index: 1200;
+}
+
+.fd-floating-order-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fd-floating-bag-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--brand-primary);
+  color: #0e1015;
+  font-weight: 800;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 992px) {
+  .fd-split-grid {
+    grid-template-columns: 1fr;
+  }
+  .fd-cat-stories-wrap {
+    top: 70px;
+    padding: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .fd-category-section {
+    padding: 18px 14px;
+  }
+  .fd-item-card {
+    padding: 13px;
+    gap: 12px;
+  }
+  .fd-item-media {
+    width: 98px;
+    height: 98px;
+    min-width: 98px;
+  }
+  .fd-modal-hero {
+    height: 200px;
+  }
+  .fd-modal-body {
+    padding: 18px 16px;
+  }
+  .fd-modal-footer {
+    padding: 12px 16px;
+  }
+}

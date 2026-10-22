@@ -145,9 +145,20 @@ async function main() {
     await page.click(`.bo-nav-btn[data-tab="${tab}"]`);
     await page.waitForTimeout(300);
     await page.screenshot({ path: path.join(OUT, `admin-${tab}.png`) });
-    const inTab = await page.$$(`#boMainContainer :is(${CLICKABLE})`);
-    for (const el of inTab.slice(0, 40)) {
-      if (!(await el.isVisible().catch(() => false))) continue;
+    // Re-tag after every click: tabs re-render, which detaches previously found elements.
+    const tagTab = () =>
+      page.evaluate(sel => {
+        let n = 0;
+        for (const el of document.querySelectorAll(`#boMainContainer :is(${sel})`)) {
+          const r = el.getBoundingClientRect();
+          if (r.width > 0 && r.height > 0) el.setAttribute('data-smoke', String(n++));
+        }
+        return n;
+      }, CLICKABLE);
+    let count = await tagTab();
+    for (let i = 0; i < Math.min(count, 40); i++) {
+      const el = await page.$(`[data-smoke="${i}"]`);
+      if (!el) continue;
       const desc = await el
         .evaluate(e => e.getAttribute('data-action') || (e.getAttribute('onclick') || '').slice(0, 60))
         .catch(() => 'detached');
@@ -155,8 +166,13 @@ async function main() {
       current.last = desc;
       current.actions.push(desc);
       await el.click({ timeout: 800, noWaitAfter: true }).catch(() => {});
-      await page.waitForTimeout(60);
+      await page.waitForTimeout(80);
       await page.keyboard.press('Escape').catch(() => {});
+      // Close any dialog the click opened so it cannot cover the next control.
+      await page
+        .evaluate(() => document.querySelectorAll('.open').forEach(m => m.classList.remove('open')))
+        .catch(() => {});
+      count = await tagTab();
     }
   }
 

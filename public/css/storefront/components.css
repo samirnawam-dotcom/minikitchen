@@ -1,0 +1,530 @@
+/* storefront/components.css — Hero sections, buttons, section headings, brand cards, catering packages and galleries.
+   Part 4 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+
+/* ============================================================================
+   HERO SECTIONS & BUTTONS
+   ============================================================================ */
+.hero-section {
+  position: relative;
+  min-height: 84vh;
+  display: flex;
+  align-items: center;
+  background-color: #0d0f14;
+  color: #ffffff;
+  overflow: hidden;
+  padding: 80px 0;
+}
+
+.hero-bg-media {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.hero-bg-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.03);
+  filter: brightness(0.45) contrast(1.08);
+  transition: transform 8s ease;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 12, 16, 0.92) 0%,
+    rgba(10, 12, 16, 0.74) 55%,
+    rgba(10, 12, 16, 0.45) 100%
+  );
+  z-index: 2;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  max-width: 780px;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(200, 157, 84, 0.18);
+  border: 1px solid rgba(200, 157, 84, 0.45);
+  color: #f3d28e;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 22px;
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 5vw, 4.4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 22px;
+  color: #ffffff;
+}
+
+.hero-title span.gold-accent {
+  color: var(--brand-primary);
+  font-style: italic;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.05rem, 1.5vw, 1.24rem);
+  color: rgba(255, 255, 255, 0.84);
+  margin-bottom: 34px;
+  max-width: 660px;
+}
+
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 42px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-align: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background: var(--brand-primary);
+  color: #0e1015;
+  box-shadow: 0 10px 26px rgba(200, 157, 84, 0.32);
+}
+
+.btn-primary:hover {
+  background: #dfb469;
+  transform: translateY(-2px);
+}
+
+.btn-whatsapp {
+  background: var(--whatsapp-green);
+  color: #06180d;
+  box-shadow: 0 10px 26px rgba(37, 211, 102, 0.28);
+}
+
+.btn-whatsapp:hover {
+  background: #20bd5a;
+  transform: translateY(-2px);
+}
+
+.btn-outline-light {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(8px);
+}
+
+.btn-outline-light:hover {
+  background: #ffffff;
+  color: #0e1015;
+  transform: translateY(-2px);
+}
+
+.btn-outline-dark {
+  background: transparent;
+  color: var(--text-main);
+  border: 1.5px solid var(--text-main);
+}
+
+.btn-outline-dark:hover {
+  background: var(--text-main);
+  color: #ffffff;
+}
+
+.hero-event-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.event-type-pill {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.07);
+  padding: 7px 14px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.event-type-pill i {
+  color: var(--brand-primary);
+}
+
+/* ============================================================================
+   SECTION HEADINGS & LAYOUT UTILITIES
+   ============================================================================ */
+.section-pad {
+  padding: 92px 0;
+}
+
+.section-dark {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+}
+
+.section-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 56px;
+}
+
+.section-eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--brand-primary);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 3.6vw, 3.1rem);
+  line-height: 1.18;
+  margin-bottom: 16px;
+}
+
+.section-desc {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+}
+
+.section-dark .section-desc {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ============================================================================
+   THREE BRANDS SHOWCASE CARDS (SECTION 9)
+   ============================================================================ */
+.brands-trio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.brand-pillar-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+
+.brand-pillar-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+}
+
+.brand-pillar-img {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.brand-pillar-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.brand-pillar-card:hover .brand-pillar-img img {
+  transform: scale(1.07);
+}
+
+.brand-pillar-tag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #fff;
+}
+
+.brand-pillar-tag.catering {
+  background: #b5893e;
+}
+.brand-pillar-tag.restaurant {
+  background: #c85a32;
+}
+.brand-pillar-tag.delivery {
+  background: #ff7300;
+}
+
+.brand-pillar-body {
+  padding: 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-pillar-body h3 {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  margin-bottom: 10px;
+}
+
+.brand-pillar-body p {
+  color: var(--text-muted);
+  font-size: 0.94rem;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+/* ============================================================================
+   CATERING PACKAGES & WEDDING SHOWCASE CARDS
+   ============================================================================ */
+.filter-tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 42px;
+}
+
+.filter-tab-btn {
+  padding: 11px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-tab-btn.active,
+.filter-tab-btn:hover {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #0e1015;
+  font-weight: 700;
+}
+
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 30px;
+}
+
+.package-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+
+.package-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+.package-card-media {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+}
+
+.package-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.package-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(14, 16, 21, 0.86);
+  color: var(--brand-primary);
+  border: 1px solid var(--brand-primary);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.package-price-pill {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: var(--brand-primary);
+  color: #0e1015;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.package-card-body {
+  padding: 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.package-card-cat {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--brand-primary-dark);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.package-card-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+.package-card-sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+
+.package-highlights {
+  list-style: none;
+  margin-bottom: 24px;
+  flex: 1;
+}
+
+.package-highlights li {
+  font-size: 0.88rem;
+  color: #32353d;
+  margin-bottom: 9px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.package-highlights li i {
+  color: var(--brand-primary-dark);
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.package-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  flex-wrap: wrap;
+}
+
+/* ============================================================================
+   GALLERY GRIDS (WEDDINGS, RESTAURANT VIEWS, BEHIND THE SCENES)
+   ============================================================================ */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.gallery-card {
+  position: relative;
+  height: 310px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+.gallery-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.65s ease;
+}
+
+.gallery-card:hover img {
+  transform: scale(1.08);
+}
+
+.gallery-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 12, 16, 0.9) 0%, rgba(10, 12, 16, 0.2) 55%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  color: #ffffff;
+}
+
+.gallery-tag {
+  display: inline-block;
+  align-self: flex-start;
+  background: var(--brand-primary);
+  color: #0e1015;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 11px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.gallery-card-overlay h4 {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  margin-bottom: 4px;
+}
+
+.gallery-card-overlay p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+}

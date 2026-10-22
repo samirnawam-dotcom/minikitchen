@@ -48,13 +48,39 @@ src/
     database.js         Backup export/import, status
     uploads.js          Image uploads
 views/                  HTML templates (storefront.html is shared by all six storefront pages)
-public/                 Static files: css/, js/, favicon, manifest, robots.txt, sitemap.xml, 404.html
+public/
+  js/storefront/        Website: main.js entry, state, api, cart, menu, dish modal, tracker, i18n, pages/*
+  js/admin/             Back Office: main.js entry, api, auth, sync, router, ui/*, orders/*, tabs/* (one per tab)
+  js/shared/            actions.js (data-action event wiring), dom.js (esc, selectors), storage.js
+  js/data/              Default site configuration and the 239-dish menu (ES modules)
+  js/theme-init.js      Applies the saved light/dark theme before first paint
+  css/storefront/       Website styles, split in cascade order (tokens → base → layout → … → dark)
+  css/admin/            Back Office styles, split in cascade order
+  favicon, manifest, robots.txt, sitemap.xml, 404.html
 scripts/                Maintenance scripts (reset-admin-password.js)
 test/                   Automated tests (e2e/ holds the browser smoke test)
 deploy/                 Production Docker Compose + Caddy (HTTPS) setup
 docs/DEPLOYMENT.md      Step-by-step free hosting guide
 data/                   Runtime only, not in git: SQLite database, backups, uploaded images
 ```
+
+## Frontend conventions
+
+- Plain ES modules, no build step. Each page loads one entry module (`js/storefront/main.js` or `js/admin/main.js`).
+- No inline scripts or `on*=""` attributes — the CSP forbids them. Wire events declaratively and register handlers:
+
+  ```html
+  <button data-action="cart:add" data-id="mk-item-12">Add</button>
+  ```
+
+  ```js
+  import { registerActions } from '../shared/actions.js';
+  registerActions({ 'cart:add': el => addToCart(el.dataset.id) });
+  ```
+
+  Also `data-on-input`, `data-on-change`, `data-on-submit` and `<img data-fallback="…">`.
+
+- Escape every interpolated value in HTML strings with `esc()` from `js/shared/dom.js`.
 
 ## API
 

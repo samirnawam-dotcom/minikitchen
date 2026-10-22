@@ -1,0 +1,263 @@
+/* storefront/panels.css — WhatsApp cart drawer, forms, team cards, floating WhatsApp button and footer.
+   Part 6 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+
+/* ============================================================================
+   WHATSAPP ORDER CART DRAWER (RIGHT SLIDE-OVER)
+   ============================================================================ */
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 450px;
+  height: 100vh;
+  background: #ffffff;
+  color: var(--text-main);
+  z-index: 2100;
+  transform: translateX(100%);
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.25);
+}
+
+.cart-drawer.open {
+  transform: translateX(0);
+}
+
+.cart-drawer-header {
+  padding: 22px 24px;
+  background: #0e1015;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-drawer-body {
+  padding: 20px 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.cart-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.cart-qty-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.cart-qty-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cart-drawer-footer {
+  padding: 20px 24px;
+  background: #f9fafb;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================================
+   FORMS (EVENT QUOTE BUILDER, TABLE RESERVATION & CONTACT)
+   ============================================================================ */
+.form-card {
+  background: #ffffff;
+  color: var(--text-main);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  box-shadow: var(--shadow-hover);
+  border: 1px solid var(--border-subtle);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.form-control {
+  padding: 13px 16px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  font-size: 0.94rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px var(--brand-primary-light);
+}
+
+/* ============================================================================
+   TEAM & ABOUT CARDS
+   ============================================================================ */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 26px;
+}
+
+.team-card {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.team-card img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+
+.team-card-body {
+  padding: 22px;
+}
+
+.team-role {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--brand-primary-dark);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* ============================================================================
+   FLOATING WHATSAPP WIDGET & FOOTER
+   ============================================================================ */
+.floating-wa-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.floating-wa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--whatsapp-green);
+  color: #06180d;
+  font-weight: 800;
+  padding: 14px 22px;
+  border-radius: 999px;
+  box-shadow: 0 12px 30px rgba(37, 211, 102, 0.42);
+  border: none;
+  cursor: pointer;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.floating-wa-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+}
+
+.site-footer {
+  background: #090b0e;
+  color: rgba(255, 255, 255, 0.78);
+  padding: 76px 0 36px;
+  border-top: 1px solid rgba(200, 157, 84, 0.22);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  margin-bottom: 50px;
+}
+
+.footer-col h4 {
+  font-family: var(--font-serif);
+  color: #ffffff;
+  font-size: 1.2rem;
+  margin-bottom: 18px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links a:hover,
+.footer-links button:hover {
+  color: var(--brand-primary);
+}
+
+.footer-link-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  font-size: 0.92rem;
+  text-align: left;
+  padding: 0;
+}
+
+.social-icons-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.social-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.social-icon-btn:hover {
+  background: var(--brand-primary);
+  color: #0e1015;
+  border-color: var(--brand-primary);
+}

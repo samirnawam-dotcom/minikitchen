@@ -1,0 +1,263 @@
+/* storefront/menu.css — Classic digital menu grid and dish cards (photo-grid layout).
+   Part 5 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+
+/* ============================================================================
+   DIGITAL MENU & DELIVERY ORDERING SYSTEM (SECTIONS 3 & 4)
+   ============================================================================ */
+.menu-controls-bar {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 28px;
+  position: sticky;
+  top: 84px;
+  z-index: 90;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.menu-search-row {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.menu-search-input-wrap {
+  flex: 1;
+  min-width: 240px;
+  position: relative;
+}
+
+.menu-search-input-wrap i {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.menu-search-input {
+  width: 100%;
+  padding: 13px 16px 13px 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  font-size: 0.94rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.menu-search-input:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px var(--brand-primary-light);
+}
+
+.category-pills-scroller {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+}
+
+.category-pills-scroller::-webkit-scrollbar {
+  height: 5px;
+}
+
+.category-pills-scroller::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 999px;
+}
+
+.cat-pill-btn {
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  border: 1px solid transparent;
+  color: #374151;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: var(--transition);
+}
+
+.cat-pill-btn:hover {
+  background: #e5e7eb;
+}
+
+.cat-pill-btn.active {
+  background: var(--brand-primary);
+  color: #0e1015;
+}
+
+.menu-category-block {
+  margin-bottom: 52px;
+}
+
+.menu-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-bottom: 14px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border-subtle);
+}
+
+.menu-category-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menu-category-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--brand-primary-light);
+  color: var(--brand-primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.menu-category-header h3 {
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+}
+
+.menu-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 22px;
+}
+
+.dish-card {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+
+.dish-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--brand-primary);
+}
+
+.dish-card-img-wrap {
+  position: relative;
+  height: 195px;
+  overflow: hidden;
+  background: #f3f2ee;
+}
+
+.dish-card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.dish-card:hover .dish-card-img-wrap img {
+  transform: scale(1.06);
+}
+
+.dish-price-tag {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(14, 16, 21, 0.9);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--brand-primary);
+}
+
+.dish-card-body {
+  padding: 18px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dish-title {
+  font-size: 1.06rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-main);
+}
+
+.dish-desc {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.dish-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.btn-add-order {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--brand-primary);
+  color: #0e1015;
+  font-weight: 700;
+  font-size: 0.84rem;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.btn-add-order:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.btn-wa-single {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(37, 211, 102, 0.14);
+  color: #128c7e;
+  border: 1px solid rgba(37, 211, 102, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.05rem;
+  transition: var(--transition);
+}
+
+.btn-wa-single:hover {
+  background: var(--whatsapp-green);
+  color: #fff;
+}

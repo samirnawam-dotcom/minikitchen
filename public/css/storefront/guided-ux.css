@@ -1,0 +1,521 @@
+/* storefront/guided-ux.css — Brand orientation bar, menu QR bar, QR studio modal, steps strip and section tabs.
+   Part 10 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+
+/* ============================================================================
+   USER-FRIENDLY GUIDED NAVIGATION, COHESIVE COLORING & QR CODE MENU SYSTEM
+   ============================================================================ */
+
+/* Hide top announcement bar to eliminate stacked black header clutter */
+.top-announcement {
+  display: none;
+}
+
+/* 1. Sticky 3-Brand Quick Orientation Bar (Top of Page) */
+.ux-brand-switcher-bar {
+  background: #ffffff;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+  padding: 12px 0;
+  box-shadow: 0 4px 16px rgba(14, 16, 21, 0.04);
+}
+
+.ux-brand-cards-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.ux-brand-choice-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1.5px solid #e7e5e0;
+  background: #faf9f6;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  text-align: left;
+}
+
+.ux-brand-choice-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand-primary);
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(14, 16, 21, 0.06);
+}
+
+.ux-brand-choice-card.active-catering {
+  background: #16181d;
+  border-color: #c59b27;
+  color: #ffffff;
+}
+
+.ux-brand-choice-card.active-restaurant {
+  background: #13241c;
+  border-color: #2d6a4f;
+  color: #ffffff;
+}
+
+.ux-brand-choice-card.active-delivery {
+  background: #1a1514;
+  border-color: #d94e28;
+  color: #ffffff;
+}
+
+.ux-brand-choice-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ux-brand-choice-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.ux-brand-choice-icon.catering {
+  background: #fbf6e8;
+  color: #967315;
+}
+.ux-brand-choice-card.active-catering .ux-brand-choice-icon.catering {
+  background: #c59b27;
+  color: #14171c;
+}
+
+.ux-brand-choice-icon.restaurant {
+  background: #eaf4ef;
+  color: #2d6a4f;
+}
+.ux-brand-choice-card.active-restaurant .ux-brand-choice-icon.restaurant {
+  background: #2d6a4f;
+  color: #ffffff;
+}
+
+.ux-brand-choice-icon.delivery {
+  background: #fdf0ec;
+  color: #d94e28;
+}
+.ux-brand-choice-card.active-delivery .ux-brand-choice-icon.delivery {
+  background: #d94e28;
+  color: #ffffff;
+}
+
+.ux-brand-choice-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ux-brand-choice-sub {
+  font-size: 0.73rem;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ux-brand-choice-card[class*='active-'] .ux-brand-choice-sub {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.ux-brand-choice-arrow {
+  font-size: 0.8rem;
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+/* 2. Dedicated Menu QR Code Bar (Inside Each of the 3 Menus) */
+.fd-qr-menu-bar {
+  background: linear-gradient(135deg, #16181d 0%, #22262e 100%);
+  color: #ffffff;
+  border-radius: 18px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 28px -10px rgba(20, 23, 28, 0.18);
+}
+
+body[data-brand='restaurant'] .fd-qr-menu-bar {
+  background: linear-gradient(135deg, #13241c 0%, #1f3b2e 100%);
+}
+
+body[data-brand='delivery'] .fd-qr-menu-bar {
+  background: linear-gradient(135deg, #1f1614 0%, #2e1e1a 100%);
+}
+
+.fd-qr-menu-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.fd-qr-mini-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 4px;
+  flex-shrink: 0;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.fd-qr-mini-thumb:hover {
+  transform: scale(1.06);
+}
+
+.fd-qr-mini-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.fd-qr-menu-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brand-primary);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 3px 9px;
+  border-radius: 999px;
+  margin-bottom: 4px;
+}
+
+body[data-brand='restaurant'] .fd-qr-menu-badge {
+  color: #74c69d;
+}
+
+body[data-brand='delivery'] .fd-qr-menu-badge {
+  color: #ff9b80;
+}
+
+.fd-qr-menu-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.fd-qr-menu-sub {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.fd-qr-menu-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fd-qr-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.fd-qr-action-btn:hover,
+.fd-qr-action-btn.active {
+  background: #ffffff;
+  color: #14171c;
+  border-color: #ffffff;
+}
+
+/* Distraction-Free QR Table Scan Mode (?qr=1 or toggled by user) */
+body.qr-table-mode .hero-section,
+body.qr-table-mode .ux-brand-switcher-bar {
+  display: none !important;
+}
+
+/* 3. Three-Menu QR Code Studio Modal */
+.qr-studio-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 16, 21, 0.76);
+  backdrop-filter: blur(6px);
+  z-index: 2700;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.qr-studio-backdrop.open {
+  display: flex;
+}
+
+.qr-studio-dialog {
+  background: #f9f8f6;
+  width: 100%;
+  max-width: 960px;
+  max-height: 90vh;
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.45);
+}
+
+.qr-studio-header {
+  background: #14171c;
+  color: #ffffff;
+  padding: 20px 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.qr-studio-body {
+  padding: 26px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.qr-studio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.qr-menu-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px 20px;
+  border: 2px solid #e7e5e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.22s ease;
+}
+
+.qr-menu-card.highlighted {
+  border-color: var(--brand-primary);
+  box-shadow: 0 16px 36px -10px rgba(20, 23, 28, 0.16);
+  transform: translateY(-3px);
+}
+
+.qr-menu-card-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+
+.qr-menu-card-tag.catering {
+  background: #fbf6e8;
+  color: #967315;
+}
+
+.qr-menu-card-tag.restaurant {
+  background: #eaf4ef;
+  color: #2d6a4f;
+}
+
+.qr-menu-card-tag.delivery {
+  background: #fdf0ec;
+  color: #d94e28;
+}
+
+.qr-code-frame {
+  width: 186px;
+  height: 186px;
+  padding: 12px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  margin: 12px 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-code-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 4. Simple 3-Step Visual How-It-Works Strip */
+.ux-steps-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(197, 155, 39, 0.32);
+  border-radius: 20px;
+  padding: 24px;
+  margin-top: -38px;
+  position: relative;
+  z-index: 15;
+  box-shadow: 0 16px 38px -12px rgba(14, 16, 21, 0.1);
+}
+
+.ux-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.ux-step-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #14171c;
+  color: var(--brand-primary);
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1.5px solid var(--brand-primary);
+}
+
+.ux-step-title {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #111827;
+  margin-bottom: 3px;
+}
+
+.ux-step-desc {
+  font-size: 0.82rem;
+  color: #6b7280;
+  line-height: 1.45;
+}
+
+/* 5. Interactive Section Switcher Tabs */
+.ux-section-tabs-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+  background: #ebe7df;
+  padding: 6px;
+  border-radius: 16px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ux-section-tab-btn {
+  padding: 12px 22px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #4b5563;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.ux-section-tab-btn:hover {
+  color: #111827;
+}
+
+.ux-section-tab-btn.active {
+  background: #14171c;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(14, 16, 21, 0.16);
+}
+
+.ux-section-tab-btn.active i {
+  color: var(--brand-primary);
+}
+
+/* 6. FineDine Category "Show All Dishes" Expand Footer */
+.fd-cat-expand-footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed #e5e7eb;
+  text-align: center;
+}
+
+.fd-cat-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border-subtle);
+  background: #faf9f6;
+  color: #111827;
+  font-size: 0.84rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fd-cat-expand-btn:hover {
+  background: #14171c;
+  color: #ffffff;
+  border-color: #14171c;
+}
+
+@media (max-width: 900px) {
+  .ux-brand-cards-row,
+  .qr-studio-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .ux-steps-strip {
+    grid-template-columns: 1fr;
+    margin-top: 16px;
+    padding: 18px;
+  }
+  .ux-section-tabs-nav {
+    width: 100%;
+  }
+  .ux-section-tab-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+  }
+}

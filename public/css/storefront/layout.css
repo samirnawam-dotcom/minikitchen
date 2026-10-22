@@ -1,0 +1,561 @@
+/* storefront/layout.css — Site chrome: top announcement bar, sticky header and navigation, hamburger drawer.
+   Part 3 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+
+/* ============================================================================
+   TOP ANNOUNCEMENT BAR
+   ============================================================================ */
+.top-announcement {
+  background: var(--bg-dark);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.82rem;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 1001;
+}
+
+.top-announcement-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.top-announcement-left,
+.top-announcement-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.top-announcement a:hover {
+  color: var(--brand-primary);
+}
+
+.top-announcement i {
+  color: var(--brand-primary);
+  margin-right: 5px;
+}
+
+/* ============================================================================
+   MAIN HEADER & ARCHITECTURAL LUXURY HOSPITALITY NAVIGATION
+   ============================================================================ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(18, 21, 26, 0.98);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(197, 155, 39, 0.22);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
+  transition: var(--transition);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 78px;
+  padding: 0;
+  gap: 24px;
+  flex-wrap: nowrap;
+}
+
+/* Left: Architectural 3-Line Hamburger Icon + Brand Identity */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.hamburger-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.hamburger-btn:hover {
+  background: rgba(197, 155, 39, 0.14);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary-light);
+}
+
+.hamburger-lines {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 18px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.hamburger-lines span {
+  display: block;
+  height: 1.8px;
+  width: 100%;
+  background-color: currentColor;
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+.hamburger-btn:hover .hamburger-lines span:nth-child(2) {
+  width: 72%;
+  background-color: var(--brand-primary);
+}
+
+.hamburger-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.brand-logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  text-decoration: none;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brand-logo-img {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--brand-primary);
+  background: #14161d;
+  flex-shrink: 0;
+}
+
+.brand-logo-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.brand-logo-title {
+  font-family: var(--font-serif);
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.brand-logo-sub {
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--brand-primary);
+  font-weight: 700;
+  margin-top: 3px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+/* Center: Editorial Typography Links with Luminous Gold Indicator Bar */
+.header-center-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: transparent;
+  padding: 0;
+  border: none;
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.nav-pill {
+  position: relative;
+  height: 78px;
+  padding: 0 4px;
+  border-radius: 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.72);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-pill i {
+  display: none;
+}
+
+.nav-pill::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--brand-primary);
+  border-radius: 3px 3px 0 0;
+  transform: scaleX(0);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-pill:hover {
+  color: #ffffff;
+  background: transparent;
+}
+
+.nav-pill:hover::after {
+  transform: scaleX(0.5);
+}
+
+.nav-pill.active {
+  background: transparent;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.nav-pill.active::after {
+  transform: scaleX(1);
+}
+
+/* Right: Sleek Icon Utilities + Refined WhatsApp Action */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.header-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.88);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.96rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.header-icon-btn:hover {
+  background: rgba(197, 155, 39, 0.15);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary-light);
+  transform: translateY(-1px);
+}
+
+.header-cart-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  height: 40px;
+  padding: 0 13px;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.header-cart-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--brand-primary);
+}
+
+.cart-count-badge {
+  background: var(--brand-primary);
+  color: #14171c;
+  font-size: 0.72rem;
+  font-weight: 800;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  line-height: 1;
+}
+
+.btn-whatsapp-header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #1da851;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.82rem;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(29, 168, 81, 0.25);
+  transition: var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.btn-whatsapp-header:hover {
+  background: #168a41;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(29, 168, 81, 0.35);
+}
+
+/* ============================================================================
+   SLIDE-OUT THREE-LINE HAMBURGER NAVIGATION DRAWER (SECTION 2)
+   ============================================================================ */
+.nav-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 14, 0.72);
+  backdrop-filter: blur(6px);
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.32s ease;
+}
+
+.nav-drawer-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: 440px;
+  height: 100vh;
+  background: #0d0f14;
+  color: #ffffff;
+  z-index: 2001;
+  transform: translateX(-100%);
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(200, 157, 84, 0.25);
+  box-shadow: 20px 0 60px rgba(0, 0, 0, 0.6);
+  overflow-y: auto;
+}
+
+.nav-drawer.open {
+  transform: translateX(0);
+}
+
+.nav-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.drawer-close-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.drawer-close-btn:hover {
+  background: var(--brand-primary);
+  color: #0e1015;
+}
+
+.nav-drawer-body {
+  padding: 24px 28px;
+  flex: 1;
+}
+
+.drawer-section-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--brand-primary);
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+.drawer-menu-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.drawer-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+}
+
+.drawer-menu-item:hover,
+.drawer-menu-item.active {
+  background: rgba(200, 157, 84, 0.15);
+  border-color: var(--brand-primary);
+  transform: translateX(4px);
+}
+
+.drawer-item-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.drawer-item-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.drawer-item-icon.catering {
+  background: rgba(200, 157, 84, 0.2);
+  color: #e6be74;
+}
+
+.drawer-item-icon.restaurant {
+  background: rgba(200, 90, 50, 0.22);
+  color: #f0825b;
+}
+
+.drawer-item-icon.delivery {
+  background: rgba(255, 115, 0, 0.22);
+  color: #ff943d;
+}
+
+.drawer-item-icon.about {
+  background: rgba(99, 179, 237, 0.18);
+  color: #76c4ff;
+}
+
+.drawer-item-icon.contact {
+  background: rgba(37, 211, 102, 0.18);
+  color: #4ce884;
+}
+
+.drawer-item-title {
+  font-weight: 700;
+  font-size: 1.02rem;
+  display: block;
+}
+
+.drawer-item-desc {
+  font-size: 0.77rem;
+  color: rgba(255, 255, 255, 0.6);
+  display: block;
+  margin-top: 2px;
+}
+
+.drawer-whatsapp-box {
+  background: linear-gradient(135deg, rgba(37, 211, 102, 0.15), rgba(18, 140, 126, 0.15));
+  border: 1px solid rgba(37, 211, 102, 0.35);
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 12px;
+}
+
+.drawer-whatsapp-box h4 {
+  font-size: 0.92rem;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4ce884;
+}
+
+.drawer-whatsapp-box p {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: 12px;
+}
+
+.drawer-wa-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawer-wa-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.drawer-wa-btn:hover {
+  background: var(--whatsapp-green);
+  color: #07190e;
+}

@@ -1,612 +1,742 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{title}}</title>
-  <meta id="metaDescription" name="description" content="{{description}}" />
-  <meta id="metaKeywords" name="keywords" content="Mini Kitchen Catering, Mini Kitchen Restaurant Aley, Mini Kitchen Delivery, wedding catering Lebanon, catering Aley, Mount Lebanon catering, Ain Al Remmaneh restaurant, Lebanese mezza buffet, live cooking stations Lebanon, minikitchencatering.com" />
-  <meta name="author" content="Mini Kitchen — Catering, Restaurant & Delivery (Aley, Lebanon)" />
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <meta name="theme-color" content="#0e1015" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link id="canonicalLink" rel="canonical" href="{{canonical}}" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+    <meta id="metaDescription" name="description" content="{{description}}" />
+    <meta
+      id="metaKeywords"
+      name="keywords"
+      content="Mini Kitchen Catering, Mini Kitchen Restaurant Aley, Mini Kitchen Delivery, wedding catering Lebanon, catering Aley, Mount Lebanon catering, Ain Al Remmaneh restaurant, Lebanese mezza buffet, live cooking stations Lebanon, minikitchencatering.com"
+    />
+    <meta name="author" content="Mini Kitchen — Catering, Restaurant & Delivery (Aley, Lebanon)" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="theme-color" content="#0e1015" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link id="canonicalLink" rel="canonical" href="{{canonical}}" />
 
-  <!-- Local Business Geo-Targeting (Ain Al Remmaneh, Aley, Mount Lebanon) -->
-  <meta name="geo.region" content="LB-JL" />
-  <meta name="geo.placename" content="Ain Al Remmaneh, Aley, Mount Lebanon, Lebanon" />
-  <meta name="geo.position" content="33.8053;35.6000" />
-  <meta name="ICBM" content="33.8053, 35.6000" />
+    <!-- Local Business Geo-Targeting (Ain Al Remmaneh, Aley, Mount Lebanon) -->
+    <meta name="geo.region" content="LB-JL" />
+    <meta name="geo.placename" content="Ain Al Remmaneh, Aley, Mount Lebanon, Lebanon" />
+    <meta name="geo.position" content="33.8053;35.6000" />
+    <meta name="ICBM" content="33.8053, 35.6000" />
 
-  <!-- Open Graph / WhatsApp / Facebook / Instagram Link Preview -->
-  <meta property="og:site_name" content="Mini Kitchen — Catering, Restaurant & Delivery" />
-  <meta id="ogTitle" property="og:title" content="{{ogTitle}}" />
-  <meta id="ogDescription" property="og:description" content="{{ogDescription}}" />
-  <meta property="og:image" content="https://rest.thrubits.com/uploads/restorants/288ad6f9-0b33-468b-977c-8cde4ae48809_cover.jpg" />
-  <meta property="og:url" id="ogUrl" content="{{canonical}}" />
-  <meta property="og:type" content="website" />
-  <meta property="og:locale" content="en_US" />
+    <!-- Open Graph / WhatsApp / Facebook / Instagram Link Preview -->
+    <meta property="og:site_name" content="Mini Kitchen — Catering, Restaurant & Delivery" />
+    <meta id="ogTitle" property="og:title" content="{{ogTitle}}" />
+    <meta id="ogDescription" property="og:description" content="{{ogDescription}}" />
+    <meta
+      property="og:image"
+      content="https://rest.thrubits.com/uploads/restorants/288ad6f9-0b33-468b-977c-8cde4ae48809_cover.jpg"
+    />
+    <meta property="og:url" id="ogUrl" content="{{canonical}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
 
-  <!-- Twitter / X Card Meta -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta id="twitterTitle" name="twitter:title" content="{{twitterTitle}}" />
-  <meta id="twitterDescription" name="twitter:description" content="{{twitterDescription}}" />
-  <meta name="twitter:image" content="https://rest.thrubits.com/uploads/restorants/288ad6f9-0b33-468b-977c-8cde4ae48809_cover.jpg" />
+    <!-- Twitter / X Card Meta -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta id="twitterTitle" name="twitter:title" content="{{twitterTitle}}" />
+    <meta id="twitterDescription" name="twitter:description" content="{{twitterDescription}}" />
+    <meta
+      name="twitter:image"
+      content="https://rest.thrubits.com/uploads/restorants/288ad6f9-0b33-468b-977c-8cde4ae48809_cover.jpg"
+    />
 
-  <!-- Instant Dark / Light Theme Initialization (Prevents Flash) -->
-  <script>
-    (function () {
-      try {
-        var saved = localStorage.getItem('mk_theme_mode');
-        var mode = saved === 'dark' || saved === 'light' ? saved : 'light';
-        document.documentElement.setAttribute('data-theme', mode);
-      } catch (e) {}
-    })();
-  </script>
+    <!-- Instant Dark / Light Theme Initialization (Prevents Flash) -->
+    <script src="js/theme-init.js"></script>
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Font Awesome 6 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-  <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="css/styles.css" />
+    <!-- Storefront stylesheets (order matters: later files override earlier ones) -->
+    <link rel="stylesheet" href="css/storefront/tokens.css" />
+    <link rel="stylesheet" href="css/storefront/base.css" />
+    <link rel="stylesheet" href="css/storefront/layout.css" />
+    <link rel="stylesheet" href="css/storefront/components.css" />
+    <link rel="stylesheet" href="css/storefront/menu.css" />
+    <link rel="stylesheet" href="css/storefront/panels.css" />
+    <link rel="stylesheet" href="css/storefront/responsive.css" />
+    <link rel="stylesheet" href="css/storefront/finedine-menu.css" />
+    <link rel="stylesheet" href="css/storefront/finedine-modal.css" />
+    <link rel="stylesheet" href="css/storefront/guided-ux.css" />
+    <link rel="stylesheet" href="css/storefront/preloader.css" />
+    <link rel="stylesheet" href="css/storefront/theme.css" />
+    <link rel="stylesheet" href="css/storefront/dark.css" />
 
-  <!-- Comprehensive Schema.org JSON-LD @graph for Multi-Brand Local SEO -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
+    <!-- Comprehensive Schema.org JSON-LD @graph for Multi-Brand Local SEO -->
+    <script type="application/ld+json">
       {
-        "@type": "FoodEstablishment",
-        "@id": "https://minikitchencatering.com/#catering",
-        "name": "Mini Kitchen Catering",
-        "alternateName": "Mini Kitchen Wedding & Event Catering Lebanon",
-        "url": "https://minikitchencatering.com/",
-        "logo": "https://rest.thrubits.com/uploads/restorants/b8fbc11a-99b2-420e-adda-0fadd3e15d4f_large.jpg",
-        "image": "https://rest.thrubits.com/uploads/restorants/288ad6f9-0b33-468b-977c-8cde4ae48809_cover.jpg",
-        "description": "Luxury wedding catering, corporate event buffets, private party catering, and live cooking stations based in Ain Al Remmaneh, Aley, serving all of Mount Lebanon and Beirut.",
-        "telephone": "+961-71-048-154",
-        "email": "minikitchen@gmail.com",
-        "priceRange": "$$$",
-        "servesCuisine": ["Lebanese Cuisine", "Wedding Buffets", "Live Cooking Stations", "International & American Cuisine", "Canapés & Grazing Tables"],
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Main Road, Ain Al Remmaneh (Ein L Remeneh)",
-          "addressLocality": "Aley",
-          "addressRegion": "Mount Lebanon",
-          "addressCountry": "LB"
-        },
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": 33.8053,
-          "longitude": 35.6000
-        },
-        "areaServed": ["Aley", "Ain Al Remmaneh", "Bhamdoun", "Souk El Gharb", "Beirut", "Mount Lebanon", "Lebanon"],
-        "sameAs": [
-          "https://www.instagram.com/minikitchen.leb/"
-        ]
-      },
-      {
-        "@type": "Restaurant",
-        "@id": "https://minikitchencatering.com/restaurant.html#restaurant",
-        "name": "Mini Kitchen Restaurant",
-        "url": "https://minikitchencatering.com/restaurant.html",
-        "image": "https://rest.thrubits.com/uploads/restorants/288ad6f9-0b33-468b-977c-8cde4ae48809_cover.jpg",
-        "description": "Scenic mountain-view restaurant and family terrace in Ain Al Remmaneh, Aley serving authentic Lebanese breakfast, charcoal grills, signature syringe burgers, pizza, pasta, and shisha.",
-        "telephone": "+961-3-682-186",
-        "openingHours": "Mo-Su 08:00-22:00",
-        "acceptsReservations": "True",
-        "hasMenu": "https://minikitchencatering.com/restaurant.html",
-        "servesCuisine": ["Lebanese", "American", "Burgers", "Breakfast", "Pizza", "Pasta", "Charcoal Grill"],
-        "priceRange": "$$",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Main Road, Ain Al Remmaneh",
-          "addressLocality": "Aley",
-          "addressRegion": "Mount Lebanon",
-          "addressCountry": "LB"
-        }
-      },
-      {
-        "@type": "FoodEstablishment",
-        "@id": "https://minikitchencatering.com/delivery.html#delivery",
-        "name": "Mini Kitchen Delivery",
-        "url": "https://minikitchencatering.com/delivery.html",
-        "telephone": "+961-3-682-186",
-        "description": "Fast hot food delivery across Ain Al Remmaneh, Aley, Bhamdoun, Souk El Gharb, and Kahale with 239+ FineDine dishes and direct WhatsApp ordering.",
-        "hasMenu": "https://minikitchencatering.com/delivery.html",
-        "openingHours": "Mo-Su 08:00-22:00",
-        "priceRange": "$$"
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
+        "@context": "https://schema.org",
+        "@graph": [
           {
-            "@type": "Question",
-            "name": "Does Mini Kitchen Catering provide full-service wedding and event catering in Lebanon?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Mini Kitchen Catering provides turnkey wedding receptions, engagement cocktail grazing tables, corporate galas, and private villa parties across Aley, Mount Lebanon, and Beirut, including uniformed staff, chafing setups, and live cooking stations."
+            "@type": "FoodEstablishment",
+            "@id": "https://minikitchencatering.com/#catering",
+            "name": "Mini Kitchen Catering",
+            "alternateName": "Mini Kitchen Wedding & Event Catering Lebanon",
+            "url": "https://minikitchencatering.com/",
+            "logo": "https://rest.thrubits.com/uploads/restorants/b8fbc11a-99b2-420e-adda-0fadd3e15d4f_large.jpg",
+            "image": "https://rest.thrubits.com/uploads/restorants/288ad6f9-0b33-468b-977c-8cde4ae48809_cover.jpg",
+            "description": "Luxury wedding catering, corporate event buffets, private party catering, and live cooking stations based in Ain Al Remmaneh, Aley, serving all of Mount Lebanon and Beirut.",
+            "telephone": "+961-71-048-154",
+            "email": "minikitchen@gmail.com",
+            "priceRange": "$$$",
+            "servesCuisine": [
+              "Lebanese Cuisine",
+              "Wedding Buffets",
+              "Live Cooking Stations",
+              "International & American Cuisine",
+              "Canapés & Grazing Tables"
+            ],
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Main Road, Ain Al Remmaneh (Ein L Remeneh)",
+              "addressLocality": "Aley",
+              "addressRegion": "Mount Lebanon",
+              "addressCountry": "LB"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 33.8053,
+              "longitude": 35.6
+            },
+            "areaServed": [
+              "Aley",
+              "Ain Al Remmaneh",
+              "Bhamdoun",
+              "Souk El Gharb",
+              "Beirut",
+              "Mount Lebanon",
+              "Lebanon"
+            ],
+            "sameAs": ["https://www.instagram.com/minikitchen.leb/"]
+          },
+          {
+            "@type": "Restaurant",
+            "@id": "https://minikitchencatering.com/restaurant.html#restaurant",
+            "name": "Mini Kitchen Restaurant",
+            "url": "https://minikitchencatering.com/restaurant.html",
+            "image": "https://rest.thrubits.com/uploads/restorants/288ad6f9-0b33-468b-977c-8cde4ae48809_cover.jpg",
+            "description": "Scenic mountain-view restaurant and family terrace in Ain Al Remmaneh, Aley serving authentic Lebanese breakfast, charcoal grills, signature syringe burgers, pizza, pasta, and shisha.",
+            "telephone": "+961-3-682-186",
+            "openingHours": "Mo-Su 08:00-22:00",
+            "acceptsReservations": "True",
+            "hasMenu": "https://minikitchencatering.com/restaurant.html",
+            "servesCuisine": ["Lebanese", "American", "Burgers", "Breakfast", "Pizza", "Pasta", "Charcoal Grill"],
+            "priceRange": "$$",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Main Road, Ain Al Remmaneh",
+              "addressLocality": "Aley",
+              "addressRegion": "Mount Lebanon",
+              "addressCountry": "LB"
             }
           },
           {
-            "@type": "Question",
-            "name": "How can I order delivery or request a catering quote from Mini Kitchen?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "You can browse all 239+ dishes on our FineDine digital menu, customize your items, and send your order directly to WhatsApp (+961 3 682 186 for Delivery & Restaurant, +961 71 048 154 for Catering & Weddings)."
-            }
+            "@type": "FoodEstablishment",
+            "@id": "https://minikitchencatering.com/delivery.html#delivery",
+            "name": "Mini Kitchen Delivery",
+            "url": "https://minikitchencatering.com/delivery.html",
+            "telephone": "+961-3-682-186",
+            "description": "Fast hot food delivery across Ain Al Remmaneh, Aley, Bhamdoun, Souk El Gharb, and Kahale with 239+ FineDine dishes and direct WhatsApp ordering.",
+            "hasMenu": "https://minikitchencatering.com/delivery.html",
+            "openingHours": "Mo-Su 08:00-22:00",
+            "priceRange": "$$"
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Does Mini Kitchen Catering provide full-service wedding and event catering in Lebanon?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Mini Kitchen Catering provides turnkey wedding receptions, engagement cocktail grazing tables, corporate galas, and private villa parties across Aley, Mount Lebanon, and Beirut, including uniformed staff, chafing setups, and live cooking stations."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How can I order delivery or request a catering quote from Mini Kitchen?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "You can browse all 239+ dishes on our FineDine digital menu, customize your items, and send your order directly to WhatsApp (+961 3 682 186 for Delivery & Restaurant, +961 71 048 154 for Catering & Weddings)."
+                }
+              }
+            ]
           }
         ]
       }
-    ]
-  }
-  </script>
-</head>
-<body data-brand="{{brand}}" data-default-page="{{page}}">
-
-  <!-- LUXURY HOSPITALITY PRELOADER -->
-  <div class="mk-preloader" id="mkPreloader" aria-label="Loading Mini Kitchen Experience">
-    <div class="mk-preloader-ambient"></div>
-    <div class="mk-preloader-inner">
-      <div class="mk-preloader-crest-wrap">
-        <div class="mk-preloader-ring-outer"></div>
-        <div class="mk-preloader-ring-inner"></div>
-        <span class="mk-preloader-crown"><i class="fa-solid fa-crown"></i></span>
-        <img
-          src="https://rest.thrubits.com/uploads/restorants/b8fbc11a-99b2-420e-adda-0fadd3e15d4f_large.jpg"
-          onerror="this.src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=200&q=80'"
-          alt="Mini Kitchen Crest"
-          class="mk-preloader-logo"
-        />
-      </div>
-      <div class="mk-preloader-brand">MINI KITCHEN</div>
-      <div class="mk-preloader-pillars">
-        <span>Catering</span>
-        <span class="mk-preloader-dot">•</span>
-        <span>Restaurant</span>
-        <span class="mk-preloader-dot">•</span>
-        <span>Delivery</span>
-      </div>
-      <div class="mk-preloader-location">Ain Al Remmaneh • Aley, Mount Lebanon</div>
-      <div class="mk-preloader-bar-track">
-        <div class="mk-preloader-bar-fill" id="mkPreloaderBar"></div>
-      </div>
-    </div>
-  </div>
-  <script>
-    setTimeout(function () {
-      var p = document.getElementById('mkPreloader');
-      if (p) p.classList.add('mk-preloader-hidden');
-    }, 1100);
-  </script>
-
-  <!-- TOP ANNOUNCEMENT BAR -->
-  <div class="top-announcement">
-    <div class="container top-announcement-inner">
-      <div class="top-announcement-left">
-        <span><i class="fa-solid fa-location-dot"></i> Ain Al Remmaneh, Aley, Mount Lebanon</span>
-        <span><i class="fa-solid fa-clock"></i> Open Daily: 8:00 AM – 10:00 PM</span>
-      </div>
-      <div class="top-announcement-right">
-        <a href="tel:+96171048154"><i class="fa-solid fa-crown"></i> Catering & Events: +961 71 048 154</a>
-        <a href="tel:+9613682186"><i class="fa-solid fa-motorcycle"></i> Restaurant & Delivery: +961 3 682 186</a>
-        <a href="https://www.instagram.com/minikitchen.leb/" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> @minikitchen.leb</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- STICKY HEADER WITH ARCHITECTURAL THREE-LINE MENU & EDITORIAL NAVIGATION -->
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="header-left">
-        <!-- Three-Line Hamburger Menu Button (Required Section 2) -->
-        <button class="hamburger-btn" onclick="openNavDrawer()" aria-label="Open Navigation Menu" title="Open All Brands & Navigation Drawer">
-          <div class="hamburger-lines">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <span class="hamburger-label">Menu</span>
-        </button>
-
-        <!-- Brand Logo -->
-        <div class="brand-logo-wrap" onclick="navigateToPage('catering')">
+    </script>
+  </head>
+  <body data-brand="{{brand}}" data-default-page="{{page}}">
+    <!-- LUXURY HOSPITALITY PRELOADER -->
+    <div class="mk-preloader" id="mkPreloader" aria-label="Loading Mini Kitchen Experience">
+      <div class="mk-preloader-ambient"></div>
+      <div class="mk-preloader-inner">
+        <div class="mk-preloader-crest-wrap">
+          <div class="mk-preloader-ring-outer"></div>
+          <div class="mk-preloader-ring-inner"></div>
+          <span class="mk-preloader-crown"><i class="fa-solid fa-crown"></i></span>
           <img
             src="https://rest.thrubits.com/uploads/restorants/b8fbc11a-99b2-420e-adda-0fadd3e15d4f_large.jpg"
-            onerror="handleImgError(this, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=200&q=80')"
-            alt="Mini Kitchen Logo"
-            class="brand-logo-img"
+            data-fallback="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=200&q=80"
+            alt="Mini Kitchen Crest"
+            class="mk-preloader-logo"
           />
-          <div class="brand-logo-text">
-            <span class="brand-logo-title">MINI KITCHEN</span>
-            <span class="brand-logo-sub" id="headerBrandSub">Catering • Weddings & Events</span>
-          </div>
         </div>
-      </div>
-
-      <!-- Desktop Editorial Navigation Links -->
-      <nav class="header-center-nav" aria-label="Primary Navigation">
-        <button class="nav-pill active" data-nav-page="catering" onclick="navigateToPage('catering')">
-          Catering
-        </button>
-        <button class="nav-pill" data-nav-page="catering-menus" onclick="navigateToPage('catering-menus')">
-          Menus & Packages
-        </button>
-        <button class="nav-pill" data-nav-page="restaurant" onclick="navigateToPage('restaurant')">
-          Restaurant
-        </button>
-        <button class="nav-pill" data-nav-page="delivery" onclick="navigateToPage('delivery')">
-          Delivery
-        </button>
-        <button class="nav-pill" data-nav-page="about" onclick="navigateToPage('about')">
-          About Us
-        </button>
-        <button class="nav-pill" data-nav-page="contact" onclick="navigateToPage('contact')">
-          Contact
-        </button>
-      </nav>
-
-      <!-- Header Right Actions -->
-      <div class="header-right">
-        <button
-          class="header-icon-btn"
-          id="langToggleBtn"
-          onclick="toggleSiteLanguage()"
-          title="Switch Language (العربية / English)"
-          aria-label="Switch Language"
-          style="width:auto; padding:0 11px; font-weight:800; font-size:0.76rem; letter-spacing:0.03em;"
-        >
-          <span id="langToggleLabel">العربية</span>
-        </button>
-        <button
-          class="header-icon-btn theme-toggle-btn"
-          id="themeToggleBtn"
-          onclick="toggleSiteTheme()"
-          title="Toggle Dark / Light Mode"
-          aria-label="Toggle Dark or Light Mode"
-        >
-          <i class="fa-solid fa-moon" id="themeToggleIcon"></i>
-        </button>
-        <button
-          class="header-icon-btn"
-          onclick="openOrderTrackerModal()"
-          title="Track Live Order or Quote Status (#MK-XXXX)"
-          aria-label="Track Order Status"
-        >
-          <i class="fa-solid fa-truck-fast"></i>
-        </button>
-        <button
-          class="header-icon-btn"
-          onclick="openQrStudioModal('all')"
-          title="QR Codes for All 3 Menus (Scan or Print)"
-          aria-label="Open QR Code Menus"
-        >
-          <i class="fa-solid fa-qrcode"></i>
-        </button>
-        <a
-          href="admin.html"
-          class="header-icon-btn"
-          title="Back Office & WhatsApp Order Manager"
-          aria-label="Open Back Office"
-        >
-          <i class="fa-solid fa-sliders"></i>
-        </a>
-        <button class="header-cart-btn" onclick="openCartDrawer()" title="Open WhatsApp Delivery Order Basket">
-          <i class="fa-solid fa-bag-shopping"></i>
-          <span class="cart-count-badge">0</span>
-        </button>
-        <button class="btn-whatsapp-header" id="headerWaBtn" onclick="openWhatsApp('catering')">
-          <i class="fa-brands fa-whatsapp" style="font-size:1.05rem;"></i>
-          <span class="wa-text">Catering WhatsApp</span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- SHARED DRAWER BACKDROP -->
-  <div class="nav-drawer-backdrop" id="navDrawerBackdrop" onclick="closeNavDrawer(); closeCartDrawer();"></div>
-
-  <!-- THREE-LINE HAMBURGER NAVIGATION DRAWER (SECTION 2) -->
-  <aside class="nav-drawer" id="navDrawer" aria-label="Site Navigation Drawer">
-    <div class="nav-drawer-header">
-      <div class="brand-logo-wrap" onclick="navigateToPage('catering')">
-        <img
-          src="https://rest.thrubits.com/uploads/restorants/b8fbc11a-99b2-420e-adda-0fadd3e15d4f_large.jpg"
-          onerror="handleImgError(this)"
-          alt="Mini Kitchen Logo"
-          class="brand-logo-img"
-          style="width:42px; height:42px;"
-        />
-        <div class="brand-logo-text">
-          <span class="brand-logo-title" style="font-size:1.15rem;">MINI KITCHEN</span>
-          <span class="brand-logo-sub">All Brands & Sections</span>
+        <div class="mk-preloader-brand">MINI KITCHEN</div>
+        <div class="mk-preloader-pillars">
+          <span>Catering</span>
+          <span class="mk-preloader-dot">•</span>
+          <span>Restaurant</span>
+          <span class="mk-preloader-dot">•</span>
+          <span>Delivery</span>
         </div>
-      </div>
-      <button class="drawer-close-btn" onclick="closeNavDrawer()" aria-label="Close Menu">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-
-    <div class="nav-drawer-body">
-      <div class="drawer-theme-bar" style="gap:8px; flex-wrap:wrap;">
-        <span class="drawer-theme-label"><i class="fa-solid fa-circle-half-stroke"></i> Theme & Language</span>
-        <div style="display:flex; gap:6px;">
-          <button type="button" class="drawer-theme-switch-btn" onclick="toggleSiteLanguage()" id="drawerLangSwitchBtn">
-            <i class="fa-solid fa-globe"></i> <span>العربية</span>
-          </button>
-          <button type="button" class="drawer-theme-switch-btn" onclick="toggleSiteTheme()" id="drawerThemeSwitchBtn">
-            <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
-          </button>
-        </div>
-      </div>
-      <div class="drawer-section-label">Our Three Brands & Pages</div>
-      <ul class="drawer-menu-list">
-        <li>
-          <button class="drawer-menu-item" data-nav-page="catering" onclick="navigateToPage('catering')">
-            <div class="drawer-item-left">
-              <div class="drawer-item-icon catering"><i class="fa-solid fa-crown"></i></div>
-              <div>
-                <span class="drawer-item-title">1. Mini Kitchen Catering</span>
-                <span class="drawer-item-desc">Weddings, Corporate Events, Private Parties & Quotes</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:0.5;"></i>
-          </button>
-        </li>
-        <li>
-          <button class="drawer-menu-item" data-nav-page="catering-menus" onclick="navigateToPage('catering-menus')" style="padding-left:28px; background:rgba(197,155,39,0.08);">
-            <div class="drawer-item-left">
-              <div class="drawer-item-icon catering" style="width:34px; height:34px; font-size:0.9rem;"><i class="fa-solid fa-book-open"></i></div>
-              <div>
-                <span class="drawer-item-title" style="font-size:0.93rem;">↳ Catering Menus & Event Packages</span>
-                <span class="drawer-item-desc">Wedding Packages, Live Stations & QR Menu #1</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:0.5;"></i>
-          </button>
-        </li>
-        <li>
-          <button class="drawer-menu-item" data-nav-page="restaurant" onclick="navigateToPage('restaurant')">
-            <div class="drawer-item-left">
-              <div class="drawer-item-icon restaurant"><i class="fa-solid fa-mountain-sun"></i></div>
-              <div>
-                <span class="drawer-item-title">2. Mini Kitchen Restaurant</span>
-                <span class="drawer-item-desc">Scenic Aley Views, Terrace Dining & Table QR Menu #2</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:0.5;"></i>
-          </button>
-        </li>
-        <li>
-          <button class="drawer-menu-item" data-nav-page="delivery" onclick="navigateToPage('delivery')">
-            <div class="drawer-item-left">
-              <div class="drawer-item-icon delivery"><i class="fa-solid fa-motorcycle"></i></div>
-              <div>
-                <span class="drawer-item-title">3. Mini Kitchen Delivery</span>
-                <span class="drawer-item-desc">239-Item Delivery Menu, WhatsApp Cart & QR Menu #3</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:0.5;"></i>
-          </button>
-        </li>
-        <li>
-          <button class="drawer-menu-item" onclick="closeNavDrawer(); openOrderTrackerModal();" style="border-color:rgba(217,78,40,0.4); background:rgba(217,78,40,0.1);">
-            <div class="drawer-item-left">
-              <div class="drawer-item-icon delivery"><i class="fa-solid fa-truck-fast"></i></div>
-              <div>
-                <span class="drawer-item-title">📍 Track Live Order Status (#MK-XXXX)</span>
-                <span class="drawer-item-desc">Check live kitchen & delivery status for your order or quote</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:0.5;"></i>
-          </button>
-        </li>
-        <li>
-          <button class="drawer-menu-item" onclick="closeNavDrawer(); openQrStudioModal('all');" style="border-color:rgba(197,155,39,0.35); background:rgba(197,155,39,0.1);">
-            <div class="drawer-item-left">
-              <div class="drawer-item-icon catering"><i class="fa-solid fa-qrcode"></i></div>
-              <div>
-                <span class="drawer-item-title">📱 All 3 Menu QR Codes (Scan / Print)</span>
-                <span class="drawer-item-desc">Catering QR • Restaurant Table QR • Delivery QR</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:0.5;"></i>
-          </button>
-        </li>
-        <li>
-          <button class="drawer-menu-item" data-nav-page="about" onclick="navigateToPage('about')">
-            <div class="drawer-item-left">
-              <div class="drawer-item-icon about"><i class="fa-solid fa-users-gear"></i></div>
-              <div>
-                <span class="drawer-item-title">4. About Us</span>
-                <span class="drawer-item-desc">Our Story, Chefs, Kitchen Brigade & Event Execution</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:0.5;"></i>
-          </button>
-        </li>
-        <li>
-          <button class="drawer-menu-item" data-nav-page="contact" onclick="navigateToPage('contact')">
-            <div class="drawer-item-left">
-              <div class="drawer-item-icon contact"><i class="fa-brands fa-whatsapp"></i></div>
-              <div>
-                <span class="drawer-item-title">5. Contact Us</span>
-                <span class="drawer-item-desc">Direct WhatsApp Lines, Event Form & Aley Map</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:0.5;"></i>
-          </button>
-        </li>
-        <li>
-          <a href="admin.html" class="drawer-menu-item" style="text-decoration:none; border-color:rgba(29,168,81,0.4); background:rgba(29,168,81,0.1);">
-            <div class="drawer-item-left">
-              <div class="drawer-item-icon contact"><i class="fa-solid fa-gauge-high"></i></div>
-              <div>
-                <span class="drawer-item-title">⚙️ Back Office & WhatsApp Order Manager</span>
-                <span class="drawer-item-desc">Manage Recorded WhatsApp Orders, Menus, Packages & Site</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="opacity:0.5;"></i>
-          </a>
-        </li>
-      </ul>
-
-      <div class="drawer-whatsapp-box">
-        <h4><i class="fa-brands fa-whatsapp"></i> Instant WhatsApp Concierge</h4>
-        <p>Choose a division to chat directly with our team on WhatsApp:</p>
-        <div class="drawer-wa-buttons">
-          <a href="javascript:void(0)" class="drawer-wa-btn" onclick="openWhatsApp('catering')">
-            <span><i class="fa-solid fa-crown" style="color:#e6c45a; margin-right:6px;"></i> Catering & Weddings</span>
-            <span>+961 71 048 154</span>
-          </a>
-          <a href="javascript:void(0)" class="drawer-wa-btn" onclick="openWhatsApp('restaurant')">
-            <span><i class="fa-solid fa-mountain-sun" style="color:#52b788; margin-right:6px;"></i> Restaurant Table Booking</span>
-            <span>+961 3 682 186</span>
-          </a>
-          <a href="javascript:void(0)" class="drawer-wa-btn" onclick="openWhatsApp('delivery')">
-            <span><i class="fa-solid fa-motorcycle" style="color:#f3724f; margin-right:6px;"></i> Delivery Order Hotline</span>
-            <span>+961 3 682 186</span>
-          </a>
+        <div class="mk-preloader-location">Ain Al Remmaneh • Aley, Mount Lebanon</div>
+        <div class="mk-preloader-bar-track">
+          <div class="mk-preloader-bar-fill" id="mkPreloaderBar"></div>
         </div>
       </div>
     </div>
-  </aside>
 
-  <!-- RIGHT SLIDE-OVER WHATSAPP ORDER CART DRAWER -->
-  <aside class="cart-drawer" id="cartDrawer" aria-label="WhatsApp Delivery Cart">
-    <div class="cart-drawer-header">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <i class="fa-brands fa-whatsapp" style="font-size:1.4rem; color:#25d366;"></i>
-        <div>
-          <h4 style="font-size:1.05rem; margin:0;">WhatsApp Order Basket</h4>
-          <span style="font-size:0.75rem; color:rgba(255,255,255,0.7);">Mini Kitchen Delivery • +961 3 682 186</span>
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="top-announcement">
+      <div class="container top-announcement-inner">
+        <div class="top-announcement-left">
+          <span><i class="fa-solid fa-location-dot"></i> Ain Al Remmaneh, Aley, Mount Lebanon</span>
+          <span><i class="fa-solid fa-clock"></i> Open Daily: 8:00 AM – 10:00 PM</span>
+        </div>
+        <div class="top-announcement-right">
+          <a href="tel:+96171048154"><i class="fa-solid fa-crown"></i> Catering & Events: +961 71 048 154</a>
+          <a href="tel:+9613682186"><i class="fa-solid fa-motorcycle"></i> Restaurant & Delivery: +961 3 682 186</a>
+          <a href="https://www.instagram.com/minikitchen.leb/" target="_blank" rel="noopener"
+            ><i class="fa-brands fa-instagram"></i> @minikitchen.leb</a
+          >
         </div>
       </div>
-      <button class="drawer-close-btn" onclick="closeCartDrawer()" aria-label="Close Cart">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
     </div>
-    <div class="cart-drawer-body" id="cartDrawerBody"></div>
-    <div class="cart-drawer-footer">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <span style="font-weight:700; color:var(--text-muted);">Estimated Order Total:</span>
-        <span id="cartDrawerTotal" style="font-size:1.35rem; font-weight:800; color:var(--text-main);">$0.00</span>
-      </div>
-      <button class="btn btn-whatsapp" style="width:100%; padding:15px;" onclick="checkoutCartViaWhatsApp()">
-        <i class="fa-brands fa-whatsapp" style="font-size:1.2rem;"></i> Send Order to WhatsApp Now
-      </button>
-    </div>
-  </aside>
 
-  <!-- DYNAMIC MAIN PAGE CONTENT -->
-  <main id="appMainContent"></main>
+    <!-- STICKY HEADER WITH ARCHITECTURAL THREE-LINE MENU & EDITORIAL NAVIGATION -->
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="header-left">
+          <!-- Three-Line Hamburger Menu Button (Required Section 2) -->
+          <button
+            class="hamburger-btn"
+            data-action="nav:open-drawer"
+            aria-label="Open Navigation Menu"
+            title="Open All Brands & Navigation Drawer"
+          >
+            <div class="hamburger-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <span class="hamburger-label">Menu</span>
+          </button>
 
-  <!-- OWNER EASY MENU & PRICE EDITOR MODAL (REQUIREMENT 8) -->
-  <div id="cmsManagerModal" style="display:none; position:fixed; inset:0; background:rgba(10,12,16,0.8); z-index:2500; align-items:center; justify-content:center; padding:20px;">
-    <div style="background:#fff; width:100%; max-width:920px; max-height:88vh; border-radius:20px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 25px 60px rgba(0,0,0,0.5);">
-      <div style="background:#0e1015; color:#fff; padding:20px 26px; display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <h3 style="font-family:var(--font-serif); font-size:1.35rem;">Mini Kitchen — Easy Menu & Price Editor</h3>
-          <p style="font-size:0.8rem; color:rgba(255,255,255,0.7);">Quickly update dish names, descriptions, and prices across Delivery & Restaurant menus.</p>
-        </div>
-        <button class="drawer-close-btn" onclick="closeMenuManagerModal()"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div style="padding:16px 26px; background:#f3f4f6; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-        <input type="text" class="form-control" style="flex:1;" placeholder="Search dish or category to edit (e.g., Burger, Hommos, Offer)..." oninput="renderCmsItemList(this.value)" />
-        <button class="btn btn-outline-dark" style="padding:10px 16px; font-size:0.82rem;" onclick="resetCmsMenuData()">Reset to Default</button>
-      </div>
-      <div id="cmsItemsContainer" style="padding:16px 26px; overflow-y:auto; flex:1;"></div>
-    </div>
-  </div>
-
-  <!-- FLOATING WHATSAPP QUICK CONCIERGE -->
-  <div class="floating-wa-container">
-    <button class="floating-wa-btn" onclick="openWhatsApp(document.body.getAttribute('data-brand') || 'catering')">
-      <i class="fa-brands fa-whatsapp" style="font-size:1.35rem;"></i>
-      <span>WhatsApp Us Now</span>
-    </button>
-  </div>
-
-  <!-- SITE FOOTER -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <div class="brand-logo-wrap" style="margin-bottom:16px;" onclick="navigateToPage('catering')">
+          <!-- Brand Logo -->
+          <div class="brand-logo-wrap" data-action="nav:go" data-page="catering">
             <img
               src="https://rest.thrubits.com/uploads/restorants/b8fbc11a-99b2-420e-adda-0fadd3e15d4f_large.jpg"
-              onerror="handleImgError(this)"
-              alt="Mini Kitchen"
+              data-fallback="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=200&q=80"
+              alt="Mini Kitchen Logo"
               class="brand-logo-img"
             />
             <div class="brand-logo-text">
               <span class="brand-logo-title">MINI KITCHEN</span>
-              <span class="brand-logo-sub">Catering • Restaurant • Delivery</span>
+              <span class="brand-logo-sub" id="headerBrandSub">Catering • Weddings & Events</span>
             </div>
           </div>
-          <p style="font-size:0.9rem; margin-bottom:16px;">
-            Serving authentic Lebanese & American cuisine with a modern twist from Ain Al Remmaneh, Aley. Premier catering for weddings, corporate galas, and private celebrations across Lebanon.
-          </p>
-          <div class="social-icons-row">
-            <a href="https://www.instagram.com/minikitchen.leb/" target="_blank" rel="noopener" class="social-icon-btn" title="Instagram @minikitchen.leb"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://www.tiktok.com/@minikitchen.leb" target="_blank" rel="noopener" class="social-icon-btn" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-            <a href="https://www.facebook.com/search/top?q=Mini%20Kitchen%20Aley" target="_blank" rel="noopener" class="social-icon-btn" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="javascript:void(0)" onclick="openWhatsApp('catering')" class="social-icon-btn" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+
+        <!-- Desktop Editorial Navigation Links -->
+        <nav class="header-center-nav" aria-label="Primary Navigation">
+          <button class="nav-pill active" data-nav-page="catering" data-action="nav:go" data-page="catering">
+            Catering
+          </button>
+          <button class="nav-pill" data-nav-page="catering-menus" data-action="nav:go" data-page="catering-menus">
+            Menus & Packages
+          </button>
+          <button class="nav-pill" data-nav-page="restaurant" data-action="nav:go" data-page="restaurant">
+            Restaurant
+          </button>
+          <button class="nav-pill" data-nav-page="delivery" data-action="nav:go" data-page="delivery">Delivery</button>
+          <button class="nav-pill" data-nav-page="about" data-action="nav:go" data-page="about">About Us</button>
+          <button class="nav-pill" data-nav-page="contact" data-action="nav:go" data-page="contact">Contact</button>
+        </nav>
+
+        <!-- Header Right Actions -->
+        <div class="header-right">
+          <button
+            class="header-icon-btn"
+            id="langToggleBtn"
+            data-action="lang:toggle"
+            title="Switch Language (العربية / English)"
+            aria-label="Switch Language"
+            style="width: auto; padding: 0 11px; font-weight: 800; font-size: 0.76rem; letter-spacing: 0.03em"
+          >
+            <span id="langToggleLabel">العربية</span>
+          </button>
+          <button
+            class="header-icon-btn theme-toggle-btn"
+            id="themeToggleBtn"
+            data-action="theme:toggle"
+            title="Toggle Dark / Light Mode"
+            aria-label="Toggle Dark or Light Mode"
+          >
+            <i class="fa-solid fa-moon" id="themeToggleIcon"></i>
+          </button>
+          <button
+            class="header-icon-btn"
+            data-action="tracker:open"
+            title="Track Live Order or Quote Status (#MK-XXXX)"
+            aria-label="Track Order Status"
+          >
+            <i class="fa-solid fa-truck-fast"></i>
+          </button>
+          <button
+            class="header-icon-btn"
+            data-action="qr:open"
+            data-mode="all"
+            title="QR Codes for All 3 Menus (Scan or Print)"
+            aria-label="Open QR Code Menus"
+          >
+            <i class="fa-solid fa-qrcode"></i>
+          </button>
+          <a
+            href="admin.html"
+            class="header-icon-btn"
+            title="Back Office & WhatsApp Order Manager"
+            aria-label="Open Back Office"
+          >
+            <i class="fa-solid fa-sliders"></i>
+          </a>
+          <button class="header-cart-btn" data-action="cart:open" title="Open WhatsApp Delivery Order Basket">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span class="cart-count-badge">0</span>
+          </button>
+          <button class="btn-whatsapp-header" id="headerWaBtn" data-action="wa:open" data-brand="catering">
+            <i class="fa-brands fa-whatsapp" style="font-size: 1.05rem"></i>
+            <span class="wa-text">Catering WhatsApp</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- SHARED DRAWER BACKDROP -->
+    <div class="nav-drawer-backdrop" id="navDrawerBackdrop" data-action="drawers:close"></div>
+
+    <!-- THREE-LINE HAMBURGER NAVIGATION DRAWER (SECTION 2) -->
+    <aside class="nav-drawer" id="navDrawer" aria-label="Site Navigation Drawer">
+      <div class="nav-drawer-header">
+        <div class="brand-logo-wrap" data-action="nav:go" data-page="catering">
+          <img
+            src="https://rest.thrubits.com/uploads/restorants/b8fbc11a-99b2-420e-adda-0fadd3e15d4f_large.jpg"
+            data-fallback=""
+            alt="Mini Kitchen Logo"
+            class="brand-logo-img"
+            style="width: 42px; height: 42px"
+          />
+          <div class="brand-logo-text">
+            <span class="brand-logo-title" style="font-size: 1.15rem">MINI KITCHEN</span>
+            <span class="brand-logo-sub">All Brands & Sections</span>
+          </div>
+        </div>
+        <button class="drawer-close-btn" data-action="nav:close-drawer" aria-label="Close Menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="nav-drawer-body">
+        <div class="drawer-theme-bar" style="gap: 8px; flex-wrap: wrap">
+          <span class="drawer-theme-label"><i class="fa-solid fa-circle-half-stroke"></i> Theme & Language</span>
+          <div style="display: flex; gap: 6px">
+            <button type="button" class="drawer-theme-switch-btn" data-action="lang:toggle" id="drawerLangSwitchBtn">
+              <i class="fa-solid fa-globe"></i> <span>العربية</span>
+            </button>
+            <button type="button" class="drawer-theme-switch-btn" data-action="theme:toggle" id="drawerThemeSwitchBtn">
+              <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+            </button>
+          </div>
+        </div>
+        <div class="drawer-section-label">Our Three Brands & Pages</div>
+        <ul class="drawer-menu-list">
+          <li>
+            <button class="drawer-menu-item" data-nav-page="catering" data-action="nav:go" data-page="catering">
+              <div class="drawer-item-left">
+                <div class="drawer-item-icon catering"><i class="fa-solid fa-crown"></i></div>
+                <div>
+                  <span class="drawer-item-title">1. Mini Kitchen Catering</span>
+                  <span class="drawer-item-desc">Weddings, Corporate Events, Private Parties & Quotes</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="opacity: 0.5"></i>
+            </button>
+          </li>
+          <li>
+            <button
+              class="drawer-menu-item"
+              data-nav-page="catering-menus"
+              data-action="nav:go"
+              data-page="catering-menus"
+              style="padding-left: 28px; background: rgba(197, 155, 39, 0.08)"
+            >
+              <div class="drawer-item-left">
+                <div class="drawer-item-icon catering" style="width: 34px; height: 34px; font-size: 0.9rem">
+                  <i class="fa-solid fa-book-open"></i>
+                </div>
+                <div>
+                  <span class="drawer-item-title" style="font-size: 0.93rem">↳ Catering Menus & Event Packages</span>
+                  <span class="drawer-item-desc">Wedding Packages, Live Stations & QR Menu #1</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="opacity: 0.5"></i>
+            </button>
+          </li>
+          <li>
+            <button class="drawer-menu-item" data-nav-page="restaurant" data-action="nav:go" data-page="restaurant">
+              <div class="drawer-item-left">
+                <div class="drawer-item-icon restaurant"><i class="fa-solid fa-mountain-sun"></i></div>
+                <div>
+                  <span class="drawer-item-title">2. Mini Kitchen Restaurant</span>
+                  <span class="drawer-item-desc">Scenic Aley Views, Terrace Dining & Table QR Menu #2</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="opacity: 0.5"></i>
+            </button>
+          </li>
+          <li>
+            <button class="drawer-menu-item" data-nav-page="delivery" data-action="nav:go" data-page="delivery">
+              <div class="drawer-item-left">
+                <div class="drawer-item-icon delivery"><i class="fa-solid fa-motorcycle"></i></div>
+                <div>
+                  <span class="drawer-item-title">3. Mini Kitchen Delivery</span>
+                  <span class="drawer-item-desc">239-Item Delivery Menu, WhatsApp Cart & QR Menu #3</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="opacity: 0.5"></i>
+            </button>
+          </li>
+          <li>
+            <button
+              class="drawer-menu-item"
+              data-action="tracker:open"
+              style="border-color: rgba(217, 78, 40, 0.4); background: rgba(217, 78, 40, 0.1)"
+            >
+              <div class="drawer-item-left">
+                <div class="drawer-item-icon delivery"><i class="fa-solid fa-truck-fast"></i></div>
+                <div>
+                  <span class="drawer-item-title">📍 Track Live Order Status (#MK-XXXX)</span>
+                  <span class="drawer-item-desc">Check live kitchen & delivery status for your order or quote</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="opacity: 0.5"></i>
+            </button>
+          </li>
+          <li>
+            <button
+              class="drawer-menu-item"
+              data-action="qr:open"
+              data-mode="all"
+              style="border-color: rgba(197, 155, 39, 0.35); background: rgba(197, 155, 39, 0.1)"
+            >
+              <div class="drawer-item-left">
+                <div class="drawer-item-icon catering"><i class="fa-solid fa-qrcode"></i></div>
+                <div>
+                  <span class="drawer-item-title">📱 All 3 Menu QR Codes (Scan / Print)</span>
+                  <span class="drawer-item-desc">Catering QR • Restaurant Table QR • Delivery QR</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="opacity: 0.5"></i>
+            </button>
+          </li>
+          <li>
+            <button class="drawer-menu-item" data-nav-page="about" data-action="nav:go" data-page="about">
+              <div class="drawer-item-left">
+                <div class="drawer-item-icon about"><i class="fa-solid fa-users-gear"></i></div>
+                <div>
+                  <span class="drawer-item-title">4. About Us</span>
+                  <span class="drawer-item-desc">Our Story, Chefs, Kitchen Brigade & Event Execution</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="opacity: 0.5"></i>
+            </button>
+          </li>
+          <li>
+            <button class="drawer-menu-item" data-nav-page="contact" data-action="nav:go" data-page="contact">
+              <div class="drawer-item-left">
+                <div class="drawer-item-icon contact"><i class="fa-brands fa-whatsapp"></i></div>
+                <div>
+                  <span class="drawer-item-title">5. Contact Us</span>
+                  <span class="drawer-item-desc">Direct WhatsApp Lines, Event Form & Aley Map</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="opacity: 0.5"></i>
+            </button>
+          </li>
+          <li>
+            <a
+              href="admin.html"
+              class="drawer-menu-item"
+              style="text-decoration: none; border-color: rgba(29, 168, 81, 0.4); background: rgba(29, 168, 81, 0.1)"
+            >
+              <div class="drawer-item-left">
+                <div class="drawer-item-icon contact"><i class="fa-solid fa-gauge-high"></i></div>
+                <div>
+                  <span class="drawer-item-title">⚙️ Back Office & WhatsApp Order Manager</span>
+                  <span class="drawer-item-desc">Manage Recorded WhatsApp Orders, Menus, Packages & Site</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="opacity: 0.5"></i>
+            </a>
+          </li>
+        </ul>
+
+        <div class="drawer-whatsapp-box">
+          <h4><i class="fa-brands fa-whatsapp"></i> Instant WhatsApp Concierge</h4>
+          <p>Choose a division to chat directly with our team on WhatsApp:</p>
+          <div class="drawer-wa-buttons">
+            <a href="#" class="drawer-wa-btn" data-action="wa:open" data-brand="catering">
+              <span
+                ><i class="fa-solid fa-crown" style="color: #e6c45a; margin-right: 6px"></i> Catering & Weddings</span
+              >
+              <span>+961 71 048 154</span>
+            </a>
+            <a href="#" class="drawer-wa-btn" data-action="wa:open" data-brand="restaurant">
+              <span
+                ><i class="fa-solid fa-mountain-sun" style="color: #52b788; margin-right: 6px"></i> Restaurant Table
+                Booking</span
+              >
+              <span>+961 3 682 186</span>
+            </a>
+            <a href="#" class="drawer-wa-btn" data-action="wa:open" data-brand="delivery">
+              <span
+                ><i class="fa-solid fa-motorcycle" style="color: #f3724f; margin-right: 6px"></i> Delivery Order
+                Hotline</span
+              >
+              <span>+961 3 682 186</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT SLIDE-OVER WHATSAPP ORDER CART DRAWER -->
+    <aside class="cart-drawer" id="cartDrawer" aria-label="WhatsApp Delivery Cart">
+      <div class="cart-drawer-header">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <i class="fa-brands fa-whatsapp" style="font-size: 1.4rem; color: #25d366"></i>
+          <div>
+            <h4 style="font-size: 1.05rem; margin: 0">WhatsApp Order Basket</h4>
+            <span style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.7)"
+              >Mini Kitchen Delivery • +961 3 682 186</span
+            >
+          </div>
+        </div>
+        <button class="drawer-close-btn" data-action="cart:close" aria-label="Close Cart">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="cart-drawer-body" id="cartDrawerBody"></div>
+      <div class="cart-drawer-footer">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px">
+          <span style="font-weight: 700; color: var(--text-muted)">Estimated Order Total:</span>
+          <span id="cartDrawerTotal" style="font-size: 1.35rem; font-weight: 800; color: var(--text-main)">$0.00</span>
+        </div>
+        <button class="btn btn-whatsapp" style="width: 100%; padding: 15px" data-action="cart:checkout">
+          <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem"></i> Send Order to WhatsApp Now
+        </button>
+      </div>
+    </aside>
+
+    <!-- DYNAMIC MAIN PAGE CONTENT -->
+    <main id="appMainContent"></main>
+
+    <!-- FLOATING WHATSAPP QUICK CONCIERGE -->
+    <div class="floating-wa-container">
+      <button class="floating-wa-btn" data-action="wa:open">
+        <i class="fa-brands fa-whatsapp" style="font-size: 1.35rem"></i>
+        <span>WhatsApp Us Now</span>
+      </button>
+    </div>
+
+    <!-- SITE FOOTER -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <div class="brand-logo-wrap" style="margin-bottom: 16px" data-action="nav:go" data-page="catering">
+              <img
+                src="https://rest.thrubits.com/uploads/restorants/b8fbc11a-99b2-420e-adda-0fadd3e15d4f_large.jpg"
+                data-fallback=""
+                alt="Mini Kitchen"
+                class="brand-logo-img"
+              />
+              <div class="brand-logo-text">
+                <span class="brand-logo-title">MINI KITCHEN</span>
+                <span class="brand-logo-sub">Catering • Restaurant • Delivery</span>
+              </div>
+            </div>
+            <p style="font-size: 0.9rem; margin-bottom: 16px">
+              Serving authentic Lebanese & American cuisine with a modern twist from Ain Al Remmaneh, Aley. Premier
+              catering for weddings, corporate galas, and private celebrations across Lebanon.
+            </p>
+            <div class="social-icons-row">
+              <a
+                href="https://www.instagram.com/minikitchen.leb/"
+                target="_blank"
+                rel="noopener"
+                class="social-icon-btn"
+                title="Instagram @minikitchen.leb"
+                ><i class="fa-brands fa-instagram"></i
+              ></a>
+              <a
+                href="https://www.tiktok.com/@minikitchen.leb"
+                target="_blank"
+                rel="noopener"
+                class="social-icon-btn"
+                title="TikTok"
+                ><i class="fa-brands fa-tiktok"></i
+              ></a>
+              <a
+                href="https://www.facebook.com/search/top?q=Mini%20Kitchen%20Aley"
+                target="_blank"
+                rel="noopener"
+                class="social-icon-btn"
+                title="Facebook"
+                ><i class="fa-brands fa-facebook-f"></i
+              ></a>
+              <a href="#" data-action="wa:open" data-brand="catering" class="social-icon-btn" title="WhatsApp"
+                ><i class="fa-brands fa-whatsapp"></i
+              ></a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h4>Our Three Brands</h4>
+            <ul class="footer-links">
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="catering">
+                  1. Mini Kitchen Catering (Home)
+                </button>
+              </li>
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="catering-menus">
+                  ↳ Wedding & Event Packages
+                </button>
+              </li>
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="restaurant">
+                  2. Mini Kitchen Restaurant (Aley)
+                </button>
+              </li>
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="delivery">
+                  3. Mini Kitchen Delivery (239+ Items)
+                </button>
+              </li>
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="about">4. About Us & Our Chefs</button>
+              </li>
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="contact">5. Contact Us & Map</button>
+              </li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Catering Occasions</h4>
+            <ul class="footer-links">
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="catering-menus">
+                  Luxury Wedding Receptions
+                </button>
+              </li>
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="catering-menus">
+                  Corporate Events & Galas
+                </button>
+              </li>
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="catering-menus">
+                  Private Villa & Garden Parties
+                </button>
+              </li>
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="catering-menus">
+                  Birthdays & Graduations
+                </button>
+              </li>
+              <li>
+                <button class="footer-link-btn" data-action="nav:go" data-page="catering-menus">
+                  Live Cheddar Fountain & Grill Stations
+                </button>
+              </li>
+              <li>
+                <a href="admin.html" class="footer-link-btn" style="color: var(--brand-primary); font-weight: 700"
+                  ><i class="fa-solid fa-gauge-high"></i> Back Office & Order Manager</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Contact & Hours</h4>
+            <ul class="footer-links" style="font-size: 0.9rem">
+              <li>
+                <i class="fa-solid fa-location-dot" style="color: var(--brand-primary); width: 20px"></i> Ain Al
+                Remmaneh, Aley, Mount Lebanon
+              </li>
+              <li>
+                <i class="fa-solid fa-clock" style="color: var(--brand-primary); width: 20px"></i> Daily: 8:00 AM –
+                10:00 PM
+              </li>
+              <li>
+                <i class="fa-solid fa-crown" style="color: var(--brand-primary); width: 20px"></i> Catering:
+                <a href="tel:+96171048154">+961 71 048 154</a>
+              </li>
+              <li>
+                <i class="fa-solid fa-motorcycle" style="color: var(--brand-primary); width: 20px"></i> Delivery/Resto:
+                <a href="tel:+9613682186">+961 3 682 186</a>
+              </li>
+              <li>
+                <i class="fa-solid fa-envelope" style="color: var(--brand-primary); width: 20px"></i>
+                <a href="mailto:minikitchen@gmail.com">minikitchen@gmail.com</a>
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div class="footer-col">
-          <h4>Our Three Brands</h4>
-          <ul class="footer-links">
-            <li><button class="footer-link-btn" onclick="navigateToPage('catering')">1. Mini Kitchen Catering (Home)</button></li>
-            <li><button class="footer-link-btn" onclick="navigateToPage('catering-menus')">↳ Wedding & Event Packages</button></li>
-            <li><button class="footer-link-btn" onclick="navigateToPage('restaurant')">2. Mini Kitchen Restaurant (Aley)</button></li>
-            <li><button class="footer-link-btn" onclick="navigateToPage('delivery')">3. Mini Kitchen Delivery (239+ Items)</button></li>
-            <li><button class="footer-link-btn" onclick="navigateToPage('about')">4. About Us & Our Chefs</button></li>
-            <li><button class="footer-link-btn" onclick="navigateToPage('contact')">5. Contact Us & Map</button></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Catering Occasions</h4>
-          <ul class="footer-links">
-            <li><button class="footer-link-btn" onclick="navigateToPage('catering-menus')">Luxury Wedding Receptions</button></li>
-            <li><button class="footer-link-btn" onclick="navigateToPage('catering-menus')">Corporate Events & Galas</button></li>
-            <li><button class="footer-link-btn" onclick="navigateToPage('catering-menus')">Private Villa & Garden Parties</button></li>
-            <li><button class="footer-link-btn" onclick="navigateToPage('catering-menus')">Birthdays & Graduations</button></li>
-            <li><button class="footer-link-btn" onclick="navigateToPage('catering-menus')">Live Cheddar Fountain & Grill Stations</button></li>
-            <li><a href="admin.html" class="footer-link-btn" style="color:var(--brand-primary); font-weight:700;"><i class="fa-solid fa-gauge-high"></i> Back Office & Order Manager</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Contact & Hours</h4>
-          <ul class="footer-links" style="font-size:0.9rem;">
-            <li><i class="fa-solid fa-location-dot" style="color:var(--brand-primary); width:20px;"></i> Ain Al Remmaneh, Aley, Mount Lebanon</li>
-            <li><i class="fa-solid fa-clock" style="color:var(--brand-primary); width:20px;"></i> Daily: 8:00 AM – 10:00 PM</li>
-            <li><i class="fa-solid fa-crown" style="color:var(--brand-primary); width:20px;"></i> Catering: <a href="tel:+96171048154">+961 71 048 154</a></li>
-            <li><i class="fa-solid fa-motorcycle" style="color:var(--brand-primary); width:20px;"></i> Delivery/Resto: <a href="tel:+9613682186">+961 3 682 186</a></li>
-            <li><i class="fa-solid fa-envelope" style="color:var(--brand-primary); width:20px;"></i> <a href="mailto:minikitchen@gmail.com">minikitchen@gmail.com</a></li>
-          </ul>
+        <div
+          style="
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.55);
+          "
+        >
+          <div>© 2026 Mini Kitchen Catering, Mini Kitchen Restaurant & Mini Kitchen Delivery. All rights reserved.</div>
+          <div>Designed for High-Conversion WhatsApp Inquiries & Orders • Ain Al Remmaneh, Aley, Lebanon</div>
         </div>
       </div>
+    </footer>
 
-      <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; font-size:0.82rem; color:rgba(255,255,255,0.55);">
-        <div>© 2026 Mini Kitchen Catering, Mini Kitchen Restaurant & Mini Kitchen Delivery. All rights reserved.</div>
-        <div>Designed for High-Conversion WhatsApp Inquiries & Orders • Ain Al Remmaneh, Aley, Lebanon</div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Scripts -->
-  <script src="js/site-data.js"></script>
-  <script src="js/menu-data.js"></script>
-  <script src="js/app.js"></script>
-</body>
+    <!-- Application (ES modules; all event handlers are wired in JS, no inline scripts) -->
+    <script type="module" src="js/storefront/main.js"></script>
+  </body>
 </html>

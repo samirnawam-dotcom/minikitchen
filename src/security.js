@@ -188,9 +188,9 @@ class RateLimiter {
 function buildCsp(https) {
   const directives = [
     "default-src 'self'",
-    // Inline handlers are used by the existing UI templates; external scripts are not allowed.
-    "script-src 'self' 'unsafe-inline'",
-    "script-src-attr 'unsafe-inline'",
+    // No inline scripts or on* handlers: the frontends use ES modules with data-action wiring.
+    "script-src 'self'",
+    "script-src-attr 'none'",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
     "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com",
     "img-src 'self' data: blob: https:",
