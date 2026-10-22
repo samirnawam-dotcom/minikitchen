@@ -5,16 +5,19 @@
  * uncaught errors, console errors and CSP violations. Screenshots go to the output dir.
  *
  *   node test/e2e/smoke.js [outDir]
+ *
+ * SMOKE_SKIP_STOREFRONT=1 / SMOKE_SKIP_ADMIN=1 run one half; SMOKE_PAGES=/,/about limits pages;
+ * SMOKE_MAX_CLICKS caps clicks per page (default 120).
  */
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-/* global window */
+/* global window, document, getComputedStyle */
 const { chromium } = require('playwright-core');
 
 const OUT = path.resolve(process.argv[2] || path.join(os.tmpdir(), 'minikitchen-smoke'));
 const ADMIN_PASSWORD = 'smoke-password-123';
-const STOREFRONT = ['/', '/catering-menus', '/restaurant', '/delivery', '/about', '/contact'];
+const STOREFRONT = (process.env.SMOKE_PAGES || '/,/catering-menus,/restaurant,/delivery,/about,/contact').split(',');
 const CLICKABLE = '[data-action], [onclick]';
 const MAX_CLICKS_PER_PAGE = Number(process.env.SMOKE_MAX_CLICKS || 120);
 
@@ -81,35 +84,46 @@ async function main() {
     await page.waitForTimeout(400);
     await page.screenshot({ path: path.join(OUT, `${name}.png`), fullPage: false });
 
-    for (let i = 0; i < MAX_CLICKS_PER_PAGE; i++) {
+    // Tag visible interactive elements once per load, then click them by index.
+    const tag = () =>
+      page.evaluate(sel => {
+        let n = 0;
+        for (const el of document.querySelectorAll(sel)) {
+          const r = el.getBoundingClientRect();
+          const visible = r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden';
+          if (visible) el.setAttribute('data-smoke', String(n++));
+        }
+        return n;
+      }, CLICKABLE);
+
+    let total = await tag();
+    for (let i = 0; i < Math.min(total, MAX_CLICKS_PER_PAGE); i++) {
       if (i > 0 && i % 25 === 0) {
         await page.goto(base + url, { waitUntil: 'load' });
-        await page.waitForTimeout(200);
+        total = await tag();
       }
-      const handles = await page.$$(CLICKABLE);
-      const visible = [];
-      for (const h of handles) if (await h.isVisible().catch(() => false)) visible.push(h);
-      const el = visible[i];
-      if (!el) break;
-      const desc = await el.evaluate(
-        e => e.getAttribute('data-action') || (e.getAttribute('onclick') || '').slice(0, 60) || e.tagName
-      );
+      const el = await page.$(`[data-smoke="${i}"]`);
+      if (!el) continue;
+      const desc = await el
+        .evaluate(e => e.getAttribute('data-action') || (e.getAttribute('onclick') || '').slice(0, 60) || e.tagName)
+        .catch(() => 'detached');
       current.last = desc;
       current.actions.push(desc);
-      await el.click({ timeout: 1500 }).catch(() => {});
-      await page.waitForTimeout(120);
-      if (!page.url().startsWith(base + url.replace(/\/$/, '')) && !page.url().startsWith(base + '/')) {
-        await page.goto(base + url, { waitUntil: 'load' });
-      }
+      await el.click({ timeout: 800, noWaitAfter: true }).catch(() => {});
+      await page.waitForTimeout(60);
+      if (!page.url().startsWith(base)) await page.goto(base + url, { waitUntil: 'load' });
       await page.keyboard.press('Escape').catch(() => {});
     }
+    console.log(`  crawled ${name}: ${current.actions.length} clicks`);
   }
 
   const page = await context.newPage();
   attach(page);
-  for (const url of STOREFRONT) {
+  for (const url of process.env.SMOKE_SKIP_STOREFRONT ? [] : STOREFRONT) {
     await crawl(page, url, url === '/' ? 'home' : url.slice(1));
   }
+
+  if (process.env.SMOKE_SKIP_ADMIN) return finish();
 
   // Back Office: sign in, then visit and crawl every tab.
   current = { url: '/admin', last: 'login', errors: [], actions: [] };
@@ -137,26 +151,30 @@ async function main() {
       if (/delete|reset|logout|import|remove/i.test(desc)) continue; // keep demo data intact
       current.last = desc;
       current.actions.push(desc);
-      await el.click({ timeout: 1000 }).catch(() => {});
-      await page.waitForTimeout(80);
+      await el.click({ timeout: 800, noWaitAfter: true }).catch(() => {});
+      await page.waitForTimeout(60);
       await page.keyboard.press('Escape').catch(() => {});
     }
   }
 
-  await browser.close();
-  await new Promise(r => server.close(r));
-  store.close();
+  return finish();
 
-  fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify(report, null, 2));
-  let failed = 0;
-  for (const [name, p] of Object.entries(report.pages)) {
-    const unique = [...new Set(p.errors)];
-    failed += unique.length;
-    console.log(`${unique.length ? '✖' : '✔'} ${name}: ${p.actions.length} actions, ${unique.length} errors`);
-    for (const e of unique.slice(0, 10)) console.log(`    ${e}`);
+  async function finish() {
+    await browser.close();
+    await new Promise(r => server.close(r));
+    store.close();
+
+    fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify(report, null, 2));
+    let failed = 0;
+    for (const [name, p] of Object.entries(report.pages)) {
+      const unique = [...new Set(p.errors)];
+      failed += unique.length;
+      console.log(`${unique.length ? '✖' : '✔'} ${name}: ${p.actions.length} actions, ${unique.length} errors`);
+      for (const e of unique.slice(0, 10)) console.log(`    ${e}`);
+    }
+    console.log(`\nScreenshots and report.json in ${OUT}`);
+    process.exit(failed ? 1 : 0);
   }
-  console.log(`\nScreenshots and report.json in ${OUT}`);
-  process.exit(failed ? 1 : 0);
 }
 
 main().catch(err => {

@@ -67,7 +67,7 @@ const PAGES = {
   'admin.html': 'admin.html'
 };
 
-const ASSET_RE = /(href|src)="((?:css|js)\/[\w.-]+\.(?:css|js))"/g;
+const ASSET_RE = /(href|src)="((?:css|js)\/(?:[\w-]+\/)*[\w.-]+\.(?:css|js))"/g;
 
 function escapeAttr(value) {
   return String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
