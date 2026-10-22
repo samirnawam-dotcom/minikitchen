@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { DatabaseSync } = require('node:sqlite');
+const { openDatabase, driverName } = require('./sqlite');
 const config = require('./config');
 const security = require('./security');
 const { getDemoOrders } = require('./demo-data');
@@ -390,7 +390,7 @@ function getDatabaseStats() {
   const journalMode = sqlite.prepare('PRAGMA journal_mode').get().journal_mode;
 
   return {
-    engine: `SQLite ${sqliteVersion} (Node.js native node:sqlite)`,
+    engine: `SQLite ${sqliteVersion} (${driverName})`,
     journalMode: String(journalMode || 'wal').toUpperCase(),
     filePath: displayPath(SQLITE_FILE),
     fileSizeKb: Math.round((fileSizeBytes / 1024) * 10) / 10,
@@ -533,7 +533,7 @@ function dailyBackup() {
 
 async function init() {
   ensureDir(config.DATA_DIR);
-  sqlite = new DatabaseSync(SQLITE_FILE);
+  sqlite = openDatabase(SQLITE_FILE);
 
   // Configure SQLite for production durability and concurrency
   sqlite.exec(`
