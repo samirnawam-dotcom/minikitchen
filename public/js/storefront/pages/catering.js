@@ -53,14 +53,14 @@ function weddingsTab() {
 
 function stationsTab() {
   return `
-        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 22px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr)); gap: 22px;">
           ${configList('liveStations')
             .map(
               st => `
             <div style="background:var(--bg-card); border-radius:18px; overflow:hidden; box-shadow:var(--shadow-soft); border:1px solid var(--border-subtle); display:flex; flex-direction:column;">
               <div style="height:195px; position:relative; overflow:hidden;">
                 <img src="${esc(st.img)}" data-fallback="" alt="${esc(st.title)}" style="width:100%; height:100%; object-fit:cover;" />
-                <span style="position:absolute; top:12px; left:12px; background:rgba(14,16,21,0.88); color:var(--brand-primary); padding:4px 12px; border-radius:999px; font-size:0.72rem; font-weight:700;">${esc(st.tag)}</span>
+                <span style="position:absolute; top:12px; inset-inline-start:12px; background:rgba(14,16,21,0.88); color:var(--brand-primary); padding:4px 12px; border-radius:999px; font-size:0.72rem; font-weight:700;">${esc(st.tag)}</span>
               </div>
               <div style="padding:20px; flex:1; display:flex; flex-direction:column;">
                 <h4 style="font-family:var(--font-serif); font-size:1.25rem; margin-bottom:6px;">${esc(st.title)}</h4>
@@ -83,7 +83,7 @@ function quoteSection() {
       <!-- PLAN YOUR EVENT / REQUEST A CATERING QUOTE -->
       <section class="section-pad section-dark" id="planEventSection">
         <div class="container">
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 44px; align-items:center;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 44px; align-items:center;">
             <div>
               <span class="section-eyebrow">Direct WhatsApp Event Concierge</span>
               <h2 class="section-title">Request a Tailored Catering Quote in 60 Seconds</h2>

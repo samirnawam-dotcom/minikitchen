@@ -108,7 +108,7 @@ function renderStationOption(a) {
                             />
                             <span>${esc(a.name)}</span>
                           </span>
-                          <span style="font-weight:800; color:var(--brand-primary-dark); white-space:nowrap; margin-left:8px;">+$${esc(a.pricePerGuest)}/guest</span>
+                          <span style="font-weight:800; color:var(--brand-primary-dark); white-space:nowrap; margin-inline-start: 8px;">+$${esc(a.pricePerGuest)}/guest</span>
                         </label>
                       `;
 }
@@ -128,7 +128,7 @@ export function renderEventBudgetCalculator() {
             </p>
           </div>
 
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:28px; align-items:stretch;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap:28px; align-items:stretch;">
             <!-- Left Controls -->
             <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:20px; padding:26px; box-shadow:var(--shadow-soft);">
               <div class="form-group" style="margin-bottom:18px;">
@@ -220,9 +220,9 @@ export function renderEventBudgetCalculator() {
                 </div>
 
                 <ul style="list-style:none; padding:0; margin:0 0 22px; font-size:0.83rem; color:rgba(255,255,255,0.82); display:flex; flex-direction:column; gap:6px;">
-                  <li><i class="fa-solid fa-circle-check" style="color:#25d366; margin-right:8px;"></i> Includes Luxury Buffet Setup, Chafing Dishes & Porcelain</li>
-                  <li><i class="fa-solid fa-circle-check" style="color:#25d366; margin-right:8px;"></i> Uniformed Hospitality Waitstaff & On-Site Event Chef</li>
-                  <li><i class="fa-solid fa-circle-check" style="color:#25d366; margin-right:8px;"></i> Complimentary Private Menu Tasting in Ain Al Remmaneh, Aley</li>
+                  <li><i class="fa-solid fa-circle-check" style="color:#25d366; margin-inline-end: 8px;"></i> Includes Luxury Buffet Setup, Chafing Dishes & Porcelain</li>
+                  <li><i class="fa-solid fa-circle-check" style="color:#25d366; margin-inline-end: 8px;"></i> Uniformed Hospitality Waitstaff & On-Site Event Chef</li>
+                  <li><i class="fa-solid fa-circle-check" style="color:#25d366; margin-inline-end: 8px;"></i> Complimentary Private Menu Tasting in Ain Al Remmaneh, Aley</li>
                 </ul>
               </div>
 

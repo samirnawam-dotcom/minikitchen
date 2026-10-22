@@ -1,5 +1,5 @@
 /* storefront/guided-ux.css — Brand orientation bar, menu QR bar, QR studio modal, steps strip and section tabs.
-   Part 10 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 10 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    USER-FRIENDLY GUIDED NAVIGATION, COHESIVE COLORING & QR CODE MENU SYSTEM
@@ -35,7 +35,7 @@
   background: #faf9f6;
   cursor: pointer;
   transition: all 0.22s ease;
-  text-align: left;
+  text-align: start;
 }
 
 .ux-brand-choice-card:hover {

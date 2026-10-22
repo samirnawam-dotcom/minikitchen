@@ -9,11 +9,11 @@ import { showToast } from './toast.js';
 
 const NAV_LABELS = {
   ar: {
-    catering: 'خدمات التموين والأعراس',
-    'catering-menus': 'قوائم الطعام والباقات',
-    restaurant: 'المطعم والتراس • عاليه',
-    delivery: 'خدمة التوصيل السريع',
-    about: 'من نحن وفريق الطهاة',
+    catering: 'التموين',
+    'catering-menus': 'القوائم والباقات',
+    restaurant: 'المطعم',
+    delivery: 'التوصيل',
+    about: 'من نحن',
     contact: 'تواصل معنا'
   },
   en: {

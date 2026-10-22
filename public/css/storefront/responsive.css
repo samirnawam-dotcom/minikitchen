@@ -1,12 +1,12 @@
 /* storefront/responsive.css — Responsive breakpoints for the sections above.
-   Part 7 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 7 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    RESPONSIVE BREAKPOINTS (MOBILE, TABLET & LAPTOP OPTIMIZATION)
    ============================================================================ */
 .nav-drawer-header .brand-logo-wrap {
-  padding-left: 0;
-  border-left: none;
+  padding-inline-start: 0;
+  border-inline-start: none;
 }
 
 @media (max-width: 1320px) {
@@ -85,5 +85,119 @@
   }
   .section-pad {
     padding: 60px 0;
+  }
+}
+
+/* ============================================================================
+   HEADER FIT
+   The header's three groups (brand, page links, actions) never shrink, so as the
+   screen narrows the header hides extras step by step instead of overflowing.
+   Everything hidden here is also in the side drawer (MENU).
+   ============================================================================ */
+.site-header .container {
+  max-width: 1560px;
+  padding: 0 24px;
+}
+
+@media (max-width: 1560px) {
+  .btn-whatsapp-header {
+    padding: 0 12px;
+  }
+  .btn-whatsapp-header .wa-text {
+    display: none;
+  }
+}
+
+@media (max-width: 1440px) {
+  .header-center-nav {
+    gap: 16px;
+  }
+  .nav-pill {
+    font-size: 0.81rem;
+  }
+  .header-admin-link {
+    display: none;
+  }
+}
+
+@media (max-width: 1300px) {
+  .header-extra-btn {
+    display: none;
+  }
+}
+
+@media (max-width: 1180px) {
+  .header-center-nav {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-header .container {
+    padding: 0 14px;
+  }
+  .header-left {
+    gap: 10px;
+  }
+  .hamburger-btn {
+    padding: 9px 11px;
+  }
+  .hamburger-label,
+  .header-pref-btn {
+    display: none;
+  }
+}
+
+/* Form fields: let grid columns shrink below their content (long <select> options) */
+.form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.form-group {
+  min-width: 0;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .form-card {
+    padding: 26px 18px;
+  }
+}
+
+/* Hero photo is slightly scaled for depth; clip it so it never widens the page */
+.hero-bg-media {
+  overflow: hidden;
+}
+
+@media (max-width: 560px) {
+  /* Long button labels wrap instead of running off narrow screens */
+  .btn {
+    max-width: 100%;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 400px) {
+  /* The floating "WhatsApp Us Now" button is on every page, so drop the header copy */
+  .btn-whatsapp-header {
+    display: none;
+  }
+  .brand-logo-title {
+    font-size: 0.95rem;
+  }
+  .brand-logo-img {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
   }
 }

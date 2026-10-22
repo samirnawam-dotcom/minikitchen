@@ -1,5 +1,5 @@
 /* storefront/panels.css — WhatsApp cart drawer, forms, team cards, floating WhatsApp button and footer.
-   Part 6 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 6 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    WHATSAPP ORDER CART DRAWER (RIGHT SLIDE-OVER)
@@ -7,7 +7,7 @@
 .cart-drawer {
   position: fixed;
   top: 0;
-  right: 0;
+  inset-inline-end: 0;
   width: 100%;
   max-width: 450px;
   height: 100vh;
@@ -128,7 +128,7 @@
    ============================================================================ */
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(270px, 100%), 1fr));
   gap: 26px;
 }
 
@@ -165,7 +165,7 @@
 .floating-wa-container {
   position: fixed;
   bottom: 24px;
-  right: 24px;
+  inset-inline-end: 24px;
   z-index: 1500;
   display: flex;
   flex-direction: column;
@@ -233,7 +233,7 @@
   color: rgba(255, 255, 255, 0.75);
   cursor: pointer;
   font-size: 0.92rem;
-  text-align: left;
+  text-align: start;
   padding: 0;
 }
 

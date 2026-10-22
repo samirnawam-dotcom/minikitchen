@@ -19,7 +19,7 @@ function atmosphereTab() {
                     .join('')}
                 </div>
 
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; align-items:center; background:#14171c; color:#fff; padding:34px; border-radius:22px;">
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 32px; align-items:center; background:#14171c; color:#fff; padding:34px; border-radius:22px;">
                   <div>
                     <span class="section-eyebrow">Visit Us in Mount Lebanon</span>
                     <h3 style="font-family:var(--font-serif); font-size:1.75rem; margin-bottom:12px;">Location, Opening Hours & Table Booking</h3>

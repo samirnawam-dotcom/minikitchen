@@ -1,5 +1,5 @@
 /* storefront/finedine-modal.css — FineDine dish detail & modifier modal and the floating order bar.
-   Part 9 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 9 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* 4. FineDine Interactive Dish Detail & Modifier Modal */
 .fd-modal-backdrop {
@@ -58,7 +58,7 @@
 .fd-modal-close {
   position: absolute;
   top: 16px;
-  right: 16px;
+  inset-inline-end: 16px;
   width: 40px;
   height: 40px;
   border-radius: 50%;

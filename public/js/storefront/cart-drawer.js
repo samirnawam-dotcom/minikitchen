@@ -64,7 +64,7 @@ function renderCartRows() {
         : '';
       return `
         <div class="cart-item-row">
-          <div style="flex:1; padding-right:10px;">
+          <div style="flex:1; padding-inline-end: 10px;">
             <div style="font-weight:700; font-size:0.95rem;">${esc(item.title)}</div>
             ${modsText}
             ${noteText}

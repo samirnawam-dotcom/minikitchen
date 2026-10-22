@@ -77,7 +77,7 @@ function buildContactPage() {
           </div>
 
           <!-- FULL CATERING & GENERAL INQUIRY FORM + MAP -->
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 42px; align-items:start;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 42px; align-items:start;">
             <div class="form-card">
               <h3 style="font-family:var(--font-serif); font-size:1.65rem; margin-bottom:8px;">Send an Event or Dining Inquiry to WhatsApp</h3>
               <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:22px;">Complete the details below and click send—your message will open directly in WhatsApp with the appropriate Mini Kitchen team.</p>

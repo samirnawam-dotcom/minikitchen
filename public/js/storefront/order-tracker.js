@@ -126,7 +126,7 @@ function renderTimeline(order) {
     STAGES.findIndex(s => s.key === order.status)
   );
   return `
-              <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; margin-bottom:18px;">
+              <div style="display:grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap:8px; margin-bottom:18px;">
                 ${STAGES.map((st, idx) => {
                   const done = idx <= currentIdx;
                   const active = idx === currentIdx;

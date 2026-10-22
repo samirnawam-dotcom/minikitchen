@@ -1,5 +1,5 @@
 /* storefront/layout.css — Site chrome: top announcement bar, sticky header and navigation, hamburger drawer.
-   Part 3 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 3 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    TOP ANNOUNCEMENT BAR
@@ -36,7 +36,7 @@
 
 .top-announcement i {
   color: var(--brand-primary);
-  margin-right: 5px;
+  margin-inline-end: 5px;
 }
 
 /* ============================================================================
@@ -134,8 +134,8 @@
   cursor: pointer;
   flex-shrink: 0;
   text-decoration: none;
-  padding-left: 16px;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding-inline-start: 16px;
+  border-inline-start: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .brand-logo-img {
@@ -367,7 +367,7 @@
 .nav-drawer {
   position: fixed;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
   width: 100%;
   max-width: 440px;
   height: 100vh;
@@ -378,7 +378,7 @@
   transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgba(200, 157, 84, 0.25);
+  border-inline-end: 1px solid rgba(200, 157, 84, 0.25);
   box-shadow: 20px 0 60px rgba(0, 0, 0, 0.6);
   overflow-y: auto;
 }
@@ -449,7 +449,7 @@
   color: #ffffff;
   cursor: pointer;
   transition: var(--transition);
-  text-align: left;
+  text-align: start;
 }
 
 .drawer-menu-item:hover,
