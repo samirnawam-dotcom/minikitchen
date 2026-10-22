@@ -1,90 +1,153 @@
-# Mini Kitchen — Catering, Restaurant & Delivery (Production Web Platform & Back Office CRM)
+# Mini Kitchen — Catering, Restaurant & Delivery
 
-Official multi-brand hospitality website and executive Back Office CRM for **Mini Kitchen** (**Ain Al Remmaneh, Aley, Mount Lebanon** — `minikitchencatering.com`), powered by **Node.js** and a built-in **SQLite 3 Relational Database (`node:sqlite` in WAL mode)** with zero external npm dependencies.
+Website and Back Office for **Mini Kitchen** (Ain Al Remmaneh, Aley, Mount Lebanon — `minikitchencatering.com`).
 
----
+- **Storefront:** catering, catering menus, restaurant (QR table menu), delivery (WhatsApp cart), about and contact pages.
+- **Back Office (`/admin`):** orders and WhatsApp leads, kitchen display, menu and price editor, website content and
+  SEO settings, database backup/restore, admin account.
+- **Stack:** Node.js (≥ 22.13) with the built-in `node:sqlite` database. No runtime npm dependencies.
 
-## 1. Architecture & Directory Structure
+## Quick start
+
+```bash
+npm install          # dev tools only (ESLint, Prettier, Playwright)
+npm run dev          # http://localhost:3000 — restarts on file changes
+```
+
+On first start in development an admin password is generated and printed in the console. Set `ADMIN_PASSWORD`
+(see [`.env.example`](.env.example)) to choose your own. Demo orders are seeded in development only.
+
+| Command            | What it does                                                  |
+| :----------------- | :------------------------------------------------------------ |
+| `npm start`        | Run the server                                                |
+| `npm test`         | API, static-server and security tests (`node:test`)           |
+| `npm run test:e2e` | Headless-browser smoke test of every page and Back Office tab |
+| `npm run lint`     | ESLint                                                        |
+| `npm run format`   | Prettier                                                      |
+| `npm run check`    | Lint + format check + tests (what CI runs)                    |
+
+## Project layout
 
 ```text
-mini-kitchen-catering/
-├── server.js                  # Production HTTP server with security headers, Slowloris timeouts & graceful WAL shutdown
-├── package.json               # Build, start, dev & verification scripts (Node >= 22.5 / Node 24)
-├── Dockerfile                 # Production container image (node:24-alpine, non-root user, healthcheck)
-├── .env.example               # Production environment variable template
-├── scripts/
-│   └── build-pages.js         # Syncs & cache-busts all 6 brand HTML pages (UTF-8 no BOM)
-├── src/
-│   ├── config.js              # Environment-driven configuration loader (.env support)
-│   ├── db.js                  # Native SQLite 3 database engine (WAL mode, ACID transactions, auto-backups)
-│   ├── security.js            # PBKDF2-SHA512 (210k iterations), HttpOnly cookies, CSRF check, CSP & rate limiters
-│   ├── api.js                 # REST API router (/api/auth/*, /api/orders/*, /api/menu, /api/site-config, /api/db/*)
-│   ├── static.js              # Hardened /public static server (Brotli/Gzip, ETag/304, path-traversal isolation)
-│   └── demo-data.js           # Development sample orders (disabled automatically in production)
-├── data/
-│   ├── minikitchen.sqlite     # Live SQLite 3 relational database (WAL mode)
-│   └── backups/               # Automatic daily rotating SQLite database snapshots
-└── public/                    # Isolated public web root (no backend or database files exposed)
-    ├── index.html             # 1. Mini Kitchen Catering (Weddings, Corporate & Private Events)
-    ├── catering-menus.html    # Catering Packages ($35–$75/guest) & FineDine Catering Menu (QR Menu #1)
-    ├── restaurant.html        # 2. Mini Kitchen Restaurant — Aley Terrace & Dine-In QR Menu (QR Menu #2)
-    ├── delivery.html          # 3. Mini Kitchen Delivery — 239+ Dishes & WhatsApp Cart (QR Menu #3)
-    ├── about.html             # 4. About Us — Culinary Story, Chefs & Kitchen Brigade
-    ├── contact.html           # 5. Contact Us — Direct WhatsApp Lines, Event Form & Aley Map
-    ├── admin.html             # Protected Executive Back Office, WhatsApp CRM, SEO & SQLite Manager
-    ├── 404.html               # Branded 404 Not Found page
-    ├── favicon.svg            # Mini Kitchen Champagne Gold crest icon
-    ├── manifest.webmanifest   # Progressive Web App manifest
-    ├── robots.txt             # Search engine crawler directives
-    ├── sitemap.xml            # Multi-page XML sitemap
-    ├── css/                   # Storefront (Light/Dark theme) & Back Office stylesheets
-    └── js/                    # Storefront & Back Office controllers + 239-item menu dataset
+server.js               Entry point: initialises the database and starts the HTTP server
+src/
+  app.js                Request handler: security headers, HTTPS redirect, API vs. static routing
+  config.js             Settings from environment variables / .env
+  db.js                 SQLite schema, queries, migrations and daily backups
+  security.js           Password hashing, cookies, proxy-aware IP, rate limiter, CSP, input sanitising
+  pages.js              Renders views/*.html with per-page SEO tags and fingerprinted asset URLs
+  static.js             Serves pages, public/ files and uploads (Brotli/Gzip, ETag, traversal-safe)
+  demo-data.js          Sample orders for development
+  api/
+    index.js            Route table and error handling
+    http.js             JSON responses and body parsing
+    session.js          Cookie sessions
+    auth.js             Login, logout, current user, change password
+    orders.js           Order creation, tracking, updates
+    content.js          Site settings, menu, public state
+    database.js         Backup export/import, status
+    uploads.js          Image uploads
+views/                  HTML templates (storefront.html is shared by all six storefront pages)
+public/
+  js/storefront/        Website: main.js entry, state, api, cart, menu, dish modal, tracker, i18n, pages/*
+  js/admin/             Back Office: main.js entry, api, auth, sync, router, ui/*, orders/*, tabs/* (one per tab)
+  js/shared/            actions.js (data-action event wiring), dom.js (esc, selectors), storage.js
+  js/data/              Default site configuration and the 239-dish menu (ES modules)
+  js/theme-init.js      Applies the saved light/dark theme before first paint
+  css/storefront/       Website styles, split in cascade order (tokens → base → layout → … → dark)
+  css/admin/            Back Office styles, split in cascade order
+  favicon, manifest, robots.txt, sitemap.xml, 404.html
+scripts/                Maintenance scripts (reset-admin-password.js)
+test/                   Automated tests (e2e/ holds the browser smoke test)
+deploy/                 Production Docker Compose + Caddy (HTTPS) setup
+docs/DEPLOYMENT.md      Step-by-step free hosting guide
+data/                   Runtime only, not in git: SQLite database, backups, uploaded images
 ```
 
----
+## Frontend conventions
 
-## 2. SQLite Relational Database Schema (`data/minikitchen.sqlite`)
+- Plain ES modules, no build step. Each page loads one entry module (`js/storefront/main.js` or `js/admin/main.js`).
+- No inline scripts or `on*=""` attributes — the CSP forbids them. Wire events declaratively and register handlers:
 
-All website and Back Office data is persisted in `data/minikitchen.sqlite` using Node's native `node:sqlite` (`DatabaseSync`) with `PRAGMA journal_mode = WAL`:
+  ```html
+  <button data-action="cart:add" data-id="mk-item-12">Add</button>
+  ```
 
-| Table | Purpose |
-| :--- | :--- |
-| **`orders`** | Stores all customer WhatsApp delivery orders, wedding/catering quote requests, restaurant table reservations, and manual phone orders. Indexed by `created_at DESC`, `status`, `type`, and `brand`. |
-| **`settings`** | Key-value JSON store for `lbpRate`, `orderSeq`, `siteConfig` (contacts, galleries, packages, live stations, SEO metadata), and `menuCategories` (22 categories / 239+ dishes). |
-| **`admin_users`** | Stores administrator credentials encrypted with **PBKDF2-SHA512 (210,000 iterations)** and per-user random salts. |
-| **`admin_sessions`** | Stores **SHA-256 hashes** of active session tokens (raw tokens are never stored on disk) with expiration timestamps, IP, and User-Agent metadata. |
-| **`audit_logs`** | Immutable security and operational audit trail recording logins, failed login attempts, password changes, order mutations, menu edits, and database exports. |
+  ```js
+  import { registerActions } from '../shared/actions.js';
+  registerActions({ 'cart:add': el => addToCart(el.dataset.id) });
+  ```
 
----
+  Also `data-on-input`, `data-on-change`, `data-on-submit` and `<img data-fallback="…">`.
 
-## 3. Security Hardening Summary
+- Escape every interpolated value in HTML strings with `esc()` from `js/shared/dom.js`.
 
-- **Web Root Isolation:** Only files inside `public/` can ever be served over HTTP. Requests for `/server.js`, `/src/*`, or `/data/minikitchen.sqlite` are blocked with `404 Not Found`.
-- **Customer PII Privacy:** `GET /api/state` only returns `orders` and `auditLogs` when the request carries a valid administrator session; public visitors receive only storefront configuration and menu data.
-- **Password & Session Security:** Passwords use asynchronous **PBKDF2-SHA512 (210,000 iterations)** with `crypto.timingSafeEqual`. Sessions use `HttpOnly; SameSite=Strict` cookies (plus `Bearer` token support) and store only SHA-256 token hashes in SQLite.
-- **Brute-Force & Abuse Rate Limiting:** Dedicated per-IP and per-account rate limiters protect `/api/auth/login`, `/api/orders`, and `/api/*`.
-- **XSS & Mass-Assignment Protection:** Server-side input sanitization (`sanitizeContentTree`, control-character stripping, strict field whitelists on `POST /api/orders` and `PATCH /api/orders/:id`) paired with client-side HTML escaping (`esc()`) in `public/js/admin.js`.
-- **HTTP Security Headers:** `Content-Security-Policy`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy`, `Permissions-Policy`, and `Strict-Transport-Security` (over HTTPS).
+## API
 
----
+All endpoints are under `/api`. Admin endpoints need the session cookie set by `POST /api/auth/login`.
 
-## 4. Running & Deploying
+| Method & path                        | Access | Purpose                                             |
+| :----------------------------------- | :----- | :-------------------------------------------------- |
+| `GET /api/health`                    | public | Liveness check                                      |
+| `GET /api/state`                     | public | Menu, site settings, LBP rate (+ orders for admins) |
+| `POST /api/orders`                   | public | Record a website order / quote / reservation        |
+| `GET /api/orders/track/:id`          | public | Order status for the tracker                        |
+| `POST /api/auth/login` · `logout`    | public | Sign in / out                                       |
+| `GET /api/auth/me`                   | admin  | Current user                                        |
+| `POST /api/auth/change-password`     | admin  | Change username / password                          |
+| `GET /api/orders`                    | admin  | All orders                                          |
+| `PATCH` · `DELETE /api/orders/:id`   | admin  | Update / delete an order                            |
+| `PUT /api/site-config` · `/api/menu` | admin  | Save website content / menu                         |
+| `POST /api/reset`                    | admin  | Restore default menu / content                      |
+| `POST /api/upload`                   | admin  | Upload an image (stored in `data/uploads`)          |
+| `GET /api/db/status` · `export`      | admin  | Database stats / JSON backup                        |
+| `POST /api/db/import`                | admin  | Restore a JSON backup                               |
 
-### Local Development / Production Server
+## Database
+
+`data/minikitchen.sqlite` (WAL mode):
+
+| Table            | Contents                                                            |
+| :--------------- | :------------------------------------------------------------------ |
+| `orders`         | Delivery orders, catering quotes, table reservations, phone orders  |
+| `settings`       | `lbpRate`, `orderSeq`, `siteConfig`, `menuCategories` (JSON values) |
+| `admin_users`    | Administrator with PBKDF2-SHA512 password hash                      |
+| `admin_sessions` | SHA-256 hashes of session tokens (raw tokens are never stored)      |
+| `audit_logs`     | Logins, order changes, content edits, exports (last 1,000 entries)  |
+
+A snapshot is copied to `data/backups/` daily and kept for `BACKUP_RETENTION_DAYS` (default 14).
+
+## Security
+
+- Only `public/`, rendered `views/` and `data/uploads/` images are served; source, templates and the database are not.
+- Sessions use a random token in an `HttpOnly; SameSite=Strict` cookie; only its SHA-256 hash is stored.
+- Passwords: PBKDF2-SHA512 (210,000 iterations), minimum 10 characters. There is no default password — production
+  refuses to start without `ADMIN_PASSWORD` on first run.
+- Rate limits on login, order submission and the API; cross-origin writes are rejected.
+- `TRUST_PROXY` is a hop count: only the address added by your own proxy is trusted, so clients cannot spoof their IP.
+- Content saved from the Back Office is sanitised; CSP, HSTS (over HTTPS), `nosniff` and frame protections are sent.
+
+## Deployment
+
+### Free preview on GitHub Pages (website only)
+
+`.github/workflows/pages.yml` publishes a static copy of the six storefront pages to
+`https://samirnawam-dotcom.github.io/minikitchen/` on every push to `main`. One-time setup: **Settings → Pages →
+Build and deployment → Source: GitHub Actions**. Build it locally with `npm run build:static` (output in `dist/`).
+
+The static copy has no server: browsing, the menu, cart, calculator and quote forms work, and orders go out via
+WhatsApp, but nothing is saved to the database and the Back Office, online menu editing and order tracking are not
+available. Use the server deployment below for the full system.
+
+### Full system (server)
+
+See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for free hosting on an Oracle Cloud Always Free server with automatic
+HTTPS and deploy-on-push. For any Docker host:
+
 ```bash
-# 1. Sync & fingerprint HTML pages and verify syntax
-npm run verify
-
-# 2. Start the server (http://localhost:3000)
-npm start
+docker build -t minikitchen .
+docker run -d -p 3000:3000 -v minikitchen_data:/app/data -e ADMIN_PASSWORD='choose-a-strong-one' minikitchen
 ```
 
-### Docker Deployment
-```bash
-docker build -t mini-kitchen-catering .
-docker run -d -p 3000:3000 -v minikitchen_data:/app/data --name minikitchen mini-kitchen-catering
-```
-
-### Back Office Access
-- **URL:** `http://localhost:3000/admin.html`
-- **Default Login:** Username `admin` / Password `minikitchen2026` (can be updated anytime inside the **Security & Admin Login** tab or via `ADMIN_USERNAME` / `ADMIN_PASSWORD` in `.env`).
+Forgot the admin password: `node scripts/reset-admin-password.js 'NEW-PASSWORD'` (inside the container:
+`docker compose exec app node scripts/reset-admin-password.js 'NEW-PASSWORD'`).

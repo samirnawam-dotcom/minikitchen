@@ -1,0 +1,33 @@
+/* Back Office — SEO tab: Google result preview card */
+
+/* GOOGLE SERP PREVIEW CARD IN SEO MANAGER */
+.bo-seo-serp-card {
+  background: #ffffff;
+  border: 1px solid var(--bo-border);
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.bo-seo-serp-url {
+  font-size: 0.78rem;
+  color: #202124;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.bo-seo-serp-title {
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: #1a0dab;
+  line-height: 1.3;
+  margin-bottom: 5px;
+}
+
+.bo-seo-serp-desc {
+  font-size: 0.86rem;
+  color: #4d5156;
+  line-height: 1.5;
+}

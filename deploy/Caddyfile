@@ -1,0 +1,7 @@
+# SITE_ADDRESS comes from deploy/.env:
+#   minikitchencatering.com, www.minikitchencatering.com  -> real domain with automatic HTTPS
+#   :80                                                    -> plain HTTP on the server IP (before DNS is set up)
+{$SITE_ADDRESS::80} {
+	encode zstd gzip
+	reverse_proxy app:3000
+}

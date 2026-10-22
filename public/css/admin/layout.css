@@ -1,0 +1,192 @@
+/* Back Office — sidebar navigation, topbar and main workspace layout */
+
+/* SIDEBAR NAVIGATION */
+.bo-sidebar {
+  width: 280px;
+  background: var(--bo-sidebar);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bo-sidebar-brand {
+  padding: 22px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bo-sidebar-brand img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--bo-gold);
+}
+
+.bo-brand-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  display: block;
+}
+
+.bo-brand-sub {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--bo-gold);
+}
+
+.bo-nav-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 14px;
+}
+
+.bo-nav-group-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.42);
+  padding: 10px 12px 6px;
+}
+
+.bo-nav-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.bo-nav-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.bo-nav-btn i {
+  width: 20px;
+  text-align: center;
+  font-size: 0.98rem;
+  color: var(--bo-gold);
+}
+
+.bo-nav-btn:hover {
+  background: var(--bo-sidebar-hover);
+  color: #fff;
+}
+
+.bo-nav-btn.active {
+  background: rgba(197, 155, 39, 0.16);
+  border-color: rgba(197, 155, 39, 0.45);
+  color: #fff;
+  font-weight: 700;
+}
+
+.bo-nav-badge {
+  background: var(--bo-terracotta);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.bo-sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bo-live-site-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: var(--bo-gold);
+  color: #14171c;
+  font-weight: 800;
+  font-size: 0.84rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.bo-live-site-link:hover {
+  background: #d8ae34;
+}
+
+/* MAIN WORKSPACE */
+.bo-main {
+  flex: 1;
+  margin-left: 280px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bo-topbar {
+  height: 72px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--bo-border);
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 80;
+}
+
+.bo-topbar-title {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--bo-text);
+}
+
+.bo-topbar-sub {
+  font-size: 0.8rem;
+  color: var(--bo-muted);
+}
+
+.bo-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bo-content {
+  padding: 28px 30px 60px;
+  max-width: 1480px;
+  width: 100%;
+}

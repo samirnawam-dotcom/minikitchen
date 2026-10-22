@@ -5,6 +5,7 @@ const path = require('path');
 const zlib = require('zlib');
 const crypto = require('crypto');
 const config = require('./config');
+const { renderPage, PAGES } = require('./pages');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -31,22 +32,19 @@ const MIME_TYPES = {
 const COMPRESSIBLE = new Set(['.html', '.css', '.js', '.mjs', '.json', '.webmanifest', '.xml', '.txt', '.svg']);
 const NO_INDEX_FILES = new Set(['admin.html', '404.html']);
 const PUBLIC_ROOT = path.resolve(config.PUBLIC_DIR);
+const UPLOADS_ROOT = path.resolve(config.UPLOADS_DIR);
+const UPLOAD_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']);
 
 // In-memory cache of file contents + pre-compressed variants, invalidated by mtime/size.
 const cache = new Map();
 
-function loadFile(absPath, stats) {
-  const cached = cache.get(absPath);
-  if (cached && cached.mtimeMs === stats.mtimeMs && cached.size === stats.size) return cached;
-
-  const raw = fs.readFileSync(absPath);
-  const ext = path.extname(absPath).toLowerCase();
+function makeEntry(raw, mtimeMs, ext) {
   const entry = {
-    mtimeMs: stats.mtimeMs,
-    size: stats.size,
+    mtimeMs,
+    size: raw.length,
     raw,
     etag: `"${crypto.createHash('sha1').update(raw).digest('base64url').slice(0, 22)}"`,
-    lastModified: new Date(stats.mtimeMs).toUTCString(),
+    lastModified: new Date(mtimeMs).toUTCString(),
     br: null,
     gzip: null
   };
@@ -56,8 +54,50 @@ function loadFile(absPath, stats) {
     });
     entry.gzip = zlib.gzipSync(raw, { level: 9 });
   }
+  return entry;
+}
+
+function loadFile(absPath, stats) {
+  const cached = cache.get(absPath);
+  if (cached && cached.mtimeMs === stats.mtimeMs && cached.size === stats.size) return cached;
+  const entry = makeEntry(fs.readFileSync(absPath), stats.mtimeMs, path.extname(absPath).toLowerCase());
   cache.set(absPath, entry);
   return entry;
+}
+
+const pageEntries = new Map();
+
+function loadPage(name) {
+  const rendered = renderPage(name);
+  if (!rendered) return null;
+  const cached = pageEntries.get(name);
+  if (cached && cached.version === rendered.version) return cached.entry;
+  const entry = makeEntry(Buffer.from(rendered.html, 'utf8'), Date.now(), '.html');
+  pageEntries.set(name, { version: rendered.version, entry });
+  return entry;
+}
+
+/** Maps a URL path to a rendered page name ("/" -> index.html, "/about" -> about.html). */
+function resolvePageName(pathname) {
+  const rel = pathname.replace(/^\/+|\/+$/g, '');
+  if (!rel) return 'index.html';
+  const name = rel.endsWith('.html') ? rel : `${rel}.html`;
+  return Object.prototype.hasOwnProperty.call(PAGES, name) ? name : null;
+}
+
+/** Resolves /uploads/<file> to an image inside DATA_DIR/uploads. */
+function resolveUpload(pathname) {
+  const name = pathname.slice('/uploads/'.length);
+  if (!/^[\w.-]{1,120}$/.test(name) || name.startsWith('.')) return { error: 404 };
+  if (!UPLOAD_EXTS.has(path.extname(name).toLowerCase())) return { error: 404 };
+  const abs = path.join(UPLOADS_ROOT, name);
+  try {
+    const stats = fs.statSync(abs);
+    if (stats.isFile()) return { abs, stats };
+  } catch {
+    /* fall through */
+  }
+  return { error: 404 };
 }
 
 /** Resolves a URL path to a file inside /public, refusing traversal and hidden files. */
@@ -118,7 +158,10 @@ function cacheControlFor(abs, parsedUrl) {
 }
 
 function send(req, res, abs, stats, parsedUrl, statusCode = 200) {
-  const entry = loadFile(abs, stats);
+  return sendEntry(req, res, loadFile(abs, stats), abs, parsedUrl, statusCode);
+}
+
+function sendEntry(req, res, entry, abs, parsedUrl, statusCode = 200) {
   const ext = path.extname(abs).toLowerCase();
   const encoding = pickEncoding(req, entry);
   const body = encoding === 'br' ? entry.br : encoding === 'gzip' ? entry.gzip : entry.raw;
@@ -132,7 +175,13 @@ function send(req, res, abs, stats, parsedUrl, statusCode = 200) {
     res.setHeader('ETag', entry.etag);
     res.setHeader('Last-Modified', entry.lastModified);
     const inm = req.headers['if-none-match'];
-    if (inm && inm.split(',').map(s => s.trim().replace(/^W\//, '')).includes(entry.etag)) {
+    if (
+      inm &&
+      inm
+        .split(',')
+        .map(s => s.trim().replace(/^W\//, ''))
+        .includes(entry.etag)
+    ) {
       res.statusCode = 304;
       return res.end();
     }
@@ -165,7 +214,17 @@ function serveStatic(req, res, parsedUrl) {
     return res.end('Method Not Allowed');
   }
 
-  const resolved = resolvePublicPath(parsedUrl.pathname);
+  let pathname;
+  try {
+    pathname = decodeURIComponent(parsedUrl.pathname);
+  } catch {
+    pathname = null;
+  }
+  const pageName = pathname && resolvePageName(pathname);
+  if (pageName) return sendEntry(req, res, loadPage(pageName), pageName, parsedUrl);
+
+  const resolved =
+    pathname && pathname.startsWith('/uploads/') ? resolveUpload(pathname) : resolvePublicPath(parsedUrl.pathname);
   if (resolved.error === 400) {
     res.statusCode = 400;
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
@@ -175,4 +234,4 @@ function serveStatic(req, res, parsedUrl) {
   return send(req, res, resolved.abs, resolved.stats, parsedUrl);
 }
 
-module.exports = { serveStatic, resolvePublicPath };
+module.exports = { serveStatic, resolvePublicPath, resolvePageName };

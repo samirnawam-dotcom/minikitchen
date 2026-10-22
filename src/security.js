@@ -38,10 +38,17 @@ function generatePassword(length = 18) {
   return out;
 }
 
-function validateNewPassword(password) {
+const MIN_PASSWORD_LENGTH = 10;
+
+function validateNewPassword(password, username = '') {
   const pw = String(password || '');
-  if (pw.length < 6) return 'New password must be at least 6 characters long.';
+  if (pw.length < MIN_PASSWORD_LENGTH) {
+    return `New password must be at least ${MIN_PASSWORD_LENGTH} characters long.`;
+  }
   if (pw.length > 128) return 'New password must be 128 characters or fewer.';
+  if (username && pw.toLowerCase() === String(username).toLowerCase()) {
+    return 'New password must not be the same as the username.';
+  }
   return null;
 }
 
@@ -90,22 +97,28 @@ function serializeCookie(name, value, opts = {}) {
 // ============================================================================
 // REQUEST CONTEXT HELPERS
 // ============================================================================
+/**
+ * Returns the value a trusted proxy appended to a comma-separated X-Forwarded-* header.
+ * Entries left of the trusted hops are client-controlled and must be ignored.
+ */
+function forwardedValue(header) {
+  if (!config.TRUST_PROXY || !header) return '';
+  const parts = String(header)
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+  return parts[Math.max(0, parts.length - config.TRUST_PROXY)] || '';
+}
+
 function getClientIp(req) {
-  if (config.TRUST_PROXY) {
-    const fwd = req.headers['x-forwarded-for'];
-    if (fwd) return String(fwd).split(',')[0].trim();
-    if (req.headers['x-real-ip']) return String(req.headers['x-real-ip']).trim();
-  }
+  const fwd = forwardedValue(req.headers['x-forwarded-for']);
+  if (fwd) return fwd;
   return (req.socket && req.socket.remoteAddress) || 'unknown';
 }
 
 function isHttps(req) {
   if (req.socket && req.socket.encrypted) return true;
-  if (config.TRUST_PROXY) {
-    const proto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase();
-    return proto === 'https';
-  }
-  return false;
+  return forwardedValue(req.headers['x-forwarded-proto']).toLowerCase() === 'https';
 }
 
 /**
@@ -113,11 +126,11 @@ function isHttps(req) {
  * if the browser sends Origin/Referer, it must match the Host we are serving.
  */
 function isSameOrigin(req) {
-  const host = req.headers['x-forwarded-host'] && config.TRUST_PROXY ? req.headers['x-forwarded-host'] : req.headers.host;
+  const host = forwardedValue(req.headers['x-forwarded-host']) || String(req.headers.host || '');
   const source = req.headers.origin || req.headers.referer;
   if (!source) return true; // Non-browser clients (curl, server-to-server) do not send Origin.
   try {
-    return new URL(source).host === String(host).split(',')[0].trim();
+    return new URL(source).host === host;
   } catch {
     return false;
   }
@@ -175,9 +188,9 @@ class RateLimiter {
 function buildCsp(https) {
   const directives = [
     "default-src 'self'",
-    // Inline handlers are used by the existing UI templates; external scripts are not allowed.
-    "script-src 'self' 'unsafe-inline'",
-    "script-src-attr 'unsafe-inline'",
+    // No inline scripts or on* handlers: the frontends use ES modules with data-action wiring.
+    "script-src 'self'",
+    "script-src-attr 'none'",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
     "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com",
     "img-src 'self' data: blob: https:",
@@ -201,7 +214,10 @@ function applySecurityHeaders(req, res) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()');
+  res.setHeader(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()'
+  );
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
   res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
   res.setHeader('X-DNS-Prefetch-Control', 'off');
@@ -262,6 +278,7 @@ function sanitizeContentTree(node, depth = 0) {
 
 module.exports = {
   PBKDF2_ITERATIONS,
+  MIN_PASSWORD_LENGTH,
   hashPassword,
   verifyPassword,
   generatePassword,

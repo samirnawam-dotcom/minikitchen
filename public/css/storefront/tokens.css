@@ -1,0 +1,53 @@
+/* storefront/tokens.css — Design tokens: colour palette, typography, radii and the per-brand (restaurant / delivery) overrides.
+   Part 1 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+
+/* ============================================================================
+   MINI KITCHEN CATERING, RESTAURANT & DELIVERY — LUXURY MULTI-BRAND STYLESHEET
+   Refined Hospitality Color System + FineDine QR Digital Menu Architecture
+   ============================================================================ */
+
+:root {
+  /* 1. Flagship Brand: Mini Kitchen Catering (Champagne Gold & Warm Espresso) */
+  --brand-primary: #c59b27;
+  --brand-primary-dark: #967315;
+  --brand-primary-light: #fbf6e8;
+  --brand-secondary: #16181d;
+  --bg-main: #f9f8f6;
+  --bg-card: #ffffff;
+  --bg-dark: #14171c;
+  --bg-dark-elevated: #1c2026;
+  --text-main: #181a1f;
+  --text-muted: #5a606a;
+  --text-light: #f9f8f6;
+  --border-subtle: rgba(197, 155, 39, 0.24);
+  --whatsapp-green: #1da851;
+  --whatsapp-dark: #128c7e;
+  --shadow-soft: 0 10px 30px -10px rgba(20, 23, 28, 0.07);
+  --shadow-hover: 0 20px 42px -12px rgba(20, 23, 28, 0.14);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 2. Brand Theme Override: Mini Kitchen Restaurant (Aley Mountain Pine & Cedar Green) */
+body[data-brand='restaurant'] {
+  --brand-primary: #2d6a4f;
+  --brand-primary-dark: #1b4332;
+  --brand-primary-light: #eaf4ef;
+  --brand-secondary: #13241c;
+  --bg-main: #f7faf8;
+  --border-subtle: rgba(45, 106, 79, 0.22);
+}
+
+/* 3. Brand Theme Override: Mini Kitchen Delivery (Appetizing Culinary Terracotta) */
+body[data-brand='delivery'] {
+  --brand-primary: #d94e28;
+  --brand-primary-dark: #b03818;
+  --brand-primary-light: #fdf0ec;
+  --brand-secondary: #181515;
+  --bg-main: #faf8f7;
+  --border-subtle: rgba(217, 78, 40, 0.22);
+}

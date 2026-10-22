@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en" data-bo-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0e1015" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <title>Mini Kitchen — Executive Back Office, WhatsApp CRM & Website Manager</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Back Office stylesheets (order matters) -->
+    <link rel="stylesheet" href="css/admin/base.css" />
+    <link rel="stylesheet" href="css/admin/layout.css" />
+    <link rel="stylesheet" href="css/admin/components.css" />
+    <link rel="stylesheet" href="css/admin/records.css" />
+    <link rel="stylesheet" href="css/admin/modal.css" />
+    <link rel="stylesheet" href="css/admin/auth.css" />
+    <link rel="stylesheet" href="css/admin/profile.css" />
+    <link rel="stylesheet" href="css/admin/seo.css" />
+    <link rel="stylesheet" href="css/admin/features.css" />
+    <link rel="stylesheet" href="css/admin/dark.css" />
+
+    <!-- Back Office controller (ES modules) -->
+    <script type="module" src="js/admin/main.js"></script>
+  </head>
+  <body>
+    <!-- ========================================================================
+       EXECUTIVE AUTHENTICATION LOGIN GATE OVERLAY (#boAuthOverlay)
+       ======================================================================== -->
+    <div class="bo-auth-overlay" id="boAuthOverlay" aria-label="Back Office Authentication Login">
+      <div class="bo-auth-ambient"></div>
+      <div class="bo-auth-card">
+        <div class="bo-auth-crest-wrap">
+          <div class="bo-auth-ring"></div>
+          <img
+            src="https://rest.thrubits.com/uploads/restorants/b8fbc11a-99b2-420e-adda-0fadd3e15d4f_large.jpg"
+            data-fallback="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=200&q=80"
+            alt="Mini Kitchen Logo"
+            class="bo-auth-logo"
+          />
+        </div>
+
+        <div class="bo-auth-badge"><i class="fa-solid fa-shield-halved"></i> Protected Executive Portal</div>
+        <h1 class="bo-auth-title">MINI KITCHEN</h1>
+        <p class="bo-auth-sub">Back Office, WhatsApp Orders CRM & Website Manager • Ain Al Remmaneh, Aley</p>
+
+        <div class="bo-auth-error" id="boAuthError" style="display: none"></div>
+
+        <form class="bo-auth-form" data-on-submit="auth:login">
+          <div class="bo-auth-field">
+            <label for="boLoginUser">Admin Username</label>
+            <div class="bo-auth-input-wrap">
+              <i class="fa-solid fa-user-shield"></i>
+              <input
+                type="text"
+                id="boLoginUser"
+                placeholder="Enter admin username (e.g., admin)"
+                autocomplete="username"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="bo-auth-field">
+            <label for="boLoginPass">Password</label>
+            <div class="bo-auth-input-wrap">
+              <i class="fa-solid fa-key"></i>
+              <input
+                type="password"
+                id="boLoginPass"
+                placeholder="Enter Back Office password"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                class="bo-auth-eye-btn"
+                data-action="auth:toggle-password"
+                title="Show / Hide Password"
+                aria-label="Show or Hide Password"
+              >
+                <i class="fa-regular fa-eye" id="boLoginEyeIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="bo-auth-options-row">
+            <label class="bo-auth-remember">
+              <input type="checkbox" id="boLoginRemember" checked />
+              <span>Keep session active on this device</span>
+            </label>
+          </div>
+
+          <button type="submit" class="bo-auth-submit-btn" id="boLoginSubmitBtn">
+            <i class="fa-solid fa-lock-open"></i>
+            <span>Sign In to Back Office</span>
+          </button>
+        </form>
+
+        <div class="bo-auth-hint-box">
+          <div style="font-size: 0.72rem; opacity: 0.7">
+            You can change your username & password anytime inside the <b>Security & Admin Login</b> tab.
+          </div>
+        </div>
+
+        <div class="bo-auth-footer-links">
+          <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Return to Public Website</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================
+       LEFT SIDEBAR NAVIGATION
+       ======================================================================== -->
+    <aside class="bo-sidebar">
+      <div class="bo-sidebar-brand">
+        <img
+          src="https://rest.thrubits.com/uploads/restorants/b8fbc11a-99b2-420e-adda-0fadd3e15d4f_large.jpg"
+          data-fallback="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=200&q=80"
+          alt="Mini Kitchen Logo"
+        />
+        <div>
+          <span class="bo-brand-title">MINI KITCHEN</span>
+          <span class="bo-brand-sub">Back Office & CRM</span>
+        </div>
+      </div>
+
+      <div class="bo-nav-scroll">
+        <div class="bo-nav-group-label">Orders & Conversions</div>
+        <button class="bo-nav-btn active" data-tab="dashboard" data-action="nav:tab">
+          <span class="bo-nav-btn-left"><i class="fa-solid fa-chart-pie"></i> <span>Overview Dashboard</span></span>
+        </button>
+        <button class="bo-nav-btn" data-tab="orders" data-action="nav:tab">
+          <span class="bo-nav-btn-left"
+            ><i class="fa-brands fa-whatsapp"></i> <span>WhatsApp Orders & Quotes</span></span
+          >
+          <span class="bo-nav-badge" id="navNewOrdersBadge">0</span>
+        </button>
+        <button class="bo-nav-btn" data-tab="kds" data-action="nav:tab">
+          <span class="bo-nav-btn-left"
+            ><i class="fa-solid fa-fire-burner"></i> <span>Kitchen Display (KDS)</span></span
+          >
+        </button>
+        <button class="bo-nav-btn" data-tab="reviews" data-action="nav:tab">
+          <span class="bo-nav-btn-left"><i class="fa-solid fa-star"></i> <span>Client Testimonials</span></span>
+        </button>
+
+        <div class="bo-nav-group-label" style="margin-top: 12px">Menus & Packages</div>
+        <button class="bo-nav-btn" data-tab="menu" data-action="nav:tab">
+          <span class="bo-nav-btn-left"
+            ><i class="fa-solid fa-utensils"></i> <span>FineDine Menu (239+ Dishes)</span></span
+          >
+        </button>
+        <button class="bo-nav-btn" data-tab="catering" data-action="nav:tab">
+          <span class="bo-nav-btn-left"
+            ><i class="fa-solid fa-crown"></i> <span>Catering Packages & Stations</span></span
+          >
+        </button>
+        <button class="bo-nav-btn" data-tab="qrcodes" data-action="nav:tab">
+          <span class="bo-nav-btn-left"><i class="fa-solid fa-qrcode"></i> <span>3-Menu QR Codes & Print</span></span>
+        </button>
+
+        <div class="bo-nav-group-label" style="margin-top: 12px">Website, SEO & Security</div>
+        <button class="bo-nav-btn" data-tab="content" data-action="nav:tab">
+          <span class="bo-nav-btn-left"><i class="fa-solid fa-images"></i> <span>Galleries, Views & Team</span></span>
+        </button>
+        <button class="bo-nav-btn" data-tab="seo" data-action="nav:tab">
+          <span class="bo-nav-btn-left"
+            ><i class="fa-solid fa-magnifying-glass-chart"></i> <span>SEO & Google Search</span></span
+          >
+        </button>
+        <button class="bo-nav-btn" data-tab="settings" data-action="nav:tab">
+          <span class="bo-nav-btn-left"
+            ><i class="fa-solid fa-sliders"></i> <span>Settings, Theme & LBP Rate</span></span
+          >
+        </button>
+        <button class="bo-nav-btn" data-tab="security" data-action="nav:tab">
+          <span class="bo-nav-btn-left"
+            ><i class="fa-solid fa-shield-halved"></i> <span>Security & Admin Login</span></span
+          >
+        </button>
+      </div>
+
+      <div class="bo-sidebar-footer">
+        <div class="bo-admin-user-pill" id="boSidebarUserPill">
+          <div class="bo-admin-avatar"><i class="fa-solid fa-user-tie"></i></div>
+          <div style="min-width: 0; flex: 1">
+            <div class="bo-admin-name" id="boAdminDisplayName">Mini Kitchen Admin</div>
+            <div class="bo-admin-role">
+              <i class="fa-solid fa-circle" style="color: #22c55e; font-size: 0.5rem"></i> Authenticated Session
+            </div>
+          </div>
+          <button
+            type="button"
+            class="bo-logout-icon-btn"
+            data-action="auth:logout"
+            title="Lock & Sign Out of Back Office"
+            aria-label="Lock and sign out"
+          >
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+
+        <a href="index.html" target="_blank" class="bo-live-site-link">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Live Website
+        </a>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px">
+          <a
+            href="index.html#catering"
+            target="_blank"
+            class="bo-btn bo-btn-outline"
+            style="padding: 6px; font-size: 0.7rem; background: #1e232b; color: #fff; border-color: #2e3440"
+            >Catering</a
+          >
+          <a
+            href="restaurant.html"
+            target="_blank"
+            class="bo-btn bo-btn-outline"
+            style="padding: 6px; font-size: 0.7rem; background: #1e232b; color: #fff; border-color: #2e3440"
+            >Resto</a
+          >
+          <a
+            href="delivery.html"
+            target="_blank"
+            class="bo-btn bo-btn-outline"
+            style="padding: 6px; font-size: 0.7rem; background: #1e232b; color: #fff; border-color: #2e3440"
+            >Delivery</a
+          >
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========================================================================
+       MAIN WORKSPACE
+       ======================================================================== -->
+    <div class="bo-main">
+      <header class="bo-topbar">
+        <div>
+          <div class="bo-topbar-title" id="boTopbarTitle">Executive Overview & Live WhatsApp Feed</div>
+          <div class="bo-topbar-sub" id="boTopbarSub">
+            Manage all 3 Mini Kitchen brands, WhatsApp orders, catering quotes, menus, SEO & security
+          </div>
+        </div>
+
+        <div class="bo-topbar-actions">
+          <button
+            class="bo-btn bo-btn-outline"
+            data-action="theme:toggle"
+            id="boThemeToggleBtn"
+            title="Toggle Back Office Dark / Light Mode"
+          >
+            <i class="fa-solid fa-moon" id="boThemeToggleIcon"></i> <span id="boThemeToggleLabel">Dark UI</span>
+          </button>
+          <button class="bo-btn bo-btn-outline" data-action="sync:refresh">
+            <i class="fa-solid fa-arrows-rotate"></i> Sync Live Data
+          </button>
+          <button class="bo-btn bo-btn-gold" data-action="orders:manual-open">
+            <i class="fa-solid fa-plus"></i> Log Manual Order / Quote
+          </button>
+          <button class="bo-btn bo-btn-danger" data-action="auth:logout" title="Lock Back Office Session">
+            <i class="fa-solid fa-lock"></i> Lock
+          </button>
+        </div>
+      </header>
+
+      <main class="bo-content" id="boMainContainer"></main>
+    </div>
+
+    <!-- UNIVERSAL BACK OFFICE MODAL -->
+    <div class="bo-modal-backdrop" id="boModalBackdrop">
+      <div class="bo-modal-dialog" id="boModalDialog"></div>
+    </div>
+  </body>
+</html>
