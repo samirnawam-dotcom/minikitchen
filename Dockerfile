@@ -9,6 +9,7 @@ COPY server.js ./
 COPY src ./src
 COPY views ./views
 COPY public ./public
+COPY scripts ./scripts
 
 RUN mkdir -p /app/data && chown -R node:node /app/data
 

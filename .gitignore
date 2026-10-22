@@ -11,3 +11,7 @@ data/backoffice-db*.json
 *.log
 .DS_Store
 Thumbs.db
+
+# Server-side deploy state
+deploy/.env
+deploy/data/

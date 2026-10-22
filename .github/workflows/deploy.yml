@@ -1,0 +1,56 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Skips cleanly until the server secrets are added in Settings → Secrets and variables → Actions.
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Upload code
+        run: |
+          rsync -az --delete \
+            --exclude '.git' --exclude 'node_modules' --exclude 'data' \
+            --exclude 'deploy/data' --exclude 'deploy/.env' \
+            -e "ssh -i ~/.ssh/id_deploy" \
+            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:minikitchen/"
+
+      - name: Rebuild and restart
+        run: |
+          ssh -i ~/.ssh/id_deploy "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            'cd ~/minikitchen/deploy && docker compose up -d --build --remove-orphans && docker image prune -f'
+
+      - name: Check the site is up
+        run: |
+          for i in $(seq 1 30); do
+            if ssh -i ~/.ssh/id_deploy "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+              'cd ~/minikitchen/deploy && docker compose exec -T app wget -qO- http://127.0.0.1:3000/api/health'; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
