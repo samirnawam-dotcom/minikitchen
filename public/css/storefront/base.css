@@ -1,5 +1,5 @@
 /* storefront/base.css — Reset, document defaults and the page container.
-   Part 2 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 2 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
 
 * {
   box-sizing: border-box;

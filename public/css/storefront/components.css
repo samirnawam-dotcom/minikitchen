@@ -1,5 +1,5 @@
 /* storefront/components.css — Hero sections, buttons, section headings, brand cards, catering packages and galleries.
-   Part 4 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 4 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    HERO SECTIONS & BUTTONS
@@ -269,7 +269,7 @@
 .brand-pillar-tag {
   position: absolute;
   top: 16px;
-  left: 16px;
+  inset-inline-start: 16px;
   padding: 6px 14px;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -381,7 +381,7 @@
 .package-badge {
   position: absolute;
   top: 16px;
-  left: 16px;
+  inset-inline-start: 16px;
   background: rgba(14, 16, 21, 0.86);
   color: var(--brand-primary);
   border: 1px solid var(--brand-primary);
@@ -396,7 +396,7 @@
 .package-price-pill {
   position: absolute;
   bottom: 16px;
-  right: 16px;
+  inset-inline-end: 16px;
   background: var(--brand-primary);
   color: #0e1015;
   padding: 8px 16px;

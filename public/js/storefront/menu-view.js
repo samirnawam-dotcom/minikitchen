@@ -277,7 +277,7 @@ export function renderMenuExplorer(mode) {
               <span>Select a Category (${catsList.length})</span>
               ${
                 activeCat !== 'all'
-                  ? `<button type="button" data-action="menu:category" data-mode="${mode}" data-cat="all" style="margin-left:8px; background:#f3f4f6; border:1px solid #d1d5db; border-radius:999px; padding:2px 10px; font-size:0.7rem; font-weight:700; cursor:pointer; color:#111827;">✕ Show All Categories</button>`
+                  ? `<button type="button" data-action="menu:category" data-mode="${mode}" data-cat="all" style="margin-inline-start: 8px; background:#f3f4f6; border:1px solid #d1d5db; border-radius:999px; padding:2px 10px; font-size:0.7rem; font-weight:700; cursor:pointer; color:#111827;">✕ Show All Categories</button>`
                   : ''
               }
             </div>

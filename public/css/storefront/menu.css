@@ -1,5 +1,5 @@
 /* storefront/menu.css — Classic digital menu grid and dish cards (photo-grid layout).
-   Part 5 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 5 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    DIGITAL MENU & DELIVERY ORDERING SYSTEM (SECTIONS 3 & 4)
@@ -31,7 +31,7 @@
 
 .menu-search-input-wrap i {
   position: absolute;
-  left: 16px;
+  inset-inline-start: 16px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
@@ -178,7 +178,7 @@
 .dish-price-tag {
   position: absolute;
   bottom: 12px;
-  right: 12px;
+  inset-inline-end: 12px;
   background: rgba(14, 16, 21, 0.9);
   color: #ffffff;
   font-weight: 800;

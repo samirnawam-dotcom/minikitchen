@@ -248,7 +248,7 @@ export function openQrStudio(highlightMode = 'all') {
         <div class="qr-studio-body">
           <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; background:var(--bg-card); padding:14px 18px; border-radius:14px; border:1px solid var(--border-subtle); margin-bottom:20px;">
             <div style="font-size:0.84rem; color:var(--text-muted);">
-              <i class="fa-solid fa-circle-info" style="color:var(--brand-primary); margin-right:6px;"></i>
+              <i class="fa-solid fa-circle-info" style="color:var(--brand-primary); margin-inline-end: 6px;"></i>
               Each QR code opens its corresponding FineDine menu directly in <b>Full-Screen QR Table Mode</b> (<code>?qr=1</code>) for instant mobile scanning.
             </div>
             <button

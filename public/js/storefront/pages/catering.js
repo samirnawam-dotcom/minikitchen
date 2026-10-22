@@ -60,7 +60,7 @@ function stationsTab() {
             <div style="background:var(--bg-card); border-radius:18px; overflow:hidden; box-shadow:var(--shadow-soft); border:1px solid var(--border-subtle); display:flex; flex-direction:column;">
               <div style="height:195px; position:relative; overflow:hidden;">
                 <img src="${esc(st.img)}" data-fallback="" alt="${esc(st.title)}" style="width:100%; height:100%; object-fit:cover;" />
-                <span style="position:absolute; top:12px; left:12px; background:rgba(14,16,21,0.88); color:var(--brand-primary); padding:4px 12px; border-radius:999px; font-size:0.72rem; font-weight:700;">${esc(st.tag)}</span>
+                <span style="position:absolute; top:12px; inset-inline-start:12px; background:rgba(14,16,21,0.88); color:var(--brand-primary); padding:4px 12px; border-radius:999px; font-size:0.72rem; font-weight:700;">${esc(st.tag)}</span>
               </div>
               <div style="padding:20px; flex:1; display:flex; flex-direction:column;">
                 <h4 style="font-family:var(--font-serif); font-size:1.25rem; margin-bottom:6px;">${esc(st.title)}</h4>

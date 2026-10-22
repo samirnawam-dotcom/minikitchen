@@ -1,12 +1,12 @@
 /* storefront/responsive.css — Responsive breakpoints for the sections above.
-   Part 7 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 7 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    RESPONSIVE BREAKPOINTS (MOBILE, TABLET & LAPTOP OPTIMIZATION)
    ============================================================================ */
 .nav-drawer-header .brand-logo-wrap {
-  padding-left: 0;
-  border-left: none;
+  padding-inline-start: 0;
+  border-inline-start: none;
 }
 
 @media (max-width: 1320px) {

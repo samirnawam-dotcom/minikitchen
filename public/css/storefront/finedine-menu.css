@@ -1,5 +1,5 @@
 /* storefront/finedine-menu.css — FineDine menu UI: category stories, search/currency toolbar, category sections and split dish cards.
-   Part 8 of 13; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 8 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    FINEDINE DIGITAL MENU PLATFORM UI (finedinemenu.com style)
@@ -173,7 +173,7 @@
 
 .fd-search-box i {
   position: absolute;
-  left: 16px;
+  inset-inline-start: 16px;
   top: 50%;
   transform: translateY(-50%);
   color: #6b7280;

@@ -1,0 +1,47 @@
+/* storefront/rtl.css — Right-to-left (Arabic) adjustments.
+   Part 14 of 14; linked last in views/storefront.html. Spacing, borders and badge positions use
+   logical properties (margin-inline-start, inset-inline-end…) elsewhere, so they mirror on their
+   own; this file only covers what logical properties cannot: slide/hover movements and text. */
+
+/* Page content is English while the layout is mirrored: give every paragraph the direction of its
+   own text so punctuation stays at the right end ("…your order." not ".…your order"), and keep
+   text right-aligned to match the mirrored layout. */
+[dir='rtl'] body {
+  text-align: right;
+}
+[dir='rtl'] body * {
+  unicode-bidi: plaintext;
+}
+
+/* Side navigation drawer slides in from the right */
+[dir='rtl'] .nav-drawer {
+  transform: translateX(100%);
+}
+[dir='rtl'] .nav-drawer.open {
+  transform: translateX(0);
+}
+
+/* Cart drawer slides in from the left */
+[dir='rtl'] .cart-drawer {
+  transform: translateX(-100%);
+}
+[dir='rtl'] .cart-drawer.open {
+  transform: translateX(0);
+}
+
+/* Drawer links nudge toward the reading direction on hover */
+[dir='rtl'] .drawer-menu-item:hover,
+[dir='rtl'] .drawer-menu-item.active {
+  transform: translateX(-4px);
+}
+
+/* Directional arrow icons point the other way */
+[dir='rtl'] .fa-arrow-right,
+[dir='rtl'] .fa-arrow-left,
+[dir='rtl'] .fa-chevron-right,
+[dir='rtl'] .fa-chevron-left,
+[dir='rtl'] .fa-angle-right,
+[dir='rtl'] .fa-angle-left,
+[dir='rtl'] .fa-arrow-right-long {
+  transform: scaleX(-1);
+}
