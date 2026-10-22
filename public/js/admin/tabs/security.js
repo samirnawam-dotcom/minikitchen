@@ -154,7 +154,7 @@ function auditPanel(logs) {
 function render() {
   const logs = ui.auditLogs.slice(0, 15);
   const db = ui.databaseInfo || {
-    engine: 'SQLite 3 (Node.js native node:sqlite)',
+    engine: 'SQLite 3',
     journalMode: 'WAL',
     filePath: 'data/minikitchen.sqlite',
     fileSizeKb: 48,

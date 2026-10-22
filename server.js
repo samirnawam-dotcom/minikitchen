@@ -34,7 +34,9 @@ async function start() {
   return server;
 }
 
-if (require.main === module) {
+// Phusion Passenger (used by Plesk and cPanel to run Node apps) loads this file itself and
+// intercepts listen(), so start when run directly or under Passenger.
+if (require.main === module || typeof PhusionPassenger !== 'undefined') {
   start().catch(err => {
     console.error('[server] Fatal startup error:', err.message);
     process.exit(1);

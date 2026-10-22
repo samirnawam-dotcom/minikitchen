@@ -5,12 +5,12 @@
   "main": "server.js",
   "private": true,
   "engines": {
-    "node": ">=22.13.0"
+    "node": ">=20.12.0"
   },
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node --test --test-reporter=spec \"test/**/*.test.js\"",
+    "test": "node --test --test-reporter=spec test/*.test.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -24,5 +24,8 @@
     "globals": "17.13.0",
     "playwright-core": "1.56.1",
     "prettier": "3.9.10"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "12.11.1"
   }
 }

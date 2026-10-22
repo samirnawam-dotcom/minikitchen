@@ -5,7 +5,8 @@ Website and Back Office for **Mini Kitchen** (Ain Al Remmaneh, Aley, Mount Leban
 - **Storefront:** catering, catering menus, restaurant (QR table menu), delivery (WhatsApp cart), about and contact pages.
 - **Back Office (`/admin`):** orders and WhatsApp leads, kitchen display, menu and price editor, website content and
   SEO settings, database backup/restore, admin account.
-- **Stack:** Node.js (≥ 22.13) with the built-in `node:sqlite` database. No runtime npm dependencies.
+- **Stack:** Node.js with SQLite: Node's built-in `node:sqlite` on Node ≥ 22.13, or the optional `better-sqlite3`
+  package on Node 20.12+ (e.g. hosting panels that only offer Node 20). No other runtime dependencies.
 
 ## Quick start
 
@@ -140,6 +141,9 @@ WhatsApp, but nothing is saved to the database and the Back Office, online menu 
 available. Use the server deployment below for the full system.
 
 ### Full system (server)
+
+- **Plesk server** (no root access needed): see **[docs/DEPLOYMENT-PLESK.md](docs/DEPLOYMENT-PLESK.md)**.
+- **Any VPS with root access:** see below.
 
 See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for free hosting on an Oracle Cloud Always Free server with automatic
 HTTPS and deploy-on-push. For any Docker host:
