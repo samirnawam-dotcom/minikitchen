@@ -1,0 +1,145 @@
+/* Back Office — order / lead cards and menu editor rows */
+
+/* ORDER & LEAD CARDS */
+.bo-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bo-order-card {
+  background: #fff;
+  border: 1px solid var(--bo-border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  transition: all 0.2s ease;
+}
+
+.bo-order-card.type-delivery_order {
+  border-left: 5px solid var(--bo-terracotta);
+}
+
+.bo-order-card.type-catering_quote {
+  border-left: 5px solid var(--bo-gold);
+}
+
+.bo-order-card.type-table_reservation {
+  border-left: 5px solid var(--bo-pine);
+}
+
+.bo-order-card.type-whatsapp_inquiry {
+  border-left: 5px solid var(--bo-wa);
+}
+
+.bo-order-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f0ec;
+  margin-bottom: 14px;
+}
+
+.bo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bo-badge.delivery {
+  background: rgba(217, 78, 40, 0.12);
+  color: var(--bo-terracotta);
+}
+
+.bo-badge.catering {
+  background: rgba(197, 155, 39, 0.16);
+  color: var(--bo-gold-dark);
+}
+
+.bo-badge.restaurant {
+  background: rgba(45, 106, 79, 0.14);
+  color: var(--bo-pine);
+}
+
+.bo-status-pill {
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.bo-status-new {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.bo-status-confirmed {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.bo-status-preparing {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.bo-status-out_for_delivery {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.bo-status-completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.bo-status-cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.bo-order-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1.5fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.bo-order-items-box {
+  background: #f9f8f5;
+  border: 1px solid var(--bo-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+/* MENU EDITOR TABLE / CARDS */
+.bo-dish-row {
+  display: grid;
+  grid-template-columns: 64px 1.4fr 1.8fr 110px 130px 150px;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f0ec;
+  background: #fff;
+}
+
+.bo-dish-row:hover {
+  background: #faf9f5;
+}
+
+.bo-dish-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--bo-border);
+}

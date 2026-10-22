@@ -1,0 +1,39 @@
+/* Back Office — design tokens, reset and page base. views/admin.html links these files in a fixed order (base, layout, components, records, modal, auth, profile, seo, features, dark); rule order matters. */
+
+:root {
+  --bo-sidebar: #14171c;
+  --bo-sidebar-hover: #1e232b;
+  --bo-bg: #f4f3ef;
+  --bo-card: #ffffff;
+  --bo-text: #14171c;
+  --bo-muted: #5c6470;
+  --bo-border: #e4e1d8;
+
+  --bo-gold: #c59b27;
+  --bo-gold-dark: #9e7815;
+  --bo-pine: #2d6a4f;
+  --bo-terracotta: #d94e28;
+  --bo-wa: #1da851;
+  --bo-danger: #dc2626;
+  --bo-info: #2563eb;
+
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bo-bg);
+  color: var(--bo-text);
+  min-height: 100vh;
+  display: flex;
+  line-height: 1.5;
+}

@@ -1,0 +1,73 @@
+/* Back Office — modal dialog and responsive (<=1024px) layout overrides */
+
+/* MODAL */
+.bo-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 18, 24, 0.72);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.bo-modal-backdrop.open {
+  display: flex;
+}
+
+.bo-modal-dialog {
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.4);
+}
+
+.bo-modal-header {
+  background: var(--bo-sidebar);
+  color: #fff;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bo-modal-body {
+  padding: 22px 24px;
+  overflow-y: auto;
+}
+
+.bo-modal-footer {
+  padding: 16px 24px;
+  background: #f9fafb;
+  border-top: 1px solid var(--bo-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 1024px) {
+  .bo-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+  body {
+    flex-direction: column;
+  }
+  .bo-main {
+    margin-left: 0;
+  }
+  .bo-order-grid {
+    grid-template-columns: 1fr;
+  }
+  .bo-dish-row {
+    grid-template-columns: 1fr;
+  }
+}

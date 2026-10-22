@@ -1,0 +1,63 @@
+/* Back Office — sidebar admin profile pill */
+
+/* SIDEBAR ADMIN PROFILE PILL */
+.bo-admin-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 4px;
+}
+
+.bo-admin-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(197, 155, 39, 0.2);
+  border: 1px solid var(--bo-gold);
+  color: #f3d28e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.bo-admin-name {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bo-admin-role {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.62);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bo-logout-icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  background: rgba(220, 38, 38, 0.14);
+  color: #fca5a5;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.bo-logout-icon-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+}

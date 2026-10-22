@@ -1,0 +1,50 @@
+/* Back Office — dark workspace theme (html[data-bo-theme="dark"]); keep this file last */
+
+html[data-bo-theme='dark'] {
+  --bo-bg: #0c0f15;
+  --bo-card: #151922;
+  --bo-text: #f3f1ec;
+  --bo-muted: #9ca5b5;
+  --bo-border: rgba(255, 255, 255, 0.1);
+}
+
+html[data-bo-theme='dark'] .bo-topbar,
+html[data-bo-theme='dark'] .bo-panel,
+html[data-bo-theme='dark'] .bo-kpi-card,
+html[data-bo-theme='dark'] .bo-order-card,
+html[data-bo-theme='dark'] .bo-modal-dialog,
+html[data-bo-theme='dark'] .bo-seo-serp-card {
+  background: #151922 !important;
+  color: #f3f1ec !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-bo-theme='dark'] .bo-panel-header,
+html[data-bo-theme='dark'] .bo-order-top,
+html[data-bo-theme='dark'] .bo-modal-footer {
+  background: #1a202c !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html[data-bo-theme='dark'] .bo-input,
+html[data-bo-theme='dark'] .bo-select,
+html[data-bo-theme='dark'] .bo-textarea {
+  background: #0f131b !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #f3f1ec !important;
+}
+
+html[data-bo-theme='dark'] .bo-btn-outline {
+  background: #1c222e;
+  color: #e5e7eb;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+html[data-bo-theme='dark'] .bo-seo-serp-title {
+  color: #8ab4f8 !important;
+}
+
+html[data-bo-theme='dark'] .bo-seo-serp-url,
+html[data-bo-theme='dark'] .bo-seo-serp-desc {
+  color: #bdc1c6 !important;
+}
