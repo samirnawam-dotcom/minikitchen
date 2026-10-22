@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+# Sitemaps for Mini Kitchen Catering, Restaurant & Delivery (Ain Al Remmaneh, Aley, Mount Lebanon)
+Sitemap: https://minikitchencatering.com/sitemap.xml
