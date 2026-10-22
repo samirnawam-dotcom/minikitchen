@@ -129,6 +129,18 @@ A snapshot is copied to `data/backups/` daily and kept for `BACKUP_RETENTION_DAY
 
 ## Deployment
 
+### Free preview on GitHub Pages (website only)
+
+`.github/workflows/pages.yml` publishes a static copy of the six storefront pages to
+`https://samirnawam-dotcom.github.io/minikitchen/` on every push to `main`. One-time setup: **Settings → Pages →
+Build and deployment → Source: GitHub Actions**. Build it locally with `npm run build:static` (output in `dist/`).
+
+The static copy has no server: browsing, the menu, cart, calculator and quote forms work, and orders go out via
+WhatsApp, but nothing is saved to the database and the Back Office, online menu editing and order tracking are not
+available. Use the server deployment below for the full system.
+
+### Full system (server)
+
 See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for free hosting on an Oracle Cloud Always Free server with automatic
 HTTPS and deploy-on-push. For any Docker host:
 

@@ -15,7 +15,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "npm run lint && npm run format:check && npm test",
-    "test:e2e": "node test/e2e/smoke.js"
+    "test:e2e": "node test/e2e/smoke.js",
+    "build:static": "node scripts/build-static.js"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
