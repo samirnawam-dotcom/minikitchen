@@ -30,7 +30,7 @@ function buildAboutPage() {
       <!-- OUR STORY & EVOLUTION -->
       <section class="section-pad">
         <div class="container">
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 50px; align-items:center;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 50px; align-items:center;">
             <div>
               <span class="section-eyebrow">How It All Started</span>
               <h2 class="section-title">From Aley’s Favorite Kitchen to Lebanon’s Trusted Event Caterer</h2>
@@ -43,7 +43,7 @@ function buildAboutPage() {
               <p style="color:var(--text-muted); margin-bottom:26px; font-size:1.02rem;">
                 Today, Mini Kitchen proudly operates through three dedicated divisions—<b>Mini Kitchen Catering</b>, <b>Mini Kitchen Restaurant</b>, and <b>Mini Kitchen Delivery</b>—united by one kitchen brigade, strict hygiene and halal quality standards, and a genuine love for hospitality.
               </p>
-              <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; text-align:center;">
+              <div style="display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:14px; text-align:center;">
                 ${statCard('3', 'Specialized Brands')}
                 ${statCard('239+', 'Handcrafted Dishes')}
                 ${statCard('100%', 'Fresh & Halal')}

@@ -128,7 +128,7 @@ export function renderEventBudgetCalculator() {
             </p>
           </div>
 
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:28px; align-items:stretch;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap:28px; align-items:stretch;">
             <!-- Left Controls -->
             <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:20px; padding:26px; box-shadow:var(--shadow-soft);">
               <div class="form-group" style="margin-bottom:18px;">

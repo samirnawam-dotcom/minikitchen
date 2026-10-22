@@ -53,7 +53,7 @@ function weddingsTab() {
 
 function stationsTab() {
   return `
-        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 22px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr)); gap: 22px;">
           ${configList('liveStations')
             .map(
               st => `
@@ -83,7 +83,7 @@ function quoteSection() {
       <!-- PLAN YOUR EVENT / REQUEST A CATERING QUOTE -->
       <section class="section-pad section-dark" id="planEventSection">
         <div class="container">
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 44px; align-items:center;">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 44px; align-items:center;">
             <div>
               <span class="section-eyebrow">Direct WhatsApp Event Concierge</span>
               <h2 class="section-title">Request a Tailored Catering Quote in 60 Seconds</h2>
