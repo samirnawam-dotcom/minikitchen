@@ -3,6 +3,9 @@
 // Opens the SQLite database with Node's built-in driver (node:sqlite, Node >= 22.13) and falls back
 // to the better-sqlite3 package on older Node versions, e.g. hosting panels that only offer Node 20.
 // Both expose the same synchronous API used by db.js: exec(), prepare().get/all/run(), close().
+//
+// better-sqlite3 is pinned to 12.9.0: the last release with prebuilt binaries for Node 20. Hosts
+// without build tools (make, g++), such as Plesk subscriptions, cannot compile newer releases.
 
 function loadDriver() {
   if (process.env.SQLITE_DRIVER !== 'better-sqlite3') {

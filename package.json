@@ -26,6 +26,6 @@
     "prettier": "3.9.10"
   },
   "optionalDependencies": {
-    "better-sqlite3": "12.11.1"
+    "better-sqlite3": "12.9.0"
   }
 }
