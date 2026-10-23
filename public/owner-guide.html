@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Mini Kitchen Owner's Guide</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Marcellus&family=Albert+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Layout: a printed-manual feel — sticky contents rail on wide screens, one reading column, task cards for how-tos. */
+      :root {
+        --paper: #f5f6f2;
+        --sheet: #ffffff;
+        --ink: #1f2622;
+        --muted: #5d6862;
+        --line: #dfe3dc;
+        --gold: #a77a22;
+        --gold-soft: #f3ead6;
+        --cedar: #24493c;
+        --cedar-soft: #e3eee8;
+        --ok: #2f7a4f;
+        --warn: #a3621b;
+        --display: 'Marcellus', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+        --body: 'Albert Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --paper: #121614;
+          --sheet: #1a201d;
+          --ink: #e8ece9;
+          --muted: #a2aea7;
+          --line: #2c3530;
+          --gold: #d9ae5a;
+          --gold-soft: #2d2617;
+          --cedar: #8cc3a9;
+          --cedar-soft: #1c2b25;
+          --ok: #74c597;
+          --warn: #e3a35a;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme='dark'] {
+        --paper: #121614;
+        --sheet: #1a201d;
+        --ink: #e8ece9;
+        --muted: #a2aea7;
+        --line: #2c3530;
+        --gold: #d9ae5a;
+        --gold-soft: #2d2617;
+        --cedar: #8cc3a9;
+        --cedar-soft: #1c2b25;
+        --ok: #74c597;
+        --warn: #e3a35a;
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font: 400 1rem/1.65 var(--body);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--cedar);
+        text-underline-offset: 3px;
+      }
+      a:focus-visible,
+      button:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--display);
+        font-weight: 400;
+        line-height: 1.2;
+        text-wrap: balance;
+        margin: 0;
+      }
+      h2 {
+        font-size: 1.75rem;
+      }
+      h3 {
+        font-size: 1.2rem;
+      }
+      p {
+        margin: 0;
+      }
+      code,
+      .mono {
+        font-family: var(--mono);
+        font-size: 0.9em;
+      }
+      .ui {
+        font-weight: 600;
+        color: var(--ink);
+        background: var(--cedar-soft);
+        padding: 0.05em 0.4em;
+        border-radius: 5px;
+        white-space: nowrap;
+      }
+
+      .masthead {
+        background: var(--cedar);
+        color: #f4f1e8;
+        padding-block: 44px 36px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+      }
+      :root:not([data-theme='light']) .masthead {
+        color: #f4f1e8;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) .masthead {
+          background: #1d3a30;
+        }
+      }
+      :root[data-theme='dark'] .masthead {
+        background: #1d3a30;
+      }
+      .masthead-inner {
+        max-width: 1120px;
+        margin: 0 auto;
+        display: grid;
+        gap: 14px;
+      }
+      .eyebrow {
+        font-size: 0.78rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #e2c27e;
+      }
+      .masthead h1 {
+        font-size: clamp(2.1rem, 5vw, 3.2rem);
+      }
+      .masthead p {
+        max-width: 62ch;
+        color: #d8e3dc;
+        font-size: 1.05rem;
+      }
+
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding-block: 36px 72px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 48px;
+      }
+      nav.toc {
+        position: sticky;
+        top: 20px;
+        align-self: start;
+        display: grid;
+        gap: 2px;
+        font-size: 0.92rem;
+      }
+      nav.toc .toc-title {
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      nav.toc a {
+        color: var(--muted);
+        text-decoration: none;
+        padding: 5px 10px;
+        border-left: 2px solid var(--line);
+      }
+      nav.toc a:hover {
+        color: var(--ink);
+        border-left-color: var(--gold);
+      }
+
+      main {
+        display: grid;
+        gap: 56px;
+        min-width: 0;
+      }
+      section {
+        display: grid;
+        gap: 18px;
+        min-width: 0;
+        scroll-margin-top: 16px;
+      }
+      .lead {
+        color: var(--muted);
+        max-width: 66ch;
+      }
+
+      /* At a glance */
+      .glance {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+        gap: 14px;
+      }
+      .glance-item {
+        background: var(--sheet);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px;
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+      }
+      .glance-item .label {
+        font-size: 0.74rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+      }
+      .glance-item .value {
+        font-family: var(--mono);
+        font-size: 0.95rem;
+        overflow-wrap: anywhere;
+        user-select: all;
+      }
+      .glance-item .note {
+        font-size: 0.86rem;
+        color: var(--muted);
+      }
+      .nowrap {
+        white-space: nowrap;
+      }
+
+      /* Daily routine */
+      ol.routine {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 12px;
+        counter-reset: step;
+      }
+      ol.routine li {
+        counter-increment: step;
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+      }
+      ol.routine li::before {
+        content: counter(step);
+        font-family: var(--display);
+        font-size: 1.15rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--gold-soft);
+        color: var(--gold);
+      }
+      ol.routine strong {
+        display: block;
+      }
+
+      /* Status flow */
+      .flow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .pill {
+        font-size: 0.86rem;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--sheet);
+        white-space: nowrap;
+      }
+      .pill.new {
+        border-color: var(--warn);
+        color: var(--warn);
+      }
+      .pill.done {
+        border-color: var(--ok);
+        color: var(--ok);
+      }
+      .arrow {
+        color: var(--muted);
+      }
+
+      /* Tables */
+      .table-scroll {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--sheet);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.94rem;
+      }
+      th,
+      td {
+        text-align: left;
+        vertical-align: top;
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      th {
+        font-size: 0.74rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+        background: var(--paper);
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      td:first-child {
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      @media (max-width: 640px) {
+        td:first-child {
+          white-space: normal;
+        }
+      }
+
+      /* How-to cards */
+      .tasks {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+        gap: 14px;
+      }
+      .task {
+        background: var(--sheet);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px 20px;
+        display: grid;
+        gap: 10px;
+        align-content: start;
+        min-width: 0;
+      }
+      .task h3 {
+        font-size: 1.12rem;
+      }
+      .task ol {
+        margin: 0;
+        padding-left: 1.2em;
+        display: grid;
+        gap: 4px;
+      }
+      .task .where {
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .callout {
+        border-left: 3px solid var(--gold);
+        background: var(--gold-soft);
+        padding: 14px 18px;
+        border-radius: 0 10px 10px 0;
+        max-width: 72ch;
+      }
+      .callout.safety {
+        border-left-color: var(--cedar);
+        background: var(--cedar-soft);
+      }
+      ul.plain {
+        margin: 0;
+        padding-left: 1.2em;
+        display: grid;
+        gap: 6px;
+        max-width: 70ch;
+      }
+
+      footer {
+        color: var(--muted);
+        font-size: 0.86rem;
+        border-top: 1px solid var(--line);
+        padding-top: 18px;
+      }
+
+      @media (max-width: 900px) {
+        .wrap {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 32px;
+        }
+        nav.toc {
+          position: static;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+        nav.toc .toc-title {
+          grid-column: 1 / -1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="masthead-inner">
+        <span class="eyebrow">Mini Kitchen · Catering · Restaurant · Delivery</span>
+        <h1>Owner's Guide</h1>
+        <p>
+          How to run the Mini Kitchen website day to day: receiving orders, updating the menu and prices, and keeping
+          the site safe. Everything is done from one private page, the Back Office.
+        </p>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <nav class="toc" aria-label="Contents">
+        <span class="toc-title">Contents</span>
+        <a href="#glance">At a glance</a>
+        <a href="#daily">Your daily routine</a>
+        <a href="#orders">Orders and quotes</a>
+        <a href="#backoffice">Back Office tabs</a>
+        <a href="#howto">Common tasks</a>
+        <a href="#customers">What customers see</a>
+        <a href="#safety">Keeping it safe</a>
+        <a href="#help">When something goes wrong</a>
+      </nav>
+
+      <main>
+        <section id="glance">
+          <h2>At a glance</h2>
+          <div class="glance">
+            <div class="glance-item">
+              <span class="label">Website</span>
+              <span class="value" id="v-site">https://minikitchen.restbits.online</span>
+            </div>
+            <div class="glance-item">
+              <span class="label">Back Office</span>
+              <span class="value" id="v-admin">https://minikitchen.restbits.online/admin</span>
+            </div>
+            <div class="glance-item">
+              <span class="label">Back Office sign-in</span>
+              <span class="value">Username: admin</span>
+              <span class="note">Password: given to you privately. It is never written in this guide.</span>
+            </div>
+            <div class="glance-item">
+              <span class="label">WhatsApp lines on the website</span>
+              <span class="value">Catering &amp; Events: <span class="nowrap">+961 71 048 154</span></span>
+              <span class="value">Restaurant &amp; Delivery: <span class="nowrap">+961 3 682 186</span></span>
+              <span class="note">Change them in Settings, Theme &amp; LBP Rate.</span>
+            </div>
+          </div>
+        </section>
+
+        <section id="daily">
+          <h2>Your daily routine</h2>
+          <p class="lead">
+            Website orders come to you on WhatsApp and are also saved in the Back Office, so nothing gets lost.
+          </p>
+          <ol class="routine">
+            <li>
+              <div>
+                <strong>Open the Back Office</strong>Sign in at the Back Office address. Tick “Keep session active on
+                this device” on your own phone or computer only.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Check new orders</strong>The red number next to
+                <span class="ui">WhatsApp Orders &amp; Quotes</span> shows how many are waiting. A chime plays when a
+                new one arrives while the page is open.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Confirm with the customer</strong>Press <span class="ui">Reply on WhatsApp</span> on the order,
+                agree the details, then set its status to <span class="ui">Confirmed</span>.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Send it to the kitchen</strong>The kitchen keeps
+                <span class="ui">Kitchen Display (KDS)</span> open on a tablet and moves each ticket along: Start
+                Preparing, then Out for Delivery.
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Close the day</strong>Mark finished orders <span class="ui">Completed</span>. Use
+                <span class="ui">Export CSV</span> in the orders tab when you want them in Excel.
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section id="orders">
+          <h2>Orders and quotes</h2>
+          <p class="lead">
+            Every website order gets a reference number such as <code>MK-1005</code>. The customer can use it in the
+            website's order tracker to see the status you set.
+          </p>
+          <div class="flow" aria-label="Order status order">
+            <span class="pill new">New / Pending</span><span class="arrow">→</span> <span class="pill">Confirmed</span
+            ><span class="arrow">→</span> <span class="pill">Preparing in Kitchen</span><span class="arrow">→</span>
+            <span class="pill">Out for Delivery</span><span class="arrow">→</span>
+            <span class="pill done">Completed</span>
+          </div>
+          <p class="lead">
+            Use <span class="ui">Cancelled</span> for orders that will not go ahead. The Back Office records four kinds
+            of request:
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Comes from</th>
+                  <th>What to do</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Delivery Cart Order</td>
+                  <td>A customer's basket on the Delivery or Restaurant menu</td>
+                  <td>Confirm the address and delivery zone, then prepare.</td>
+                </tr>
+                <tr>
+                  <td>Catering &amp; Event Quote</td>
+                  <td>The quote form or event calculator</td>
+                  <td>Reply with a price. <span class="ui">Proposal / PDF</span> prepares a printable proposal.</td>
+                </tr>
+                <tr>
+                  <td>Restaurant Table Booking</td>
+                  <td>The reservation button on the Restaurant page</td>
+                  <td>Confirm the time and number of guests.</td>
+                </tr>
+                <tr>
+                  <td>WhatsApp Lead</td>
+                  <td>Any other WhatsApp button on the site</td>
+                  <td>Answer the question; no order may follow.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout">
+            <strong>Phone or walk-in order?</strong> Press <span class="ui">Log Manual Order / Quote</span> at the top
+            of the Back Office so it appears in the same list and on the kitchen display.
+          </div>
+        </section>
+
+        <section id="backoffice">
+          <h2>Back Office tabs</h2>
+          <p class="lead">
+            The menu on the left of the Back Office. Each tab saves to the live website as soon as you press its Save
+            button.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tab</th>
+                  <th>Use it to</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Overview Dashboard</td>
+                  <td>See today's orders and totals, update the LBP exchange rate, turn sound alerts on or off.</td>
+                </tr>
+                <tr>
+                  <td>WhatsApp Orders &amp; Quotes</td>
+                  <td>
+                    See every order, change status, add staff notes, reply on WhatsApp, print tickets, export to Excel.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Kitchen Display (KDS)</td>
+                  <td>
+                    A board for the kitchen: active orders in four columns, with timers that turn amber after 20 minutes
+                    and red after 40.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Client Testimonials</td>
+                  <td>Add, edit or remove the reviews shown on the website.</td>
+                </tr>
+                <tr>
+                  <td>FineDine Menu (239+ Dishes)</td>
+                  <td>
+                    Change dish names, prices, photos and badges; mark dishes sold out; add dishes and categories.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Catering Packages &amp; Stations</td>
+                  <td>Edit the wedding and event packages (price per guest) and live cooking stations.</td>
+                </tr>
+                <tr>
+                  <td>3-Menu QR Codes &amp; Print</td>
+                  <td>Print QR codes for the catering, restaurant and delivery menus, and numbered table QR codes.</td>
+                </tr>
+                <tr>
+                  <td>Galleries, Views &amp; Team</td>
+                  <td>Change the photos in the galleries and the team members on the About page.</td>
+                </tr>
+                <tr>
+                  <td>SEO &amp; Google Search</td>
+                  <td>Edit the title and description Google shows for each page, with a live preview.</td>
+                </tr>
+                <tr>
+                  <td>Settings, Theme &amp; LBP Rate</td>
+                  <td>
+                    WhatsApp numbers, address, opening hours, delivery zones and fees, promo codes, light or dark look.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Security &amp; Admin Login</td>
+                  <td>
+                    Change your username and password, download or restore a database backup, see the activity log.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="howto">
+          <h2>Common tasks</h2>
+          <div class="tasks">
+            <article class="task">
+              <h3>Change a price</h3>
+              <span class="where">FineDine Menu (239+ Dishes)</span>
+              <ol>
+                <li>Search for the dish.</li>
+                <li>Type the new price.</li>
+                <li>Press <span class="ui">Save</span> on that row. The website updates straight away.</li>
+              </ol>
+            </article>
+            <article class="task">
+              <h3>Mark a dish sold out</h3>
+              <span class="where">FineDine Menu (239+ Dishes)</span>
+              <ol>
+                <li>Find the dish.</li>
+                <li>Switch it to <span class="ui">Sold Out</span>. Customers see it greyed out and cannot add it.</li>
+                <li>Switch it back when it is available again.</li>
+              </ol>
+            </article>
+            <article class="task">
+              <h3>Add a new dish</h3>
+              <span class="where">FineDine Menu (239+ Dishes)</span>
+              <ol>
+                <li>Press <span class="ui">Add New Dish</span>.</li>
+                <li>
+                  Choose the category, enter the name, description and price, and upload a photo (JPG or PNG, under 6
+                  MB).
+                </li>
+                <li>Press <span class="ui">Add Dish to Menu</span>.</li>
+              </ol>
+            </article>
+            <article class="task">
+              <h3>Update the dollar rate</h3>
+              <span class="where">Overview Dashboard</span>
+              <ol>
+                <li>In <span class="ui">1 USD =</span> type the new rate in L.L.</li>
+                <li>Press <span class="ui">Update Rate</span>. All LBP prices on the website change.</li>
+              </ol>
+            </article>
+            <article class="task">
+              <h3>Change phone numbers or hours</h3>
+              <span class="where">Settings, Theme &amp; LBP Rate</span>
+              <ol>
+                <li>Edit the WhatsApp numbers, address or opening hours.</li>
+                <li>Press <span class="ui">Save All Website Settings</span> at the bottom.</li>
+              </ol>
+            </article>
+            <article class="task">
+              <h3>Add a customer review</h3>
+              <span class="where">Client Testimonials</span>
+              <ol>
+                <li>Press <span class="ui">+ Add Review</span>.</li>
+                <li>Enter the name, event, words and star rating.</li>
+                <li>Save. It appears in the reviews section of the website.</li>
+              </ol>
+            </article>
+            <article class="task">
+              <h3>Print table QR codes</h3>
+              <span class="where">3-Menu QR Codes &amp; Print</span>
+              <ol>
+                <li>Choose the menu, or the numbered table codes for the terrace.</li>
+                <li>Press <span class="ui">Print QR Standee</span>.</li>
+                <li>Guests who scan a table code see “You are seated at Table #” and a Call Waiter button.</li>
+              </ol>
+            </article>
+            <article class="task">
+              <h3>Change a photo</h3>
+              <span class="where">Galleries, Views &amp; Team</span>
+              <ol>
+                <li>Open the gallery or team section.</li>
+                <li>Upload the new photo or paste its link.</li>
+                <li>Press <span class="ui">Save</span>.</li>
+              </ol>
+            </article>
+          </div>
+        </section>
+
+        <section id="customers">
+          <h2>What customers see</h2>
+          <ul class="plain">
+            <li>Six pages: Catering, Menus &amp; Packages, Restaurant, Delivery, About Us and Contact.</li>
+            <li>
+              A basket on the menus. “Send Order to WhatsApp” opens WhatsApp with the full order written out, and saves
+              it in your Back Office.
+            </li>
+            <li>An Arabic button (العربية) that switches the layout to right-to-left, and a light or dark mode.</li>
+            <li>An order tracker where they enter their <code>MK-</code> number to see its status.</li>
+            <li>QR codes are only in the Back Office. Customers never see the QR printing screen.</li>
+          </ul>
+        </section>
+
+        <section id="safety">
+          <h2>Keeping it safe</h2>
+          <div class="callout safety">
+            The Back Office holds your customers' names, phone numbers and addresses. Treat its password like a bank
+            password.
+          </div>
+          <ul class="plain">
+            <li>
+              <strong>Password:</strong> at least 10 characters, not used anywhere else. Change it in
+              <span class="ui">Security &amp; Admin Login</span>. Changing it signs out every other device.
+            </li>
+            <li><strong>Sign out</strong> with <span class="ui">Lock</span> when you use a shared computer.</li>
+            <li>
+              <strong>Automatic backups:</strong> the server copies the database every day and keeps the last 14 days.
+            </li>
+            <li>
+              <strong>Your own copy:</strong> once a month, press
+              <span class="ui">Download Full Database Backup (.json)</span> in
+              <span class="ui">Security &amp; Admin Login</span> and keep the file somewhere safe.
+              <span class="ui">Restore Backup (.json)</span> puts it back if ever needed.
+            </li>
+            <li>The activity log in the same tab shows every sign-in, failed sign-in and change, with the time.</li>
+          </ul>
+        </section>
+
+        <section id="help">
+          <h2>When something goes wrong</h2>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>What you see</th>
+                  <th>What to do</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>The site still shows old prices or layout</td>
+                  <td>
+                    Press Ctrl + F5 (on a phone, close and reopen the browser tab). Your browser kept an old copy.
+                  </td>
+                </tr>
+                <tr>
+                  <td>The Back Office asks you to sign in again</td>
+                  <td>Your session ended. Sign in again; nothing was lost.</td>
+                </tr>
+                <tr>
+                  <td>“Too many sign-in attempts”</td>
+                  <td>Wait 15 minutes, then try again with the correct password.</td>
+                </tr>
+                <tr>
+                  <td>You forgot the password</td>
+                  <td>Ask your website developer to reset it. Nobody can read the old one, it is stored encrypted.</td>
+                </tr>
+                <tr>
+                  <td>A change shows a red error</td>
+                  <td>The change was not saved. Check your internet connection, sign in again and repeat it.</td>
+                </tr>
+                <tr>
+                  <td>A customer says they ordered but you see nothing</td>
+                  <td>
+                    Check WhatsApp first: the order message goes there even if their connection dropped before the Back
+                    Office saved it.
+                  </td>
+                </tr>
+                <tr>
+                  <td>The website shows “Server Error 500”</td>
+                  <td>Contact your website developer with the time it happened.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <footer>Mini Kitchen · Ain Al Remmaneh, Aley, Mount Lebanon · Guide version: October 2026</footer>
+      </main>
+    </div>
+  </body>
+</html>

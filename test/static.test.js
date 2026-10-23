@@ -83,7 +83,7 @@ test('ETag revalidation returns 304', async () => {
 });
 
 test('pages contain no inline scripts or event handlers', async () => {
-  for (const url of ['/', '/delivery', '/admin', '/missing-page']) {
+  for (const url of ['/', '/delivery', '/admin', '/missing-page', '/owner-guide.html']) {
     const html = await (await get(url)).text();
     assert.doesNotMatch(html, /\son[a-z]+\s*=\s*["']/i, `${url} has an inline on* handler`);
     const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)([^>]*)>/g)].filter(
