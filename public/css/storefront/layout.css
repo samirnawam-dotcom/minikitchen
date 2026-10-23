@@ -168,15 +168,20 @@
   border-inline-start: 1px solid var(--line);
 }
 
+/* The logo is shown whole (no circle crop), with softly rounded corners */
 .brand-logo-img {
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--line-strong);
-  background: var(--bg-card);
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  object-fit: contain;
+  border-radius: 10px;
   flex-shrink: 0;
+}
+
+.site-footer .brand-logo-img {
+  width: 84px;
+  height: 84px;
+  min-width: 84px;
 }
 
 .brand-logo-text {
