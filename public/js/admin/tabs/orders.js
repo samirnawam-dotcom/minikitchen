@@ -122,7 +122,7 @@ registerActions({
 });
 
 registerTab('orders', {
-  title: 'WhatsApp Orders, Catering Quotes & Reservations CRM',
-  subtitle: 'Every order or quote sent to WhatsApp from the website is automatically recorded here',
+  title: 'Orders',
+  subtitle: '',
   render
 });

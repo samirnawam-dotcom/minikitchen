@@ -227,7 +227,7 @@ registerActions({
 });
 
 registerTab('security', {
-  title: 'Back Office Security & Administrator Login Credentials',
-  subtitle: 'Manage administrator username, display profile, password encryption & active session security',
+  title: 'Account',
+  subtitle: '',
   render
 });

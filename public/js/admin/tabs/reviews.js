@@ -187,7 +187,7 @@ registerActions({
 });
 
 registerTab('reviews', {
-  title: 'Verified Client Testimonials & Wedding Reviews Manager',
-  subtitle: 'Add, edit, or feature 5-star wedding, corporate event, and Aley restaurant reviews on the live website',
+  title: 'Reviews',
+  subtitle: '',
   render
 });

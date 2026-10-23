@@ -55,7 +55,9 @@ export function switchTab(tabId) {
   }
   const tab = tabs.get(ui.activeTab);
   byId('boTopbarTitle').textContent = tab.title;
-  byId('boTopbarSub').textContent = tab.subtitle;
+  const sub = byId('boTopbarSub');
+  sub.textContent = tab.subtitle || '';
+  sub.hidden = !tab.subtitle;
   renderActiveTab();
 }
 

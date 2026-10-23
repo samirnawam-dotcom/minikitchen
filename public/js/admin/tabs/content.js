@@ -182,7 +182,7 @@ registerActions({
 });
 
 registerTab('content', {
-  title: 'Website Galleries, Views & Culinary Team Manager',
-  subtitle: 'Manage wedding photos, Aley mountain view photos, chef bios, and behind-the-scenes media',
+  title: 'Photos & Team',
+  subtitle: '',
   render
 });

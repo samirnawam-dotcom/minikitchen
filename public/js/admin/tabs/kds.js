@@ -148,7 +148,7 @@ function render() {
 }
 
 registerTab('kds', {
-  title: 'Live Kitchen Display System (KDS) Kanban Board',
-  subtitle: 'Real-time 4-column kitchen workflow board with elapsed timers and 1-tap status progression',
+  title: 'Kitchen',
+  subtitle: '',
   render
 });

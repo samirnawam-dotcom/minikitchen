@@ -45,7 +45,7 @@ Under **Custom environment variables**, click **specify** and add:
 Click **OK** to save.
 
 > `ADMIN_PASSWORD` is only used the first time, when the database is created. Change it later in the Back Office
-> (**Security & Admin Login**) or with `node scripts/reset-admin-password.js 'NEW-PASSWORD'` from the app folder.
+> (**Account** tab) or with `node scripts/reset-admin-password.js 'NEW-PASSWORD'` from the app folder.
 
 ## 3. Install the database driver and start
 
