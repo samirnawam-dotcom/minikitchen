@@ -7,7 +7,6 @@ import { applyServerContent, loadContentFromCache, CONFIG_KEY, MENU_KEY, LBP_KEY
 import { fetchState } from './api.js';
 import { initImageFallbacks } from './images.js';
 import { setNextOrderSeqHint, saveLocalOrders } from './orders.js';
-import { applySiteTheme, getSavedThemeMode } from './theme.js';
 import { applySiteLanguage } from './i18n.js';
 import { initRouting, navigateToPage } from './navigation.js';
 import { updatePageSeoMeta } from './seo.js';
@@ -21,6 +20,7 @@ import './cart-drawer.js';
 import './dish-modal.js';
 import './menu-view.js';
 import './event-calculator.js';
+import './lightbox.js';
 import './quote-form.js';
 import './pages/catering.js';
 import './pages/catering-menus.js';
@@ -48,7 +48,6 @@ async function syncWithServer() {
 
 function listenForOtherTabs() {
   window.addEventListener('storage', e => {
-    if (e.key === 'mk_theme_mode' && e.newValue) applySiteTheme(e.newValue);
     if (e.key === CONFIG_KEY || e.key === MENU_KEY || e.key === LBP_KEY) {
       loadContentFromCache();
       updatePageSeoMeta(state.currentPage);
@@ -59,7 +58,6 @@ function listenForOtherTabs() {
 
 function init() {
   initImageFallbacks();
-  applySiteTheme(getSavedThemeMode());
   applySiteLanguage(state.lang);
   if (state.qrTableMode) document.body.classList.add('qr-table-mode');
 

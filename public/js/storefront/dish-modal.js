@@ -11,10 +11,10 @@ import { render } from './view.js';
 import { showToast } from './toast.js';
 
 const BADGES = {
-  Popular: '<span class="fd-badge popular"><i class="fa-solid fa-fire"></i> Popular</span>',
+  Popular: '<span class="fd-badge popular">Popular</span>',
   Spicy: '<span class="fd-badge spicy"><i class="fa-solid fa-pepper-hot"></i> Spicy</span>',
   Vegetarian: '<span class="fd-badge vegetarian"><i class="fa-solid fa-leaf"></i> Vegetarian</span>',
-  Sharing: '<span class="fd-badge sharing"><i class="fa-solid fa-users"></i> Sharing</span>'
+  Sharing: '<span class="fd-badge sharing">Sharing</span>'
 };
 
 function ensureModalDom() {
@@ -37,7 +37,7 @@ function renderModifierGroups(modGroups) {
           <div class="fd-mod-header">
             <span class="fd-mod-name">${esc(grp.name)}</span>
             <span class="fd-mod-pill ${grp.required ? 'required' : 'optional'}">
-              ${grp.required ? 'Required • Choose 1' : 'Optional • Select any'}
+              ${grp.required ? 'Required · choose 1' : 'Optional'}
             </span>
           </div>
           <div class="fd-mod-options-list">
@@ -59,7 +59,7 @@ function renderModifierGroups(modGroups) {
                   <span>${esc(opt.label)}</span>
                 </span>
                 <span class="fd-mod-option-price">
-                  ${opt.price > 0 ? `+ ${formatPrice(opt.price)}` : 'Included'}
+                  ${opt.price > 0 ? `+ ${formatPrice(opt.price)}` : ''}
                 </span>
               </label>
             `
@@ -89,12 +89,8 @@ export function openDishModal(itemId, mode) {
           <img src="${esc(item.img)}" data-fallback="${esc(item.fallbackImg)}" alt="${esc(item.title)}" />
           <button class="fd-modal-close" data-action="dish:close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
           <div class="fd-modal-hero-badges">
-            <span style="background:rgba(14,16,21,0.86); color:var(--brand-primary); padding:4px 11px; border-radius:999px; font-size:0.72rem; font-weight:800;">
-              <i class="fa-solid ${esc(cat.icon)}"></i> ${esc(cat.name)}
-            </span>
-            <span style="background:rgba(14,16,21,0.86); color:#fff; padding:4px 11px; border-radius:999px; font-size:0.72rem; font-weight:700;">
-              <i class="fa-regular fa-clock"></i> ${esc(item.prepTime || '15–20 min')}
-            </span>
+            <span class="fd-modal-chip">${esc(cat.name)}</span>
+            <span class="fd-modal-chip"><i class="fa-regular fa-clock"></i> ${esc(item.prepTime || '15–20 min')}</span>
             ${badgesHtml}
           </div>
         </div>
@@ -111,12 +107,12 @@ export function openDishModal(itemId, mode) {
           ${renderModifierGroups(modGroups)}
 
           <div class="fd-modal-notes-wrap">
-            <label for="fdModalSpecialNote"><i class="fa-regular fa-comment-dots"></i> Special Instructions for the Kitchen (Optional)</label>
+            <label for="fdModalSpecialNote">Note for the kitchen (optional)</label>
             <input
               type="text"
               id="fdModalSpecialNote"
               class="form-control"
-              placeholder="e.g., No pickles, extra napkins, allergy note, or event tray request..."
+              placeholder="e.g. no pickles, allergy note…"
             />
           </div>
         </div>
@@ -128,7 +124,7 @@ export function openDishModal(itemId, mode) {
             <button type="button" class="fd-qty-btn" data-action="dish:qty" data-delta="1">+</button>
           </div>
           <button type="button" class="fd-modal-submit-btn" id="fdModalSubmitBtn" data-action="dish:add">
-            <span><i class="fa-solid fa-bag-shopping"></i> Add to Order</span>
+            <span>Add to basket</span>
             <span id="fdModalLiveTotal">${formatPrice(item.priceValue)}</span>
           </button>
         </div>

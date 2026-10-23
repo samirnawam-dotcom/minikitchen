@@ -1,4 +1,4 @@
-// Interactive wedding & event budget calculator on the catering home page:
+// Interactive wedding & event budget calculator on the catering menus page:
 // base package × guests + live-station add-ons, live USD/LBP totals and "send estimate to WhatsApp".
 
 import { registerActions } from '../shared/actions.js';
@@ -95,22 +95,13 @@ function sendEstimateToWhatsApp() {
 function renderStationOption(a) {
   const checked = (state.calcStations || []).includes(a.id);
   return `
-                        <label style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:12px; border:1px solid ${
-                          checked ? 'var(--brand-primary)' : 'var(--border-subtle)'
-                        }; background:${checked ? 'rgba(197,155,39,0.1)' : 'var(--bg-elevated)'}; cursor:pointer; font-size:0.86rem;">
-                          <span style="display:flex; align-items:center; gap:10px; font-weight:600;">
-                            <input
-                              type="checkbox"
-                              ${checked ? 'checked' : ''}
-                              data-on-change="calc:station"
-                              data-id="${esc(a.id)}"
-                              style="accent-color:var(--brand-primary); width:16px; height:16px;"
-                            />
-                            <span>${esc(a.name)}</span>
-                          </span>
-                          <span style="font-weight:800; color:var(--brand-primary-dark); white-space:nowrap; margin-inline-start: 8px;">+$${esc(a.pricePerGuest)}/guest</span>
-                        </label>
-                      `;
+                <label class="calc-option${checked ? ' checked' : ''}">
+                  <span class="calc-option-left">
+                    <input type="checkbox" ${checked ? 'checked' : ''} data-on-change="calc:station" data-id="${esc(a.id)}" />
+                    <span>${esc(a.name)}</span>
+                  </span>
+                  <span class="calc-option-price">+$${esc(a.pricePerGuest)}/guest</span>
+                </label>`;
 }
 
 export function renderEventBudgetCalculator() {
@@ -118,29 +109,24 @@ export function renderEventBudgetCalculator() {
   const calc = computeTotals();
 
   return `
-      <section class="section-pad" style="background:var(--bg-elevated); border-top:1px solid var(--border-subtle); border-bottom:1px solid var(--border-subtle);">
+      <section class="section-pad section-ivory" id="eventCalculatorSection">
         <div class="container">
-          <div class="section-header" style="margin-bottom:28px;">
-            <span class="section-eyebrow"><i class="fa-solid fa-calculator"></i> Instant Event Budget Estimator</span>
-            <h2 class="section-title">Interactive Wedding & Event Cost Calculator</h2>
-            <p class="section-desc">
-              Customize your guest count, choose a base catering formula, and add chef-manned live cooking stations to see an instant per-guest and total event estimate.
-            </p>
-          </div>
+          <header class="section-header">
+            <span class="eyebrow">Budget</span>
+            <h2 class="section-title">Estimate your event</h2>
+            <p class="section-desc">Pick a package, set your guest count and add live stations to see a per-guest and total estimate.</p>
+          </header>
 
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap:28px; align-items:stretch;">
-            <!-- Left Controls -->
-            <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:20px; padding:26px; box-shadow:var(--shadow-soft);">
-              <div class="form-group" style="margin-bottom:18px;">
-                <label style="display:flex; justify-content:space-between; align-items:center; font-weight:800;">
-                  <span>1. Choose Base Catering Package</span>
-                </label>
-                <select class="form-control" data-on-change="calc:package">
+          <div class="calc-layout">
+            <div class="calc-panel">
+              <div class="form-group">
+                <label for="calcPackageSelect">1 · Package</label>
+                <select id="calcPackageSelect" class="form-control" data-on-change="calc:package">
                   ${pkgs
                     .map(
                       (p, idx) => `
                     <option value="${idx}" ${state.calcPkgIdx === idx ? 'selected' : ''}>
-                      ${esc(p.title)} (${esc(p.pricePerPerson)}/guest • ${esc(p.minGuests)})
+                      ${esc(p.title)} (${esc(p.pricePerPerson)}/guest · ${esc(p.minGuests)})
                     </option>
                   `
                     )
@@ -148,86 +134,65 @@ export function renderEventBudgetCalculator() {
                 </select>
               </div>
 
-              <div class="form-group" style="margin-bottom:20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <label style="font-weight:800; margin:0;">2. Estimated Guest Count</label>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <input
-                      type="number"
-                      id="calcGuestsNumber"
-                      class="form-control"
-                      style="width:92px; padding:6px 10px; font-weight:800; text-align:center;"
-                      min="15"
-                      max="1500"
-                      value="${calc.guests}"
-                      data-on-input="calc:guests"
-                      data-on-change="calc:guests-commit"
-                    />
-                    <span style="font-size:0.82rem; font-weight:700; color:var(--text-muted);">Guests</span>
-                  </div>
+              <div class="form-group">
+                <div class="calc-guests-head">
+                  <label for="calcGuestsNumber">2 · Guests</label>
+                  <input
+                    type="number"
+                    id="calcGuestsNumber"
+                    class="form-control form-control-sm calc-guests-input"
+                    min="15"
+                    max="1500"
+                    value="${calc.guests}"
+                    data-on-input="calc:guests"
+                    data-on-change="calc:guests-commit"
+                  />
                 </div>
                 <input
                   type="range"
                   id="calcGuestsSlider"
+                  class="calc-range"
                   min="20"
                   max="500"
                   step="5"
                   value="${Math.min(500, calc.guests)}"
-                  style="width:100%; accent-color:var(--brand-primary); cursor:pointer;"
+                  aria-label="Guest count"
                   data-on-input="calc:guests"
                 />
-                <div style="display:flex; justify-content:space-between; font-size:0.74rem; color:var(--text-muted); margin-top:4px;">
-                  <span>20 Guests (Intimate)</span>
-                  <span>150 Guests</span>
-                  <span>300 Guests</span>
-                  <span>500+ Guests (Grand Gala)</span>
-                </div>
+                <div class="calc-range-scale"><span>20</span><span>150</span><span>300</span><span>500+</span></div>
               </div>
 
-              <div>
-                <label style="font-weight:800; display:block; margin-bottom:10px;">3. Add Interactive Live Cooking Stations (Optional)</label>
-                <div style="display:flex; flex-direction:column; gap:8px;">
+              <div class="form-group">
+                <span class="calc-label">3 · Live stations (optional)</span>
+                <div class="calc-options">
                   ${getStationAddons().map(renderStationOption).join('')}
                 </div>
               </div>
             </div>
 
-            <!-- Right Live Summary Card -->
-            <div style="background:#14171c; color:#fff; border:2px solid var(--brand-primary); border-radius:20px; padding:30px; display:flex; flex-direction:column; justify-content:space-between;">
-              <div>
-                <span style="display:inline-block; background:rgba(197,155,39,0.2); color:#e6c45a; font-size:0.74rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; padding:5px 12px; border-radius:999px; margin-bottom:14px;">
-                  <i class="fa-solid fa-crown"></i> Live Tailored Estimate
-                </span>
-                <h3 id="calcPkgTitle" style="font-family:var(--font-serif); font-size:1.55rem; color:#fff; margin-bottom:6px;">${esc(calc.chosenPkg.title)}</h3>
-                <div id="calcBreakdownText" style="font-size:0.86rem; color:rgba(255,255,255,0.75); margin-bottom:20px;">
-                  ${esc(breakdownText(calc))}
-                </div>
+            <div class="calc-summary">
+              <span class="eyebrow">Your estimate</span>
+              <h3 id="calcPkgTitle" class="calc-summary-title">${esc(calc.chosenPkg.title)}</h3>
+              <div id="calcBreakdownText" class="calc-breakdown">${esc(breakdownText(calc))}</div>
 
-                <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:18px; margin-bottom:18px;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <span style="font-size:0.82rem; color:rgba(255,255,255,0.7);">All-Inclusive Rate Per Guest:</span>
-                    <strong id="calcPerGuestDisplay" style="font-size:1.2rem; color:#e6c45a;">$${calc.totalPerGuest.toFixed(0)} / guest</strong>
-                  </div>
-                  <div style="border-top:1px dashed rgba(255,255,255,0.15); padding-top:12px;">
-                    <div style="font-size:0.76rem; text-transform:uppercase; letter-spacing:0.08em; color:rgba(255,255,255,0.65);">Estimated Total Event Investment</div>
-                    <div id="calcTotalUsdDisplay" style="font-family:var(--font-serif); font-size:2.35rem; font-weight:700; color:#fff; line-height:1.2; margin-top:4px;">
-                      $${calc.totalEventUsd.toLocaleString('en-US')}
-                    </div>
-                    <div id="calcTotalLbpDisplay" style="font-size:0.85rem; color:#e6c45a; font-weight:700; margin-top:4px;">
-                      ${lbp(calc.totalEventUsd)}
-                    </div>
-                  </div>
+              <div class="calc-figures">
+                <div class="calc-figure-row">
+                  <span>Per guest</span>
+                  <strong id="calcPerGuestDisplay">$${calc.totalPerGuest.toFixed(0)} / guest</strong>
                 </div>
-
-                <ul style="list-style:none; padding:0; margin:0 0 22px; font-size:0.83rem; color:rgba(255,255,255,0.82); display:flex; flex-direction:column; gap:6px;">
-                  <li><i class="fa-solid fa-circle-check" style="color:#25d366; margin-inline-end: 8px;"></i> Includes Luxury Buffet Setup, Chafing Dishes & Porcelain</li>
-                  <li><i class="fa-solid fa-circle-check" style="color:#25d366; margin-inline-end: 8px;"></i> Uniformed Hospitality Waitstaff & On-Site Event Chef</li>
-                  <li><i class="fa-solid fa-circle-check" style="color:#25d366; margin-inline-end: 8px;"></i> Complimentary Private Menu Tasting in Ain Al Remmaneh, Aley</li>
-                </ul>
+                <div class="calc-total-label">Estimated total</div>
+                <div id="calcTotalUsdDisplay" class="calc-total">$${calc.totalEventUsd.toLocaleString('en-US')}</div>
+                <div id="calcTotalLbpDisplay" class="calc-total-lbp">${lbp(calc.totalEventUsd)}</div>
               </div>
 
-              <button type="button" class="btn btn-whatsapp" style="width:100%; padding:14px; font-size:0.95rem;" data-action="calc:send">
-                <i class="fa-brands fa-whatsapp" style="font-size:1.15rem;"></i> Send This Estimate to WhatsApp & Check Dates
+              <ul class="check-list">
+                <li>Buffet set-up, chafing dishes &amp; porcelain</li>
+                <li>Uniformed waitstaff and an on-site chef</li>
+                <li>Free menu tasting in Ain Al Remmaneh</li>
+              </ul>
+
+              <button type="button" class="btn btn-whatsapp btn-block" data-action="calc:send">
+                <i class="fa-brands fa-whatsapp"></i> Send estimate &amp; check dates
               </button>
             </div>
           </div>

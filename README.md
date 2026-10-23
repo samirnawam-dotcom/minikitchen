@@ -54,8 +54,7 @@ public/
   js/admin/             Back Office: main.js entry, api, auth, sync, router, ui/*, orders/*, tabs/* (one per tab)
   js/shared/            actions.js (data-action event wiring), dom.js (esc, selectors), storage.js
   js/data/              Default site configuration and the 239-dish menu (ES modules)
-  js/theme-init.js      Applies the saved light/dark theme before first paint
-  css/storefront/       Website styles, split in cascade order (tokens → base → layout → … → dark)
+  css/storefront/       Website styles, split in cascade order (tokens → base → layout → … → rtl)
   css/admin/            Back Office styles, split in cascade order
   favicon, manifest, robots.txt, sitemap.xml, 404.html
 scripts/                Maintenance scripts (reset-admin-password.js)

@@ -1,4 +1,4 @@
-// Interactive FineDine menu explorer shared by the catering à-la-carte tab, the restaurant table menu
+// Interactive menu explorer (FineDine-style) shared by the catering à-la-carte tab, the restaurant table menu
 // and the delivery menu: category stories, search, currency / layout / dietary toggles and dish cards.
 //
 // `mode` is 'catering' | 'resto' | 'delivery'; each mode keeps its own category + search state.
@@ -31,10 +31,10 @@ const modeState = mode => MODE_STATE[mode] || MODE_STATE.resto;
 const WA_BRAND_BY_MODE = { catering: 'catering', resto: 'restaurant', delivery: 'delivery' };
 
 const BADGE_PILLS = {
-  Popular: '<span class="fd-badge popular"><i class="fa-solid fa-fire"></i> Popular</span>',
+  Popular: '<span class="fd-badge popular">Popular</span>',
   Spicy: '<span class="fd-badge spicy"><i class="fa-solid fa-pepper-hot"></i> Spicy</span>',
   Vegetarian: '<span class="fd-badge vegetarian"><i class="fa-solid fa-leaf"></i> Veg</span>',
-  Sharing: '<span class="fd-badge sharing"><i class="fa-solid fa-users"></i> Sharing</span>'
+  Sharing: '<span class="fd-badge sharing">Sharing</span>'
 };
 
 export function availableCategories(allowedCatIds) {
@@ -82,50 +82,45 @@ const dishAction = (item, mode) =>
 
 function renderGridItem(item, mode, inBagQty) {
   const isSoldOut = Boolean(item.soldOut);
+  let label = '<i class="fa-solid fa-plus"></i> Add';
+  if (isSoldOut) label = 'Sold out';
+  else if (inBagQty > 0) label = `<i class="fa-solid fa-check"></i> ${inBagQty} in basket`;
   return `
-                            <div class="dish-card" style="cursor:${isSoldOut ? 'not-allowed' : 'pointer'}; ${isSoldOut ? 'opacity:0.65;' : ''}" ${dishAction(item, mode)}>
+                            <article class="dish-card${isSoldOut ? ' is-sold-out' : ''}" ${dishAction(item, mode)}>
                               <div class="dish-card-img-wrap">
                                 <img src="${esc(item.img)}" data-fallback="${esc(item.fallbackImg)}" alt="${esc(item.title)}" loading="lazy" />
-                                <span class="dish-price-tag">${formatPrice(item.priceValue)}</span>
                               </div>
                               <div class="dish-card-body">
                                 ${renderBadgePills(item.badges)}
-                                <div class="dish-title">${esc(item.title)}</div>
-                                <div class="dish-desc">${esc(item.desc || 'Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen.')}</div>
+                                <h4 class="dish-title">${esc(item.title)}</h4>
+                                <p class="dish-desc">${esc(item.desc || 'Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen.')}</p>
                                 <div class="dish-actions">
-                                  <button class="btn-add-order" ${isSoldOut ? 'disabled style="background:#9ca3af; cursor:not-allowed;"' : ''} ${dishAction(item, mode)}>
-                                    <i class="fa-solid ${isSoldOut ? 'fa-ban' : inBagQty > 0 ? 'fa-check' : 'fa-plus'}"></i>
-                                    ${isSoldOut ? 'Sold Out' : inBagQty > 0 ? `In Bag (${inBagQty}) • Add More` : 'Customize & Add'}
-                                  </button>
+                                  <span class="fd-item-price">${formatPrice(item.priceValue)}</span>
+                                  <button class="btn-add-order${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)}>${label}</button>
                                 </div>
                               </div>
-                            </div>
+                            </article>
                           `;
 }
 
 function renderSplitItem(item, cat, mode, inBagQty) {
   const hasCustomMods = cat.modType && cat.modType !== 'none';
   const isSoldOut = Boolean(item.soldOut);
-  let tag = `<span class="fd-item-customize-tag"><i class="fa-solid fa-circle-info"></i> View Details</span>`;
-  if (isSoldOut)
-    tag = `<span class="fd-item-customize-tag" style="color:#dc2626;"><i class="fa-solid fa-ban"></i> Sold Out</span>`;
+  let tag = '';
+  if (isSoldOut) tag = '<span class="fd-item-customize-tag is-sold-out">Sold out</span>';
   else if (hasCustomMods)
-    tag = `<span class="fd-item-customize-tag"><i class="fa-solid fa-sliders"></i> Customizable</span>`;
+    tag = '<span class="fd-item-customize-tag"><i class="fa-solid fa-sliders"></i> Options</span>';
 
-  let addLabel = `<i class="fa-solid fa-plus"></i> Add`;
-  if (isSoldOut) addLabel = `<i class="fa-solid fa-ban"></i> Sold Out`;
-  else if (inBagQty > 0) addLabel = `<i class="fa-solid fa-check"></i> ${inBagQty} in Bag`;
+  let addLabel = '<i class="fa-solid fa-plus"></i> Add';
+  if (isSoldOut) addLabel = 'Sold out';
+  else if (inBagQty > 0) addLabel = `<i class="fa-solid fa-check"></i> ${inBagQty}`;
 
   return `
-                            <div class="fd-item-card" style="${isSoldOut ? 'opacity:0.65; cursor:not-allowed;' : ''}" ${dishAction(item, mode)}>
+                            <article class="fd-item-card${isSoldOut ? ' is-sold-out' : ''}" ${dishAction(item, mode)}>
                               <div class="fd-item-info">
-                                <div>
-                                  ${renderBadgePills(item.badges)}
-                                  <div class="fd-item-title">${esc(item.title)}</div>
-                                  <div class="fd-item-desc">
-                                    ${esc(item.desc || 'Prepared fresh to order with signature Mini Kitchen ingredients.')}
-                                  </div>
-                                </div>
+                                ${renderBadgePills(item.badges)}
+                                <h4 class="fd-item-title">${esc(item.title)}</h4>
+                                <p class="fd-item-desc">${esc(item.desc || 'Prepared fresh to order with signature Mini Kitchen ingredients.')}</p>
                                 <div class="fd-item-bottom">
                                   <span class="fd-item-price">${formatPrice(item.priceValue)}</span>
                                   <span class="fd-item-meta-pill"><i class="fa-regular fa-clock"></i> ${esc(item.prepTime || '15–20 min')}</span>
@@ -141,16 +136,11 @@ function renderSplitItem(item, cat, mode, inBagQty) {
                                   class="fd-item-media-img"
                                   loading="lazy"
                                 />
-                                <button
-                                  type="button"
-                                  class="fd-add-float-btn ${inBagQty > 0 ? 'in-cart' : ''}"
-                                  style="${isSoldOut ? 'background:#6b7280; color:#fff; cursor:not-allowed;' : ''}"
-                                  ${dishAction(item, mode)}
-                                >
+                                <button type="button" class="fd-add-float-btn${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)}>
                                   ${addLabel}
                                 </button>
                               </div>
-                            </div>
+                            </article>
                           `;
 }
 
@@ -181,23 +171,22 @@ function renderCategorySection(cat, { mode, activeCat, isOverviewMode, qtyByItem
                       />
                       <div>
                         <h3 class="fd-category-banner-title">${catName}</h3>
-                        <div class="fd-category-banner-sub">${esc(cat.subtitle || cat.badge)} • ${cat.items.length} dishes</div>
+                        <div class="fd-category-banner-sub">${esc(cat.subtitle || cat.badge)} · ${cat.items.length} dishes</div>
                       </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <div class="fd-category-actions">
                       ${
                         activeCat !== 'all'
-                          ? `<button type="button" class="btn btn-outline-dark" style="padding:8px 14px; font-size:0.78rem;" data-action="menu:category" data-mode="${mode}" data-cat="all"><i class="fa-solid fa-arrow-left"></i> Back to All Categories</button>`
+                          ? `<button type="button" class="text-link" data-action="menu:category" data-mode="${mode}" data-cat="all"><i class="fa-solid fa-arrow-left"></i> All categories</button>`
                           : ''
                       }
                       <button
-                        class="btn btn-whatsapp"
-                        style="padding:8px 14px; font-size:0.78rem;"
+                        class="text-link text-link-wa"
                         data-action="wa:open"
                         data-brand="${WA_BRAND_BY_MODE[mode] || 'delivery'}"
                         data-msg="${esc(askMsg)}"
                       >
-                        <i class="fa-brands fa-whatsapp"></i> Ask About ${catName}
+                        <i class="fa-brands fa-whatsapp"></i> Ask about this
                       </button>
                     </div>
                   </div>
@@ -208,7 +197,7 @@ function renderCategorySection(cat, { mode, activeCat, isOverviewMode, qtyByItem
                     hiddenCount > 0
                       ? `<div class="fd-cat-expand-footer">
                           <button type="button" class="fd-cat-expand-btn" data-action="menu:category" data-mode="${mode}" data-cat="${esc(cat.id)}">
-                            <span>View All ${cat.items.length} Dishes in ${catName} (+${hiddenCount} more)</span>
+                            <span>See all ${cat.items.length} dishes</span>
                             <i class="fa-solid fa-arrow-right"></i>
                           </button>
                         </div>`
@@ -220,11 +209,11 @@ function renderCategorySection(cat, { mode, activeCat, isOverviewMode, qtyByItem
 
 function renderResults(mode, filteredCats, activeCat, activeSearch) {
   if (filteredCats.length === 0) {
-    return `<div style="text-align:center; padding:60px 20px; background:var(--bg-card); border-radius:20px; border:1px solid var(--border-subtle);">
-                  <i class="fa-solid fa-utensils" style="font-size:2.5rem; color:var(--text-muted); margin-bottom:12px;"></i>
-                  <h3>No matching dishes found</h3>
-                  <p style="color:var(--text-muted); margin-bottom:18px;">Try clearing your search or dietary filter, or message us directly on WhatsApp!</p>
-                  <button class="btn btn-primary" data-action="menu:reset" data-mode="${mode}">Reset All Filters</button>
+    return `<div class="empty-state">
+                  <i class="fa-solid fa-utensils"></i>
+                  <h3>No matching dishes</h3>
+                  <p>Try another search or filter, or ask us on WhatsApp.</p>
+                  <button class="btn btn-outline" data-action="menu:reset" data-mode="${mode}">Reset filters</button>
                 </div>`;
   }
   // Map item quantities currently in the cart so cards show live badges
@@ -269,21 +258,18 @@ export function renderMenuExplorer(mode) {
         <!-- 0. DEDICATED QR CODE BAR FOR THIS MENU -->
         ${renderTableBanner()}
 
-        <!-- 1. FINEDINE VISUAL CATEGORY STORY CAROUSEL -->
+        <!-- 1. Category circles -->
         <div class="fd-cat-stories-wrap">
           <div class="fd-cat-stories-header">
             <div class="fd-cat-stories-title">
-              <i class="fa-solid fa-utensils" style="color:var(--brand-primary-dark);"></i>
-              <span>Select a Category (${catsList.length})</span>
+              <span class="eyebrow">Categories · ${catsList.length}</span>
               ${
                 activeCat !== 'all'
-                  ? `<button type="button" data-action="menu:category" data-mode="${mode}" data-cat="all" style="margin-inline-start: 8px; background:#f3f4f6; border:1px solid #d1d5db; border-radius:999px; padding:2px 10px; font-size:0.7rem; font-weight:700; cursor:pointer; color:#111827;">✕ Show All Categories</button>`
+                  ? `<button type="button" class="fd-clear-btn" data-action="menu:category" data-mode="${mode}" data-cat="all"><i class="fa-solid fa-xmark"></i> Show all</button>`
                   : ''
               }
             </div>
-            <div style="font-size:0.76rem; color:#6b7280; font-weight:600;">
-              <i class="fa-solid fa-hand-pointer" style="color:var(--brand-primary-dark);"></i> Tap any dish to customize & add
-            </div>
+            <div class="fd-cat-stories-hint">Tap a dish to choose options and add it</div>
           </div>
 
           <div class="fd-cat-stories-scroller">
@@ -294,8 +280,8 @@ export function renderMenuExplorer(mode) {
               <div class="fd-story-thumb">
                 <img src="${logo}" data-fallback="" alt="All Categories" />
               </div>
-              <div class="fd-story-name">All Menu</div>
-              <div class="fd-story-count">${totalDishCount} dishes</div>
+              <div class="fd-story-name">All</div>
+              <div class="fd-story-count">${totalDishCount}</div>
             </div>
 
             ${catsList
@@ -309,7 +295,7 @@ export function renderMenuExplorer(mode) {
                   <img src="${esc(c.thumbImg || c.items[0]?.img || content.config.logos.main)}" data-fallback="" alt="${esc(c.name)}" loading="lazy" />
                 </div>
                 <div class="fd-story-name">${esc(c.name)}</div>
-                <div class="fd-story-count">${c.items.length} items</div>
+                <div class="fd-story-count">${c.items.length}</div>
               </div>
             `
               )
@@ -325,7 +311,7 @@ export function renderMenuExplorer(mode) {
               <input
                 type="text"
                 class="fd-search-input"
-                placeholder="Search ${totalDishCount}+ dishes, ingredients, burgers, mezza, grills..."
+                placeholder="Search ${totalDishCount} dishes…"
                 value="${esc(activeSearch)}"
                 data-on-input="menu:search"
                 data-mode="${mode}"
@@ -341,26 +327,26 @@ export function renderMenuExplorer(mode) {
 
               <!-- View Mode Toggle (Split List vs Photo Grid) -->
               <div class="fd-toggle-pill-group" title="Switch Menu Layout">
-                ${toggleBtn(state.menuLayout === 'split', 'menu:layout', 'split', '<i class="fa-solid fa-table-list"></i> FineDine Split')}
-                ${toggleBtn(state.menuLayout === 'grid', 'menu:layout', 'grid', '<i class="fa-solid fa-grip"></i> Photo Grid')}
+                ${toggleBtn(state.menuLayout === 'split', 'menu:layout', 'split', '<i class="fa-solid fa-list"></i> List')}
+                ${toggleBtn(state.menuLayout === 'grid', 'menu:layout', 'grid', '<i class="fa-solid fa-grip"></i> Photos')}
               </div>
 
-              <button class="btn btn-whatsapp" style="padding:10px 16px; font-size:0.82rem;" data-action="cart:open">
+              <button class="btn btn-primary btn-sm fd-bag-btn" data-action="cart:open">
                 <i class="fa-solid fa-bag-shopping"></i>
-                <span>Bag (${cartCount()}) • ${formatPrice(cartSubtotal())}</span>
+                <span>Basket (${cartCount()}) · ${formatPrice(cartSubtotal())}</span>
               </button>
             </div>
           </div>
 
           <div class="fd-dietary-row">
             <div class="fd-dietary-pills">
-              ${dietChip('all', 'All Dishes')}
-              ${dietChip('popular', '<i class="fa-solid fa-fire" style="color:#d97706;"></i> Popular & Signatures')}
-              ${dietChip('spicy', '<i class="fa-solid fa-pepper-hot" style="color:#dc2626;"></i> Spicy')}
-              ${dietChip('vegetarian', '<i class="fa-solid fa-leaf" style="color:#16a34a;"></i> Vegetarian')}
-              ${dietChip('sharing', '<i class="fa-solid fa-users" style="color:#4f46e5;"></i> Group & Sharing')}
+              ${dietChip('all', 'All dishes')}
+              ${dietChip('popular', 'Popular')}
+              ${dietChip('spicy', 'Spicy')}
+              ${dietChip('vegetarian', 'Vegetarian')}
+              ${dietChip('sharing', 'For sharing')}
             </div>
-            <div style="font-size:0.75rem; color:#6b7280;">
+            <div class="fd-rate-note">
               ${state.currency === 'LBP' ? `Rate: 1 USD = ${content.lbpRate.toLocaleString('en-US')} L.L.` : 'Prices shown in USD ($)'}
             </div>
           </div>

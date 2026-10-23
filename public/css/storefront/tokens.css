@@ -1,53 +1,80 @@
-/* storefront/tokens.css — Design tokens: colour palette, typography, radii and the per-brand (restaurant / delivery) overrides.
-   Part 1 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
+/* storefront/tokens.css — Design tokens: colour, type, spacing, radii and the per-brand accents.
+   Part 1 of 8; files are linked in this order in views/storefront.html (cascade order matters).
 
-/* ============================================================================
-   MINI KITCHEN CATERING, RESTAURANT & DELIVERY — LUXURY MULTI-BRAND STYLESHEET
-   Refined Hospitality Color System + FineDine QR Digital Menu Architecture
-   ============================================================================ */
+   The website is light only: near-white pages, a warmer ivory for alternating sections, ink text
+   with real contrast and Mini Kitchen gold as the single accent. Hairlines do the work that heavy
+   shadows and boxes used to do. */
 
 :root {
-  /* 1. Flagship Brand: Mini Kitchen Catering (Champagne Gold & Warm Espresso) */
-  --brand-primary: #c59b27;
-  --brand-primary-dark: #967315;
-  --brand-primary-light: #fbf6e8;
-  --brand-secondary: #16181d;
-  --bg-main: #f9f8f6;
-  --bg-card: #ffffff;
-  --bg-dark: #14171c;
-  --bg-dark-elevated: #1c2026;
-  --text-main: #181a1f;
-  --text-muted: #5a606a;
-  --text-light: #f9f8f6;
-  --border-subtle: rgba(197, 155, 39, 0.24);
-  --whatsapp-green: #1da851;
-  --whatsapp-dark: #128c7e;
-  --shadow-soft: 0 10px 30px -10px rgba(20, 23, 28, 0.07);
-  --shadow-hover: 0 20px 42px -12px rgba(20, 23, 28, 0.14);
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Surfaces */
+  --bg-page: #fcfbf8; /* near-white page */
+  --bg-ivory: #f6f2ea; /* alternating sections, footer, quiet panels */
+  --bg-card: #ffffff; /* cards, drawers, dialogs */
+  --bg-sunken: #f1ece2; /* tracks of segmented controls, image placeholders */
+
+  /* Text (contrast measured on --bg-page) */
+  --ink: #1d1b18; /* headings — 16:1 */
+  --text: #3a3630; /* body — 11:1 */
+  --text-muted: #69625a; /* secondary text — 5.8:1 */
+  --text-on-dark: #ffffff;
+
+  /* Lines */
+  --line: #e8e2d7; /* hairlines between things */
+  --line-strong: #d6ccbb; /* inputs, section rules */
+
+  /* Brand accent: Mini Kitchen gold (catering, about, contact pages) */
+  --brand-primary: #c59b27; /* decorative: rules, rings, active marks */
+  --brand-ink: #8a6914; /* accent text on light surfaces — ≥ 4.5:1 */
+  --brand-soft: #f7efd9; /* tinted backgrounds */
+
+  /* Actions */
+  --whatsapp: #1a8045; /* white text on it — 5:1 */
+  --whatsapp-hover: #146a39;
+  --danger: #b42318;
+  --success: #1d7a45;
+
+  /* Type */
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --fs-body: 1.03rem; /* 16.5px */
+  --fs-small: 0.9rem;
+  --fs-xs: 0.8rem;
+  --fs-eyebrow: 0.74rem;
+  --fs-h1: clamp(2.3rem, 4.4vw, 3.9rem);
+  --fs-h2: clamp(1.85rem, 3vw, 2.6rem);
+  --fs-h3: 1.4rem;
+  --tracking-caps: 0.2em;
+
+  /* Shape: radii by role, not on every block */
+  --radius-photo: 4px;
+  --radius-control: 999px; /* buttons, chips */
+  --radius-field: 8px; /* inputs */
+  --radius-card: 12px; /* menu cards, panels */
+  --radius-dialog: 16px;
+
+  /* Elevation: only floating things get a shadow */
+  --shadow-float: 0 18px 48px -18px rgba(29, 27, 24, 0.28);
+  --shadow-dialog: 0 30px 80px -24px rgba(29, 27, 24, 0.35);
+
+  /* Layout */
+  --header-h: 76px;
+  --section-y: clamp(64px, 9vw, 112px);
+  --container: 1240px;
+  --gutter: 24px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition: all 0.25s var(--ease);
 }
 
-/* 2. Brand Theme Override: Mini Kitchen Restaurant (Aley Mountain Pine & Cedar Green) */
+/* Restaurant pages: deep cedar green accent */
 body[data-brand='restaurant'] {
-  --brand-primary: #2d6a4f;
-  --brand-primary-dark: #1b4332;
-  --brand-primary-light: #eaf4ef;
-  --brand-secondary: #13241c;
-  --bg-main: #f7faf8;
-  --border-subtle: rgba(45, 106, 79, 0.22);
+  --brand-primary: #3d7a5e;
+  --brand-ink: #2b5e47;
+  --brand-soft: #e8f1ec;
 }
 
-/* 3. Brand Theme Override: Mini Kitchen Delivery (Appetizing Culinary Terracotta) */
+/* Delivery page: muted terracotta accent */
 body[data-brand='delivery'] {
-  --brand-primary: #d94e28;
-  --brand-primary-dark: #b03818;
-  --brand-primary-light: #fdf0ec;
-  --brand-secondary: #181515;
-  --bg-main: #faf8f7;
-  --border-subtle: rgba(217, 78, 40, 0.22);
+  --brand-primary: #c4623a;
+  --brand-ink: #a2461f;
+  --brand-soft: #f9ebe4;
 }
