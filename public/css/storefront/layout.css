@@ -175,11 +175,13 @@
 }
 
 .brand-logo-img {
-  width: auto;
+  width: 105px;
   height: 70px;
+  overflow: hidden;
 }
 
 .site-footer .brand-logo-img {
+  width: 156px;
   height: 104px;
 }
 
