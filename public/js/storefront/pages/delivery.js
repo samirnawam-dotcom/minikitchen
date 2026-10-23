@@ -38,9 +38,6 @@ function buildDeliveryPage() {
               <button class="btn btn-whatsapp" data-action="cart:open">
                 <i class="fa-solid fa-bag-shopping"></i> Order Bag (${cartCount()} items • ${formatPrice(cartSubtotal())})
               </button>
-              <button class="btn btn-outline-light" data-action="qr:open" data-mode="delivery">
-                <i class="fa-solid fa-qrcode"></i> View Delivery Menu QR Code
-              </button>
             </div>
           </div>`
       })}

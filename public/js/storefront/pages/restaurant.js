@@ -68,9 +68,6 @@ function buildRestaurantPage() {
               <button class="btn btn-whatsapp" data-action="wa:open" data-brand="restaurant" data-msg="Hello Mini Kitchen Restaurant! I would like to reserve a table in Ain Al Remmaneh, Aley.">
                 <i class="fa-brands fa-whatsapp" style="font-size:1.15rem;"></i> Reserve a Table on WhatsApp
               </button>
-              <button class="btn btn-outline-light" data-action="qr:open" data-mode="resto">
-                <i class="fa-solid fa-qrcode"></i> Table Dine-In QR Code
-              </button>
               <a class="btn btn-outline-light" href="${esc(location.googleMapsUrl)}" target="_blank" rel="noopener">
                 <i class="fa-solid fa-location-dot"></i> Get Directions (${esc(location.short)})
               </a>
