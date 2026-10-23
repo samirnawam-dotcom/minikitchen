@@ -54,10 +54,10 @@
     padding-inline-start: 12px;
     gap: 10px;
   }
-  .brand-logo-img {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
+  .brand-logo-img,
+  .site-footer .brand-logo-img {
+    width: 84px;
+    height: 56px;
   }
   .hamburger-label,
   .header-pref-btn {
@@ -82,10 +82,10 @@
   .brand-logo-sub {
     letter-spacing: 0.12em;
   }
-  .brand-logo-img {
-    width: 46px;
+  .brand-logo-img,
+  .site-footer .brand-logo-img {
+    width: 69px;
     height: 46px;
-    min-width: 46px;
   }
 }
 
