@@ -28,9 +28,9 @@ const STOREFRONT_PAGES = {
   'catering-menus.html': {
     brand: 'catering',
     page: 'catering-menus',
-    title: 'Catering Set Menus & Interactive FineDine Menu | Mini Kitchen Catering Lebanon',
+    title: 'Catering Packages & Menus | Mini Kitchen Catering Aley, Lebanon',
     description:
-      "Explore Mini Kitchen Catering's 7 curated luxury wedding & corporate set menus ($35-$75/guest) and interactive FineDine Catering Menu with 23+ artisanal dishes in Aley & Lebanon."
+      'Mini Kitchen catering packages: event buffets from $20 per person, Birthday Mini packages from $18 per person, live stations, main course trays and mini bites in Aley & Lebanon.'
   },
   'restaurant.html': {
     brand: 'restaurant',

@@ -16,7 +16,7 @@ function buildAboutPage() {
       ${pageHero({
         eyebrow: 'About Mini Kitchen',
         title: 'A family kitchen in the mountains of Aley',
-        text: 'One kitchen, three ways to enjoy it: catering for your events, our restaurant terrace, and delivery to your door.',
+        text: 'A catering kitchen first — buffets, birthdays and live stations for your events — with our restaurant terrace and delivery on the side.',
         photo: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1400&q=85',
         alt: 'The Mini Kitchen team at work'
       })}

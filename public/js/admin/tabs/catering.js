@@ -1,262 +1,455 @@
-// Catering tab: event/wedding packages and live cooking stations (siteConfig.cateringPackages /
-// siteConfig.liveStations), each with inline editing, delete and an "add" modal.
+// Packages tab: everything on the website's catering offer, editable without code.
+//   Packages      — siteConfig.eventPackages (event buffets & Birthday Minis): name, price per person,
+//                   badge, how many dishes per dish list, what is included, photo
+//   Dish lists    — siteConfig.cateringChoiceGroups: the dishes customers pick from ("appetizers")
+//   Live stations — siteConfig.liveStationMenu: options priced per person or per kg
+//   Trays / Mini bites / Extras — siteConfig.mainCourseTrays, miniBites, cateringExtras
+//
+// Each card is a small form: rows can be added and removed on the page, and "Save" reads the card
+// back into the site config and saves it (PUT /api/site-config). Nothing changes until Save.
 
 import { registerActions } from '../../shared/actions.js';
-import { esc, byId } from '../../shared/dom.js';
+import { esc } from '../../shared/dom.js';
 import { ui, siteList } from '../state.js';
 import { registerTab, renderActiveTab } from '../router.js';
 import { saveSiteConfig } from '../sync.js';
-import { openModal, closeModal, modalFormButtons } from '../ui/modal.js';
-import { showToast } from '../ui/toast.js';
+import { showToast, showError } from '../ui/toast.js';
 import { uploadButton } from '../ui/upload.js';
 
-const CARD =
-  'border:1px solid var(--bo-border); border-radius:16px; overflow:hidden; background:#fff; display:flex; flex-direction:column;';
-const GRID = 'display:grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap:18px;';
-const CATEGORY_LABELS = { wedding: 'Wedding Catering', corporate: 'Corporate Events', private: 'Private Parties' };
+const SUBTABS = [
+  { id: 'packages', icon: 'fa-crown', label: 'Packages', key: 'eventPackages' },
+  { id: 'groups', icon: 'fa-list-check', label: 'Dish lists', key: 'cateringChoiceGroups' },
+  { id: 'stations', icon: 'fa-fire-burner', label: 'Live stations', key: 'liveStationMenu' },
+  { id: 'trays', icon: 'fa-bowl-rice', label: 'Main course trays', key: 'mainCourseTrays' },
+  { id: 'bites', icon: 'fa-cookie-bite', label: 'Mini bites', key: 'miniBites' },
+  { id: 'extras', icon: 'fa-bell-concierge', label: 'Extras', key: 'cateringExtras' }
+];
 
-const packages = () => siteList('cateringPackages');
-const stations = () => siteList('liveStations');
+const TYPE_NAMES = { buffet: 'Event buffet', birthday: 'Birthday Mini' };
+const list = key => siteList(key);
+const newId = prefix => `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
+// ---------------------------------------------------------------------------
+// Small form builders. `col` inputs live in repeatable rows, `field` inputs on the card itself.
+// ---------------------------------------------------------------------------
+
+const field = (label, name, value, { type = 'text', placeholder = '', dir = '' } = {}) => `
+        <label class="bo-pk-field">
+          <span>${label}</span>
+          <input type="${type}" class="bo-input" data-field="${name}"${type === 'number' ? ' data-type="number" min="0" step="any"' : ''} value="${esc(value ?? '')}" placeholder="${esc(placeholder)}"${dir ? ` dir="${dir}"` : ''} />
+        </label>`;
+
+const colInput = (name, value, { type = 'text', placeholder = '', dir = '', label = '' } = {}) =>
+  `<input type="${type}" class="bo-input" data-col="${name}"${type === 'number' ? ' data-type="number" min="0" step="any"' : ''} value="${esc(value ?? '')}" placeholder="${esc(placeholder)}" aria-label="${esc(label || placeholder || name)}"${dir ? ` dir="${dir}"` : ''} />`;
+
+const colSelect = (name, value, options, label) =>
+  `<select class="bo-select" data-col="${name}" aria-label="${esc(label)}">${options
+    .map(
+      ([v, text]) => `<option value="${esc(v)}" ${String(value) === String(v) ? 'selected' : ''}>${esc(text)}</option>`
+    )
+    .join('')}</select>`;
+
+const removeRowButton = () =>
+  `<button type="button" class="bo-btn bo-btn-outline bo-pk-x" data-action="pk:row-remove" aria-label="Remove row" title="Remove"><i class="fa-solid fa-xmark"></i></button>`;
+
+/** Markup of one row for each kind of repeatable list (also used by "Add row"). */
+const ROW_TEMPLATES = {
+  dish: (r = {}) => `
+          <div class="bo-pk-row bo-pk-row-2">
+            ${colInput('name', r.name, { placeholder: 'English name' })}
+            ${colInput('nameAr', r.nameAr, { placeholder: 'الاسم بالعربي', dir: 'rtl', label: 'Arabic name' })}
+            ${removeRowButton()}
+          </div>`,
+  choice: (r = {}) => `
+          <div class="bo-pk-row bo-pk-row-choice">
+            ${colSelect(
+              'group',
+              r.group,
+              list('cateringChoiceGroups').map(g => [g.id, g.name]),
+              'Dish list'
+            )}
+            ${colInput('count', r.count ?? 1, { type: 'number', label: 'How many to choose (0 = selection included)' })}
+            ${removeRowButton()}
+          </div>`,
+  option: (r = {}) => `
+          <div class="bo-pk-row bo-pk-row-option">
+            ${colInput('label', r.label, { placeholder: 'e.g. Classic' })}
+            ${colInput('labelAr', r.labelAr, { placeholder: 'بالعربي', dir: 'rtl', label: 'Arabic label' })}
+            ${colInput('price', r.price, { type: 'number', placeholder: 'Price $', label: 'Price in USD' })}
+            ${colSelect(
+              'unit',
+              r.unit || 'person',
+              [
+                ['person', 'per person'],
+                ['kg', 'per kg']
+              ],
+              'Priced'
+            )}
+            ${removeRowButton()}
+          </div>`,
+  tray: (r = {}) => `
+          <div class="bo-pk-row bo-pk-row-tray">
+            <input type="hidden" data-col="id" value="${esc(r.id || '')}" />
+            ${colInput('name', r.name, { placeholder: 'English name' })}
+            ${colInput('nameAr', r.nameAr, { placeholder: 'الاسم بالعربي', dir: 'rtl', label: 'Arabic name' })}
+            ${colInput('price', r.price, { type: 'number', placeholder: 'Price $', label: 'Price in USD' })}
+            ${colInput('serves', r.serves ?? '30–40 people', { placeholder: 'Serves', label: 'Serves' })}
+            ${removeRowButton()}
+          </div>`,
+  bite: (r = {}) => `
+          <div class="bo-pk-row bo-pk-row-bite">
+            <input type="hidden" data-col="id" value="${esc(r.id || '')}" />
+            ${colInput('name', r.name, { placeholder: 'English name' })}
+            ${colInput('nameAr', r.nameAr, { placeholder: 'الاسم بالعربي', dir: 'rtl', label: 'Arabic name' })}
+            ${colInput('desc', r.desc, { placeholder: 'Short description (optional)', label: 'Description' })}
+            ${colInput('price', r.price, { type: 'number', placeholder: 'Price $', label: 'Price in USD' })}
+            ${colInput('unit', r.unit, { placeholder: 'Unit, e.g. dozen', label: 'Unit (optional)' })}
+            ${removeRowButton()}
+          </div>`,
+  extra: (r = {}) => `
+          <div class="bo-pk-row bo-pk-row-2">
+            <input type="hidden" data-col="id" value="${esc(r.id || '')}" />
+            ${colInput('name', r.name, { placeholder: 'English name' })}
+            ${colInput('nameAr', r.nameAr, { placeholder: 'الاسم بالعربي', dir: 'rtl', label: 'Arabic name' })}
+            ${removeRowButton()}
+          </div>`
+};
+
+const ROW_HEADERS = {
+  dish: ['English', 'Arabic'],
+  choice: ['Dish list', 'How many'],
+  option: ['Option', 'Arabic', 'Price $', 'Priced'],
+  tray: ['English', 'Arabic', 'Price $', 'Serves'],
+  bite: ['English', 'Arabic', 'Description', 'Price $', 'Unit'],
+  extra: ['English', 'Arabic']
+};
+
+/** A repeatable list of rows plus its "Add" button. */
+function rowsBlock(name, kind, rows, addLabel) {
+  return `
+        <div class="bo-pk-rows-wrap">
+          <div class="bo-pk-row bo-pk-row-head bo-pk-row-${kind === 'dish' || kind === 'extra' ? '2' : kind}">${ROW_HEADERS[kind].map(h => `<span>${h}</span>`).join('')}<span></span></div>
+          <div class="bo-pk-rows" data-rows="${name}" data-kind="${kind}">
+            ${rows.map(r => ROW_TEMPLATES[kind](r)).join('')}
+          </div>
+          <button type="button" class="bo-btn bo-btn-outline bo-pk-add" data-action="pk:row-add" data-rows="${name}"><i class="fa-solid fa-plus"></i> ${addLabel}</button>
+        </div>`;
+}
+
+const cardActions = (saveLabel, { deletable = true } = {}) => `
+        <div class="bo-pk-actions">
+          <button type="button" class="bo-btn bo-btn-primary" data-action="pk:save">${saveLabel}</button>
+          ${deletable ? `<button type="button" class="bo-btn bo-btn-danger" data-action="pk:delete" aria-label="Delete"><i class="fa-solid fa-trash"></i> Delete</button>` : ''}
+        </div>`;
+
+// ---------------------------------------------------------------------------
+// Cards per sub-tab
+// ---------------------------------------------------------------------------
 
 function packageCard(p, idx) {
+  const imgId = `pkImg${idx}`;
   return `
-    <div style="${CARD}" data-index="${idx}" class="bo-catering-card">
-      <div style="height:160px; position:relative;">
-        <img src="${esc(p.img)}" style="width:100%; height:100%; object-fit:cover;" alt="${esc(p.title)}" />
-        <span style="position:absolute; top:10px; left:10px; background:#14171c; color:var(--bo-gold); padding:4px 10px; border-radius:999px; font-size:0.72rem; font-weight:800;">${esc(p.badge)}</span>
-        <span style="position:absolute; bottom:10px; right:10px; background:var(--bo-gold); color:#14171c; padding:4px 12px; border-radius:999px; font-weight:800; font-size:0.85rem;">${esc(p.pricePerPerson)}/guest</span>
-      </div>
-      <div style="padding:16px; flex:1; display:flex; flex-direction:column; gap:8px;">
-        <div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--bo-muted);">${esc(p.categoryLabel)} • ${esc(p.minGuests)}</div>
-        <input type="text" class="bo-input" data-field="title" value="${esc(p.title)}" style="font-weight:700;" aria-label="Package title" />
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+      <div class="bo-pk-card" data-list="eventPackages" data-index="${idx}">
+        <div class="bo-pk-card-head">
+          <img src="${esc(p.img)}" alt="" class="bo-pk-thumb" />
           <div>
-            <label style="font-size:0.68rem; color:var(--bo-muted);">Price / Guest</label>
-            <input type="text" class="bo-input" data-field="pricePerPerson" value="${esc(p.pricePerPerson)}" aria-label="Price per guest" />
-          </div>
-          <div>
-            <label style="font-size:0.68rem; color:var(--bo-muted);">Min Guests</label>
-            <input type="text" class="bo-input" data-field="minGuests" value="${esc(p.minGuests)}" aria-label="Minimum guests" />
+            <div class="bo-pk-kicker">${esc(TYPE_NAMES[p.type] || 'Package')}</div>
+            <div class="bo-pk-title">${esc(p.name)} · $${esc(p.pricePerPerson)} per person</div>
           </div>
         </div>
-        <textarea class="bo-textarea" data-field="subtitle" rows="2" style="font-size:0.8rem;" aria-label="Subtitle">${esc(p.subtitle)}</textarea>
-        <div style="display:flex; gap:8px; margin-top:auto; padding-top:8px;">
-          <button class="bo-btn bo-btn-primary" style="flex:1;" data-action="catering:save-package" data-index="${idx}">Save Changes</button>
-          <button class="bo-btn bo-btn-danger" data-action="catering:delete-package" data-index="${idx}" aria-label="Delete package"><i class="fa-solid fa-trash"></i></button>
+        <div class="bo-pk-grid">
+          ${field('Name (English)', 'name', p.name)}
+          ${field('Name (Arabic)', 'nameAr', p.nameAr, { dir: 'rtl' })}
+          <label class="bo-pk-field">
+            <span>Kind</span>
+            <select class="bo-select" data-field="type">
+              <option value="buffet" ${p.type === 'buffet' ? 'selected' : ''}>Event buffet (weddings &amp; occasions)</option>
+              <option value="birthday" ${p.type === 'birthday' ? 'selected' : ''}>Birthday Mini</option>
+            </select>
+          </label>
+          ${field('Price per person ($)', 'pricePerPerson', p.pricePerPerson, { type: 'number' })}
+          ${field('Badge (optional)', 'badge', p.badge, { placeholder: 'e.g. Ideal for weddings' })}
+          ${field('Short note (optional)', 'note', p.note)}
         </div>
-      </div>
-    </div>
-  `;
+        <div class="bo-pk-section-label">What the customer chooses <small>(0 = “selection of …” included, nothing to choose)</small></div>
+        ${rowsBlock('choices', 'choice', p.choices || [], 'Add a dish list')}
+        <label class="bo-pk-field">
+          <span>Also included <small>(one per line, e.g. Live pasta station)</small></span>
+          <textarea class="bo-textarea" rows="2" data-field="includes" data-type="lines">${esc((p.includes || []).join('\n'))}</textarea>
+        </label>
+        <label class="bo-pk-field">
+          <span>Photo</span>
+          <span class="bo-pk-photo">
+            <input type="text" id="${imgId}" class="bo-input" data-field="img" value="${esc(p.img)}" placeholder="Photo link or upload" />
+            ${uploadButton(imgId, { compact: true, label: '' })}
+          </span>
+        </label>
+        ${cardActions('Save package')}
+      </div>`;
+}
+
+function groupCard(g, idx) {
+  const used = list('eventPackages').filter(p => (p.choices || []).some(c => c.group === g.id));
+  return `
+      <div class="bo-pk-card" data-list="cateringChoiceGroups" data-index="${idx}">
+        <div class="bo-pk-grid">
+          ${field('List name (English)', 'name', g.name, { placeholder: 'e.g. Appetizers' })}
+          ${field('List name (Arabic)', 'nameAr', g.nameAr, { dir: 'rtl' })}
+        </div>
+        <div class="bo-pk-section-label">Dishes (${(g.items || []).length}) <small>${used.length ? `used by ${used.map(p => `${esc(TYPE_NAMES[p.type] || '')} ${esc(p.name)}`).join(', ')}` : 'not used by any package'}</small></div>
+        ${(g.items || []).length === 0 ? '<p class="bo-pk-hint">No dishes yet — the website says the team will confirm the options. Add dishes to let customers choose.</p>' : ''}
+        ${rowsBlock('items', 'dish', g.items || [], 'Add a dish')}
+        ${cardActions('Save dish list')}
+      </div>`;
 }
 
 function stationCard(st, idx) {
   return `
-    <div style="${CARD}" data-index="${idx}" class="bo-catering-card">
-      <img src="${esc(st.img)}" style="width:100%; height:160px; object-fit:cover;" alt="${esc(st.title)}" />
-      <div style="padding:16px; display:flex; flex-direction:column; gap:8px; flex:1;">
-        <input type="text" class="bo-input" data-field="tag" value="${esc(st.tag)}" style="font-size:0.75rem; font-weight:700;" aria-label="Badge tag" />
-        <input type="text" class="bo-input" data-field="title" value="${esc(st.title)}" style="font-weight:700;" aria-label="Station title" />
-        <textarea class="bo-textarea" data-field="desc" rows="3" style="font-size:0.8rem;" aria-label="Description">${esc(st.desc)}</textarea>
-        <div style="display:flex; gap:8px; margin-top:auto; padding-top:8px;">
-          <button class="bo-btn bo-btn-primary" style="flex:1;" data-action="catering:save-station" data-index="${idx}">Save Station</button>
-          <button class="bo-btn bo-btn-danger" data-action="catering:delete-station" data-index="${idx}" aria-label="Delete station"><i class="fa-solid fa-trash"></i></button>
+      <div class="bo-pk-card" data-list="liveStationMenu" data-index="${idx}">
+        <div class="bo-pk-grid">
+          ${field('Station name (English)', 'name', st.name)}
+          ${field('Station name (Arabic)', 'nameAr', st.nameAr, { dir: 'rtl' })}
         </div>
-      </div>
-    </div>
-  `;
+        <div class="bo-pk-section-label">Options &amp; prices</div>
+        ${rowsBlock('options', 'option', st.options || [], 'Add an option')}
+        ${cardActions('Save station')}
+      </div>`;
 }
 
+/** Trays, mini bites and extras: one table for the whole list. */
+function wholeListCard(key, kind, addLabel, hint) {
+  return `
+      <div class="bo-pk-card bo-pk-card-wide" data-list="${key}" data-whole="1">
+        ${hint ? `<p class="bo-pk-hint">${hint}</p>` : ''}
+        ${rowsBlock('rows', kind, list(key), addLabel)}
+        ${cardActions('Save list', { deletable: false })}
+      </div>`;
+}
+
+function subtabBody(sub) {
+  if (sub === 'groups') {
+    return `<p class="bo-pk-intro">The dishes customers pick from inside a package. Lists without dishes show “our team will confirm the options”.</p>
+      <div class="bo-pk-cards">${list('cateringChoiceGroups').map(groupCard).join('')}</div>`;
+  }
+  if (sub === 'stations') {
+    return `<p class="bo-pk-intro">Live stations customers can add to any package. Per-person prices are multiplied by the number of guests; per-kg prices by the kilos they ask for.</p>
+      <div class="bo-pk-cards">${list('liveStationMenu').map(stationCard).join('')}</div>`;
+  }
+  if (sub === 'trays')
+    return wholeListCard(
+      'mainCourseTrays',
+      'tray',
+      'Add a tray',
+      'Main course trays (each serves 30–40 people). Prices in USD.'
+    );
+  if (sub === 'bites') {
+    return wholeListCard(
+      'miniBites',
+      'bite',
+      'Add a mini bite',
+      'La2mi La2mi mini bites. “Unit” is optional (e.g. dozen, piece, box) and shows next to the price.'
+    );
+  }
+  if (sub === 'extras') {
+    return wholeListCard(
+      'cateringExtras',
+      'extra',
+      'Add an extra',
+      'Services offered on request — they have no price on the website.'
+    );
+  }
+  return `<p class="bo-pk-intro">Event buffets and Birthday Mini packages, priced per person. Customers choose the number of dishes you set here from the <b>Dish lists</b>.</p>
+      <div class="bo-pk-cards">${list('eventPackages').map(packageCard).join('')}</div>`;
+}
+
+const ADD_BUTTONS = {
+  packages: 'Add a package',
+  groups: 'Add a dish list',
+  stations: 'Add a live station'
+};
+
 function render() {
-  const pkgs = packages();
-  const sts = stations();
-  const onPackages = ui.cateringSubTab === 'packages';
+  const sub = SUBTABS.some(t => t.id === ui.cateringSubTab) ? ui.cateringSubTab : 'packages';
   return `
     <div class="bo-panel">
       <div class="bo-panel-header">
         <div class="bo-pill-tabs">
-          <button class="bo-pill-tab ${onPackages ? 'active' : ''}" data-action="catering:subtab" data-subtab="packages">
-            <i class="fa-solid fa-crown"></i> Event & Wedding Packages (${pkgs.length})
-          </button>
-          <button class="bo-pill-tab ${!onPackages ? 'active' : ''}" data-action="catering:subtab" data-subtab="stations">
-            <i class="fa-solid fa-fire-burner"></i> Live Cooking Stations (${sts.length})
-          </button>
+          ${SUBTABS.map(
+            t => `
+          <button class="bo-pill-tab ${sub === t.id ? 'active' : ''}" data-action="catering:subtab" data-subtab="${t.id}">
+            <i class="fa-solid ${t.icon}"></i> ${t.label} (${list(t.key).length})
+          </button>`
+          ).join('')}
         </div>
-        <button class="bo-btn bo-btn-gold" data-action="${onPackages ? 'catering:package-open' : 'catering:station-open'}">
-          <i class="fa-solid fa-plus"></i> ${onPackages ? '+ Add Catering Package' : '+ Add Live Station'}
-        </button>
+        ${ADD_BUTTONS[sub] ? `<button class="bo-btn bo-btn-gold" data-action="pk:add" data-subtab="${sub}"><i class="fa-solid fa-plus"></i> ${ADD_BUTTONS[sub]}</button>` : ''}
       </div>
       <div class="bo-panel-body">
-        <div style="${GRID}">
-          ${onPackages ? pkgs.map(packageCard).join('') : sts.map(stationCard).join('')}
-        </div>
+        ${subtabBody(sub)}
       </div>
     </div>
   `;
 }
 
-/** Copies the card's data-field inputs into the list item, saves, and rolls back on failure. */
-async function saveCard(button, list, label) {
-  const idx = Number(button.dataset.index);
-  const card = button.closest('.bo-catering-card');
-  const item = list[idx];
-  if (!item || !card) return;
-  const before = { ...item };
-  for (const input of card.querySelectorAll('[data-field]')) item[input.dataset.field] = input.value.trim();
+// ---------------------------------------------------------------------------
+// Reading a card back and saving
+// ---------------------------------------------------------------------------
+
+function readValue(input) {
+  const raw = input.value.trim();
+  if (input.dataset.type === 'number') return Math.max(0, Number(raw) || 0);
+  if (input.dataset.type === 'lines') {
+    return raw
+      .split('\n')
+      .map(s => s.trim())
+      .filter(Boolean);
+  }
+  return raw;
+}
+
+const ID_PREFIX = { mainCourseTrays: 'tray', miniBites: 'bite', cateringExtras: 'extra' };
+
+function readRows(container, listKey) {
+  return [...container.querySelectorAll(':scope > .bo-pk-row')]
+    .map(row => {
+      const out = {};
+      for (const input of row.querySelectorAll('[data-col]')) out[input.dataset.col] = readValue(input);
+      return out;
+    })
+    .filter(r => (r.name ?? r.label ?? r.group ?? '') !== '')
+    .map(r => ('id' in r && !r.id ? { ...r, id: newId(ID_PREFIX[listKey] || 'item') } : r));
+}
+
+/** Copies the card's inputs onto `target` (fields on the card, rows into arrays). */
+function readCard(card, target) {
+  for (const input of card.querySelectorAll('[data-field]')) target[input.dataset.field] = readValue(input);
+  for (const rows of card.querySelectorAll('.bo-pk-rows[data-rows]'))
+    target[rows.dataset.rows] = readRows(rows, card.dataset.list);
+  return target;
+}
+
+async function saveCard(button) {
+  const card = button.closest('.bo-pk-card');
+  if (!card) return;
+  const key = card.dataset.list;
+  const items = list(key);
+
+  if (card.dataset.whole) {
+    const before = items.slice();
+    const rows = readRows(card.querySelector('.bo-pk-rows[data-rows]'), key);
+    items.splice(0, items.length, ...rows);
+    if (!(await saveSiteConfig())) {
+      items.splice(0, items.length, ...before);
+      return;
+    }
+    renderActiveTab();
+    showToast(`Saved ${rows.length} rows.`);
+    return;
+  }
+
+  const item = items[Number(card.dataset.index)];
+  if (!item) return;
+  const edited = readCard(card, structuredClone(item));
+  if (!edited.name) {
+    showError('Please give it an English name before saving.');
+    return;
+  }
+  const before = structuredClone(item);
+  Object.assign(item, edited);
   if (!(await saveSiteConfig())) {
     Object.assign(item, before);
     return;
   }
-  showToast(`Saved ${label} "${item.title}"`);
+  renderActiveTab();
+  showToast(`Saved "${item.name}".`);
 }
 
-async function deleteCard(button, list, label) {
-  const idx = Number(button.dataset.index);
-  if (!list[idx]) return;
-  if (!window.confirm(`Delete the ${label} "${list[idx].title}"?`)) return;
-  const [removed] = list.splice(idx, 1);
+async function deleteCard(button) {
+  const card = button.closest('.bo-pk-card');
+  const key = card?.dataset.list;
+  const items = key ? list(key) : [];
+  const idx = Number(card?.dataset.index);
+  const item = items[idx];
+  if (!item) return;
+  let question = `Delete "${item.name}"?`;
+  if (key === 'cateringChoiceGroups') {
+    const used = list('eventPackages').filter(p => (p.choices || []).some(c => c.group === item.id));
+    if (used.length) question += `\nIt is used by ${used.length} package(s); they will no longer show it.`;
+  }
+  if (!window.confirm(question)) return;
+  items.splice(idx, 1);
   if (!(await saveSiteConfig())) {
-    list.splice(idx, 0, removed);
+    items.splice(idx, 0, item);
     return;
   }
   renderActiveTab();
-  showToast(`${label === 'package' ? 'Package' : 'Live station'} deleted.`);
+  showToast('Deleted.');
 }
 
-function openAddPackage() {
-  openModal(
-    'Add New Catering / Wedding Package',
-    `
-      <form data-on-submit="catering:package-submit">
-        <div class="bo-form-grid">
-          <div class="bo-form-group">
-            <label for="npTitle">Package Title *</label>
-            <input type="text" id="npTitle" class="bo-input" placeholder="e.g., Diamond Mountain Wedding Buffet" required />
-          </div>
-          <div class="bo-form-group">
-            <label for="npCat">Category *</label>
-            <select id="npCat" class="bo-select">
-              <option value="wedding">Wedding Catering</option>
-              <option value="corporate">Corporate Events</option>
-              <option value="private">Private Parties & Formulas</option>
-            </select>
-          </div>
-          <div class="bo-form-group">
-            <label for="npPrice">Price Per Guest *</label>
-            <input type="text" id="npPrice" class="bo-input" placeholder="e.g., $40" required />
-          </div>
-          <div class="bo-form-group">
-            <label for="npMin">Minimum Guests *</label>
-            <input type="text" id="npMin" class="bo-input" placeholder="e.g., 50+ Guests" required />
-          </div>
-        </div>
-        <div class="bo-form-group" style="margin-top:14px;">
-          <label for="npImg">Cover Photo (Paste URL or Upload from Device) *</label>
-          <div style="display:flex; gap:8px; align-items:center;">
-            <input type="text" id="npImg" class="bo-input" style="flex:1;" value="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=85" required />
-            ${uploadButton('npImg')}
-          </div>
-        </div>
-        <div class="bo-form-group" style="margin-top:14px;">
-          <label for="npSub">Subtitle *</label>
-          <input type="text" id="npSub" class="bo-input" placeholder="Brief summary of the event package..." required />
-        </div>
-        <div class="bo-form-group" style="margin-top:14px;">
-          <label for="npHighlights">Package Highlights (One per line) *</label>
-          <textarea id="npHighlights" class="bo-textarea" rows="4" placeholder="Welcome Drink & Canapés&#10;14+ Cold & Hot Lebanese Mezza&#10;Live Charcoal Mixed Grill Station" required></textarea>
-        </div>
-        ${modalFormButtons('Add Package')}
-      </form>
-    `
-  );
-}
+const NEW_ITEMS = {
+  packages: () => ({
+    key: 'eventPackages',
+    item: {
+      id: newId('pkg'),
+      type: 'buffet',
+      name: 'New package',
+      nameAr: '',
+      pricePerPerson: 0,
+      badge: '',
+      note: '',
+      choices: [],
+      includes: [],
+      img: 'https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=1000&q=85'
+    }
+  }),
+  groups: () => ({
+    key: 'cateringChoiceGroups',
+    item: { id: newId('list'), name: 'New dish list', nameAr: '', items: [] }
+  }),
+  stations: () => ({
+    key: 'liveStationMenu',
+    item: {
+      id: newId('station'),
+      name: 'New live station',
+      nameAr: '',
+      options: [{ label: 'Classic', labelAr: '', price: 0, unit: 'person' }]
+    }
+  })
+};
 
-async function submitAddPackage() {
-  const value = id => byId(id).value.trim();
-  const category = value('npCat');
-  const pkg = {
-    id: `pkg-custom-${Date.now()}`,
-    category,
-    categoryLabel: CATEGORY_LABELS[category] || 'Event Catering',
-    badge: 'New Package',
-    title: value('npTitle'),
-    subtitle: value('npSub'),
-    pricePerPerson: value('npPrice'),
-    minGuests: value('npMin'),
-    img: value('npImg'),
-    highlights: value('npHighlights')
-      .split('\n')
-      .map(s => s.trim())
-      .filter(Boolean)
-  };
-  const list = packages();
-  list.unshift(pkg);
+/** Adds a new item at the end and saves it, so it can be edited like the others. */
+async function addItem(sub) {
+  const make = NEW_ITEMS[sub];
+  if (!make) return;
+  const { key, item } = make();
+  const items = list(key);
+  items.push(item);
   if (!(await saveSiteConfig())) {
-    list.shift();
+    items.pop();
     return;
   }
-  closeModal();
   renderActiveTab();
-  showToast(`Added package "${pkg.title}"!`);
-}
-
-function openAddStation() {
-  openModal(
-    'Add New Live Cooking Station',
-    `
-      <form data-on-submit="catering:station-submit">
-        <div class="bo-form-grid">
-          <div class="bo-form-group">
-            <label for="nsTitle">Station Title *</label>
-            <input type="text" id="nsTitle" class="bo-input" placeholder="e.g., Live Shawarma & Saj Station" required />
-          </div>
-          <div class="bo-form-group">
-            <label for="nsTag">Badge Tag *</label>
-            <input type="text" id="nsTag" class="bo-input" placeholder="e.g., Guest Favorite" required />
-          </div>
-        </div>
-        <div class="bo-form-group" style="margin-top:14px;">
-          <label for="nsImg">Station Photo (Paste URL or Upload from Device) *</label>
-          <div style="display:flex; gap:8px; align-items:center;">
-            <input type="text" id="nsImg" class="bo-input" style="flex:1;" value="https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=900&q=85" required />
-            ${uploadButton('nsImg')}
-          </div>
-        </div>
-        <div class="bo-form-group" style="margin-top:14px;">
-          <label for="nsDesc">Description *</label>
-          <textarea id="nsDesc" class="bo-textarea" rows="3" required></textarea>
-        </div>
-        ${modalFormButtons('Add Live Station')}
-      </form>
-    `
-  );
-}
-
-async function submitAddStation() {
-  const value = id => byId(id).value.trim();
-  const list = stations();
-  list.unshift({ title: value('nsTitle'), tag: value('nsTag'), img: value('nsImg'), desc: value('nsDesc') });
-  if (!(await saveSiteConfig())) {
-    list.shift();
-    return;
-  }
-  closeModal();
-  renderActiveTab();
-  showToast('New Live Cooking Station added!');
+  showToast(`Added "${item.name}" at the bottom — edit it and press Save.`);
+  document
+    .querySelector('.bo-pk-cards > .bo-pk-card:last-child')
+    ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 registerActions({
   'catering:subtab': el => {
-    ui.cateringSubTab = el.dataset.subtab === 'stations' ? 'stations' : 'packages';
+    ui.cateringSubTab = el.dataset.subtab;
     renderActiveTab();
   },
-  'catering:save-package': el => saveCard(el, packages(), 'package'),
-  'catering:delete-package': el => deleteCard(el, packages(), 'package'),
-  'catering:save-station': el => saveCard(el, stations(), 'station'),
-  'catering:delete-station': el => deleteCard(el, stations(), 'station'),
-  'catering:package-open': () => openAddPackage(),
-  'catering:package-submit': () => submitAddPackage(),
-  'catering:station-open': () => openAddStation(),
-  'catering:station-submit': () => submitAddStation()
+  'pk:save': el => saveCard(el),
+  'pk:delete': el => deleteCard(el),
+  'pk:add': el => addItem(el.dataset.subtab),
+  // Rows are added and removed on the page only; "Save" stores them.
+  'pk:row-add': el => {
+    const rows = el.closest('.bo-pk-rows-wrap')?.querySelector('.bo-pk-rows[data-rows]');
+    if (!rows) return;
+    rows.insertAdjacentHTML('beforeend', ROW_TEMPLATES[rows.dataset.kind]());
+    rows.lastElementChild?.querySelector('input:not([type="hidden"]), select')?.focus();
+  },
+  'pk:row-remove': el => el.closest('.bo-pk-row')?.remove()
 });
 
 registerTab('catering', {

@@ -19,7 +19,7 @@ import './whatsapp.js';
 import './cart-drawer.js';
 import './dish-modal.js';
 import './menu-view.js';
-import './event-calculator.js';
+import './package-builder.js';
 import './lightbox.js';
 import './quote-form.js';
 import './pages/catering.js';

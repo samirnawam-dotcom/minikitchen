@@ -1,5 +1,5 @@
 /* storefront/responsive.css — Breakpoints for everything above (laptop → tablet → phone).
-   Part 7 of 8; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 8 of 9; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    HEADER FIT
@@ -27,6 +27,9 @@
   }
   .nav-pill {
     font-size: 0.86rem;
+  }
+  .nav-pill-secondary {
+    font-size: 0.78rem;
   }
 }
 
@@ -109,9 +112,7 @@
 }
 
 @media (max-width: 900px) {
-  .quote-layout,
   .contact-layout,
-  .calc-layout,
   .visit-panel,
   .split,
   .contact-cards {
@@ -132,39 +133,14 @@
   .gallery-grid .tile-tail {
     grid-column: 1 / -1;
   }
-  /* The photo strip becomes a swipeable row */
-  .photo-strip {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    padding-inline: 6px;
-  }
-  .photo-strip::-webkit-scrollbar {
-    display: none;
-  }
-  .photo-strip .gallery-tile {
-    flex: 0 0 42%;
-    scroll-snap-align: start;
-  }
   .fd-split-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (max-width: 760px) {
-  .services-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 40px;
-  }
-  .service-card-media img {
-    aspect-ratio: 3 / 2;
-  }
   .form-grid {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .photo-strip .gallery-tile {
-    flex-basis: 62%;
   }
   .home-hero-media img {
     height: clamp(280px, 52vh, 440px);

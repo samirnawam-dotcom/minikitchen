@@ -53,6 +53,28 @@ function itemLines(items) {
     .join('');
 }
 
+/**
+ * Catering requests from the website package builder: one line per priced item and one per dish
+ * list, with the chosen dishes underneath. Lines without a price are included or priced on request.
+ */
+function quoteLines(items) {
+  return items
+    .map(item => {
+      const price = itemTotal(item);
+      const picks = (item.modifiers || []).filter(Boolean);
+      return `
+        <div class="bo-quote-line">
+          <div>
+            <b>${itemQty(item) > 1 ? `${itemQty(item)} × ` : ''}${esc(item.title)}</b>
+            ${picks.length ? `<ul class="bo-quote-picks">${picks.map(m => `<li>${esc(m)}</li>`).join('')}</ul>` : ''}
+            ${item.note ? `<div class="bo-quote-note">${esc(item.note)}</div>` : ''}
+          </div>
+          <div class="bo-quote-price">${price > 0 ? formatUsd(price) : ''}</div>
+        </div>`;
+    })
+    .join('');
+}
+
 function eventDetails(o) {
   return `
     <div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--bo-muted); margin-bottom:6px;">
@@ -130,12 +152,16 @@ export function renderOrderCard(o) {
 
         <div class="bo-order-items-box">
           ${
-            items.length > 0
-              ? `<div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--bo-muted); margin-bottom:6px;">
+            o.type === 'catering_quote' && items.length > 0
+              ? `${eventDetails(o)}
+                <div class="bo-quote-head">Selections</div>
+                ${quoteLines(items)}`
+              : items.length > 0
+                ? `<div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--bo-muted); margin-bottom:6px;">
                   Ordered Dishes (${items.reduce((s, i) => s + itemQty(i), 0)} items)
                 </div>
                 ${itemLines(items)}`
-              : eventDetails(o)
+                : eventDetails(o)
           }
         </div>
 

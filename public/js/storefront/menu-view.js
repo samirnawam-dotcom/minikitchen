@@ -1,7 +1,7 @@
-// Interactive menu explorer (FineDine-style) shared by the catering à-la-carte tab, the restaurant table menu
-// and the delivery menu: category stories, search, currency / layout / dietary toggles and dish cards.
+// Interactive menu explorer (FineDine-style) shared by the restaurant table menu and the delivery menu:
+// category stories, search, currency / layout / dietary toggles and dish cards.
 //
-// `mode` is 'catering' | 'resto' | 'delivery'; each mode keeps its own category + search state.
+// `mode` is 'resto' | 'delivery'; each mode keeps its own category + search state.
 
 import { registerActions } from '../shared/actions.js';
 import { esc } from '../shared/dom.js';
@@ -11,24 +11,12 @@ import { formatPrice } from './format.js';
 import { renderTableBanner } from './table-banner.js';
 import { render, renderMainView } from './view.js';
 
-/** Menu categories offered as catering trays. */
-export const CATERING_CATEGORY_IDS = [
-  'hot-offers',
-  'main-course',
-  'lebanese-corner',
-  'cheddar-fountain',
-  'appetisers',
-  'salads',
-  'dessert'
-];
-
 const MODE_STATE = {
   delivery: { cat: 'deliveryCategory', search: 'deliverySearch', allowed: null },
-  catering: { cat: 'cateringAlaCarteCat', search: 'cateringAlaCarteSearch', allowed: CATERING_CATEGORY_IDS },
   resto: { cat: 'restoCategory', search: 'restoSearch', allowed: null }
 };
 const modeState = mode => MODE_STATE[mode] || MODE_STATE.resto;
-const WA_BRAND_BY_MODE = { catering: 'catering', resto: 'restaurant', delivery: 'delivery' };
+const WA_BRAND_BY_MODE = { resto: 'restaurant', delivery: 'delivery' };
 
 const BADGE_PILLS = {
   Popular: '<span class="fd-badge popular">Popular</span>',

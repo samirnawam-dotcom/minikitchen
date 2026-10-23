@@ -125,17 +125,14 @@ export function getPromoCodes() {
   return listOr(content.config.promoCodes, SITE_CONFIG.promoCodes || []);
 }
 
-export function getStationAddons() {
-  return listOr(
-    content.config.stationAddons,
-    listOr(SITE_CONFIG.stationAddons, [
-      { id: 'st-burger', name: 'Live Charcoal Burger & Cheddar Syringe Station', pricePerGuest: 5 },
-      { id: 'st-saj', name: 'Live Lebanese Saj & Bil Foron Bakery Station', pricePerGuest: 4 },
-      { id: 'st-pasta', name: 'Live Italian Pasta & Truffle Parmesan Wheel', pricePerGuest: 5 },
-      { id: 'st-knefe', name: 'Live Oriental Knefe & Dessert Bar', pricePerGuest: 4 },
-      { id: 'st-welcome', name: 'Welcome Mocktail & Grazing Canapé Reception', pricePerGuest: 3 }
-    ])
-  );
+/**
+ * Catering offer lists (eventPackages, liveStationMenu, mainCourseTrays…). The owner's saved list
+ * wins even when empty (e.g. no extras offered); only a missing key falls back to the defaults.
+ */
+export function cateringList(key) {
+  const saved = content.config[key];
+  if (Array.isArray(saved)) return saved;
+  return Array.isArray(SITE_CONFIG[key]) ? SITE_CONFIG[key] : [];
 }
 
 export function getTestimonials() {

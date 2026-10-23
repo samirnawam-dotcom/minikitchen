@@ -1,0 +1,665 @@
+/* storefront/catering.css — The catering offer: catering type cards, package cards (counts list),
+   price lists for live stations / trays / mini bites, the "Also from Mini Kitchen" band and the
+   "Build your package" form with its running estimate.
+   Part 5 of 9; files are linked in this order in views/storefront.html (cascade order matters). */
+
+.container-narrow {
+  max-width: 880px;
+  margin-inline: auto;
+}
+
+/* Bilingual names: the visitor's language first, the other one quietly underneath */
+.bi-name {
+  display: block;
+}
+
+.bi-other {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.check-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.check-list li {
+  position: relative;
+  padding-inline-start: 22px;
+}
+
+.check-list li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 2px;
+  top: 0.45em;
+  width: 9px;
+  height: 5px;
+  border-left: 1.5px solid var(--brand-ink);
+  border-bottom: 1.5px solid var(--brand-ink);
+  transform: rotate(-45deg);
+}
+
+/* ============================================================================
+   CATERING TYPES (home)
+   ============================================================================ */
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 36px);
+}
+
+.type-card-media {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-photo);
+  overflow: hidden;
+  background: var(--bg-sunken);
+}
+
+.type-card-media img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease);
+}
+
+.type-card:hover .type-card-media img {
+  transform: scale(1.03);
+}
+
+.type-card-title {
+  font-size: 1.4rem;
+  margin: 20px 0 4px;
+}
+
+.type-card-price {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--brand-ink);
+  margin-bottom: 8px;
+}
+
+.type-card-text {
+  color: var(--text-muted);
+  font-size: 0.93rem;
+  margin-bottom: 14px;
+}
+
+/* ============================================================================
+   PACKAGE CARDS
+   ============================================================================ */
+.packages-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.event-package .package-card-title {
+  margin-bottom: 4px;
+}
+
+.event-package-plain {
+  border-top: 2px solid var(--brand-primary);
+}
+
+.package-counts {
+  flex: 1;
+  margin: 4px 0 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.extras-note {
+  margin: 28px auto 0;
+  text-align: center;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
+.extras-note strong {
+  color: var(--ink);
+}
+
+/* Packages page: heading above each tab */
+.tab-intro {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 36px;
+}
+
+.tab-intro-title {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+}
+
+.tab-intro-text {
+  color: var(--text-muted);
+  margin: 8px auto 0;
+}
+
+/* ============================================================================
+   PRICE LISTS (live stations, trays, mini bites)
+   ============================================================================ */
+.price-list {
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.price-list-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(28px, 5vw, 64px);
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.price-row-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-serif);
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.price-row-meta {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.price-row-price {
+  white-space: nowrap;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+
+.price-row-unit {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.price-row-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px 18px;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
+.price-option strong {
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* ============================================================================
+   "ALSO FROM MINI KITCHEN" BAND (home)
+   ============================================================================ */
+.also-band {
+  padding: 36px 0;
+  border-top: 1px solid var(--line);
+}
+
+.also-band-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  flex-wrap: wrap;
+}
+
+.also-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.also-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+  text-align: start;
+  transition: border-color 0.2s ease;
+}
+
+.also-link:hover {
+  border-color: var(--line-strong);
+}
+
+.also-link strong {
+  color: var(--ink);
+  margin-inline-end: 6px;
+}
+
+.also-link i {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* ============================================================================
+   BUILD YOUR PACKAGE
+   ============================================================================ */
+.builder {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.builder-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.builder-step {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.builder-step-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.25rem;
+  margin-bottom: 18px;
+}
+
+.builder-step-title > span {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--brand-primary);
+  color: var(--brand-ink);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.builder-step-title small {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.builder-help {
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+}
+
+/* One choice group ("Hot main courses — choose 3") */
+.builder-group {
+  min-width: 0;
+  margin: 0 0 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-field);
+}
+
+.builder-group.invalid {
+  border-color: var(--danger);
+}
+
+.builder-group-info {
+  background: var(--bg-ivory);
+  border-color: transparent;
+}
+
+.builder-group-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  width: 100%;
+  padding: 0;
+  float: inline-start; /* lets the legend sit inside the fieldset box */
+  margin-bottom: 12px;
+}
+
+.builder-group-info .builder-group-head {
+  float: none;
+  margin-bottom: 0;
+}
+
+.builder-group-title {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.builder-group-note {
+  margin-top: 6px;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
+.builder-group-hint {
+  clear: both;
+  font-size: var(--fs-xs);
+  color: var(--danger);
+}
+
+.builder-group-hint:empty {
+  display: none;
+}
+
+.builder-counter,
+.builder-tag {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.builder-counter.done {
+  color: var(--success);
+}
+
+.builder-tag {
+  padding: 2px 10px;
+  border-radius: var(--radius-control);
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+}
+
+.builder-checks {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.builder-checks-inline {
+  grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr));
+}
+
+.builder-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-field);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.builder-check:hover {
+  border-color: var(--line-strong);
+}
+
+.builder-check.checked {
+  border-color: var(--ink);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.builder-check input {
+  width: 17px;
+  height: 17px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--ink);
+}
+
+.builder-check:has(input:disabled) {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.builder-check .bi-other {
+  font-size: 0.76rem;
+  font-weight: 400;
+}
+
+/* Station / tray / bite rows: name on one side, controls on the other */
+.builder-rows {
+  border-top: 1px solid var(--line);
+}
+
+.builder-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px 16px;
+  flex-wrap: wrap;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.builder-row-name {
+  flex: 1 1 200px;
+  min-width: 0;
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.builder-row-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 14px;
+}
+
+.builder-row-controls select {
+  width: auto;
+  max-width: 100%;
+}
+
+.builder-qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.builder-qty input,
+.builder-qty-input {
+  width: 84px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.builder-row-qty {
+  cursor: pointer;
+}
+
+.builder-details + .builder-details {
+  margin-top: 12px;
+}
+
+.builder-details summary {
+  cursor: pointer;
+  padding: 10px 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.builder-details summary small {
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-inline-start: 6px;
+}
+
+/* Running estimate */
+.builder-summary {
+  position: sticky;
+  top: calc(var(--header-h) + 16px);
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--brand-primary);
+  border-radius: var(--radius-card);
+  padding: clamp(22px, 3vw, 30px);
+}
+
+.builder-lines {
+  list-style: none;
+  margin: 14px 0 20px;
+  border-top: 1px solid var(--line);
+  font-size: 0.88rem;
+}
+
+.builder-lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.builder-lines strong {
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.builder-lines em {
+  white-space: nowrap;
+  font-style: normal;
+  color: var(--text-muted);
+}
+
+.builder-lines .builder-lines-empty {
+  color: var(--text-muted);
+}
+
+.builder-total-label {
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.builder-total {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  color: var(--ink);
+  line-height: 1.15;
+  margin-top: 4px;
+}
+
+.builder-total-lbp {
+  font-size: 0.88rem;
+  color: var(--brand-ink);
+  font-weight: 600;
+}
+
+.builder-fineprint {
+  margin: 14px 0 18px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.builder-errors {
+  font-size: var(--fs-small);
+  color: var(--danger);
+}
+
+.builder-errors:not(:empty) {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-field);
+}
+
+.builder-errors ul {
+  margin-top: 4px;
+  padding-inline-start: 18px;
+}
+
+.form-control[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+/* ============================================================================
+   BREAKPOINTS
+   ============================================================================ */
+@media (max-width: 1100px) {
+  .types-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .packages-grid-3 {
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .builder {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .builder-summary {
+    position: static;
+  }
+  .price-list-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .types-grid {
+    gap: 28px 14px;
+  }
+  .type-card-media img {
+    aspect-ratio: 1 / 1;
+  }
+  .type-card-title {
+    font-size: 1.12rem;
+    margin-top: 14px;
+  }
+  .type-card-text {
+    font-size: 0.84rem;
+  }
+  .builder-checks {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .builder-group {
+    padding: 14px;
+  }
+  .price-list-stations .price-row {
+    flex-wrap: wrap;
+  }
+  .price-row-options {
+    justify-content: flex-start;
+  }
+  .also-link {
+    width: 100%;
+  }
+}

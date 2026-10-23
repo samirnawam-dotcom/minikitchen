@@ -1,5 +1,5 @@
-/* Back Office — Kitchen Display (KDS) board, Reviews cards and the SEO page selector pills.
-   Colours use the theme tokens, so dark.css only needs to override the few literal colours below. */
+/* Back Office — Kitchen Display (KDS) board, Reviews cards, the SEO page selector pills and the Packages
+   tab editors. Colours use the theme tokens, so dark.css only needs to override the few literal colours below. */
 
 /* SEO PAGE SELECTOR PILLS (previously unstyled) */
 .bo-filter-pill {
@@ -291,4 +291,210 @@ html[data-bo-theme='dark'] .bo-kds-note {
 html[data-bo-theme='dark'] .bo-kds-count {
   background: var(--bo-gold);
   color: #14171c;
+}
+
+/* ============================================================================
+   PACKAGES TAB (tabs/catering.js) & CATERING REQUEST SELECTIONS (orders/order-card.js)
+   ============================================================================ */
+.bo-pk-intro,
+.bo-pk-hint {
+  color: var(--bo-muted);
+  font-size: 0.86rem;
+  margin: 0 0 16px;
+}
+
+.bo-pk-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(460px, 100%), 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.bo-pk-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--bo-border);
+  border-radius: 16px;
+  background: var(--bo-card);
+}
+
+.bo-pk-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bo-pk-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: var(--bo-bg);
+  flex-shrink: 0;
+}
+
+.bo-pk-kicker {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--bo-gold-dark);
+}
+
+.bo-pk-title {
+  font-weight: 800;
+  color: var(--bo-text);
+}
+
+.bo-pk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.bo-pk-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.bo-pk-field > span:first-child,
+.bo-pk-section-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bo-muted);
+}
+
+.bo-pk-field small,
+.bo-pk-section-label small {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.bo-pk-photo {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bo-pk-rows-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bo-pk-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.bo-pk-row {
+  display: grid;
+  gap: 6px;
+  align-items: center;
+}
+
+.bo-pk-row .bo-input,
+.bo-pk-row .bo-select {
+  padding: 7px 9px;
+  font-size: 0.82rem;
+  min-width: 0;
+}
+
+.bo-pk-row-2 {
+  grid-template-columns: 1fr 1fr 36px;
+}
+.bo-pk-row-choice {
+  grid-template-columns: 1fr 110px 36px;
+}
+.bo-pk-row-option {
+  grid-template-columns: 1fr 1fr 90px 110px 36px;
+}
+.bo-pk-row-tray {
+  grid-template-columns: 2fr 2fr 90px 1fr 36px;
+}
+.bo-pk-row-bite {
+  grid-template-columns: 1.4fr 1.4fr 1.6fr 80px 1fr 36px;
+}
+
+.bo-pk-row-head span {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--bo-muted);
+}
+
+.bo-pk-x {
+  padding: 6px 0;
+  justify-content: center;
+}
+
+.bo-pk-add {
+  align-self: flex-start;
+  padding: 7px 12px;
+  font-size: 0.78rem;
+}
+
+.bo-pk-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.bo-pk-actions .bo-btn-primary {
+  flex: 1;
+}
+
+@media (max-width: 720px) {
+  .bo-pk-row-option,
+  .bo-pk-row-tray,
+  .bo-pk-row-bite {
+    grid-template-columns: 1fr 1fr 36px;
+  }
+  .bo-pk-row-head:not(.bo-pk-row-2):not(.bo-pk-row-choice) {
+    display: none;
+  }
+}
+
+.bo-quote-head {
+  margin: 10px 0 4px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--bo-muted);
+}
+
+.bo-quote-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px dashed var(--bo-border);
+  font-size: 0.84rem;
+}
+
+.bo-quote-picks {
+  margin: 2px 0 0;
+  padding-inline-start: 18px;
+  font-size: 0.78rem;
+  color: var(--bo-gold-dark);
+}
+
+.bo-quote-note {
+  font-size: 0.74rem;
+  color: var(--bo-muted);
+  font-style: italic;
+}
+
+.bo-quote-price {
+  font-weight: 700;
+  white-space: nowrap;
 }

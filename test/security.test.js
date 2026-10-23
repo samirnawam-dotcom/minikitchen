@@ -40,6 +40,35 @@ test('content sanitiser strips tags, script URLs and prototype keys', () => {
   assert.equal(Object.keys(out).includes('__proto__'), false);
 });
 
+test('content sanitiser keeps the catering offer shapes (numbers, nested lists, Arabic)', () => {
+  const config = {
+    eventPackages: [
+      {
+        id: 'buffet-vip',
+        type: 'buffet',
+        name: 'VIP',
+        nameAr: 'الباقة الفاخرة',
+        pricePerPerson: 30,
+        choices: [
+          { group: 'hot-mains', count: 4 },
+          { group: 'desserts', count: 0 }
+        ],
+        includes: ['Live pasta station']
+      }
+    ],
+    cateringChoiceGroups: [{ id: 'appetizers', name: 'Appetizers', nameAr: 'مقبلات', items: [] }],
+    liveStationMenu: [
+      {
+        id: 'station-shawarma',
+        name: 'Live shawarma station',
+        options: [{ label: 'Beef (1 kg)', price: 35, unit: 'kg' }]
+      }
+    ],
+    miniBites: [{ id: 'bite-tuna-mix', name: 'Tuna Mix', nameAr: 'ميني تونا ميكس', price: 20, unit: '' }]
+  };
+  assert.deepEqual(security.sanitizeContentTree(config), config);
+});
+
 test('rate limiter blocks after max hits', () => {
   const limiter = new security.RateLimiter({ windowMs: 60000, max: 2 });
   assert.equal(limiter.hit('k').allowed, true);
