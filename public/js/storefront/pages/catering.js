@@ -5,7 +5,6 @@ import { registerActions } from '../../shared/actions.js';
 import { esc } from '../../shared/dom.js';
 import { state } from '../state.js';
 import { content, configList } from '../config.js';
-import { renderEventBudgetCalculator } from '../event-calculator.js';
 import { registerPage, renderMainView } from '../view.js';
 import { heroSection, galleryCard, packageCard, testimonialsSection } from './sections.js';
 
@@ -202,15 +201,6 @@ function buildCateringHomePage() {
               <button class="btn btn-whatsapp" data-action="wa:open" data-brand="catering" data-msg="Hello Mini Kitchen Catering! I would like to inquire about your catering menus, packages, and availability for an upcoming event.">
                 <i class="fa-brands fa-whatsapp" style="font-size:1.15rem;"></i> Contact Us on WhatsApp
               </button>
-              <button class="btn btn-outline-light" data-action="nav:go" data-page="catering" data-scroll="planEventSection">
-                <i class="fa-solid fa-calendar-check"></i> Request a Catering Quote
-              </button>
-            </div>
-            <div class="hero-event-pills">
-              <span class="event-type-pill"><i class="fa-solid fa-ring"></i> Weddings</span>
-              <span class="event-type-pill"><i class="fa-solid fa-building-columns"></i> Corporate Events</span>
-              <span class="event-type-pill"><i class="fa-solid fa-champagne-glasses"></i> Private Parties</span>
-              <span class="event-type-pill"><i class="fa-solid fa-cake-candles"></i> Birthdays & Launches</span>
             </div>
           </div>`
       })}
@@ -262,8 +252,6 @@ function buildCateringHomePage() {
           ${tabBody}
         </div>
       </section>
-
-      ${renderEventBudgetCalculator()}
 
       ${testimonialsSection()}
 

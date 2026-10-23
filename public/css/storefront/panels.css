@@ -197,29 +197,29 @@
 .site-footer {
   background: #090b0e;
   color: rgba(255, 255, 255, 0.78);
-  padding: 76px 0 36px;
+  padding: 48px 0 28px;
   border-top: 1px solid rgba(200, 157, 84, 0.22);
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  grid-template-columns: 1.5fr 1fr 1.2fr;
   gap: 40px;
-  margin-bottom: 50px;
+  margin-bottom: 28px;
 }
 
 .footer-col h4 {
   font-family: var(--font-serif);
   color: #ffffff;
   font-size: 1.2rem;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .footer-links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
 }
 
 .footer-links a:hover,

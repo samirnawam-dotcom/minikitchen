@@ -8,6 +8,7 @@ import { renderMenuExplorer } from '../menu-view.js';
 import { renderTableBanner } from '../table-banner.js';
 import { registerPage, renderMainView } from '../view.js';
 import { heroSection, packageCard } from './sections.js';
+import { renderEventBudgetCalculator } from '../event-calculator.js';
 
 const filterButton = (filter, label) =>
   `<button class="filter-tab-btn ${state.cateringPkgFilter === filter ? 'active' : ''}" data-action="catering-menus:filter" data-filter="${filter}">${label}</button>`;
@@ -90,6 +91,8 @@ function buildCateringMenusPage() {
           }
         </div>
       </section>
+
+      ${renderEventBudgetCalculator()}
     `;
 }
 

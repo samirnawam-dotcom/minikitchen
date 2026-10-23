@@ -4,7 +4,8 @@
 /* ============================================================================
    RESPONSIVE BREAKPOINTS (MOBILE, TABLET & LAPTOP OPTIMIZATION)
    ============================================================================ */
-.nav-drawer-header .brand-logo-wrap {
+.nav-drawer-header .brand-logo-wrap,
+.site-footer .brand-logo-wrap {
   padding-inline-start: 0;
   border-inline-start: none;
 }
@@ -114,15 +115,6 @@
   }
   .nav-pill {
     font-size: 0.81rem;
-  }
-  .header-admin-link {
-    display: none;
-  }
-}
-
-@media (max-width: 1300px) {
-  .header-extra-btn {
-    display: none;
   }
 }
 
