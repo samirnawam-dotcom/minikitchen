@@ -30,6 +30,9 @@ function heroSection() {
   const hero = configList('cateringGallery')[0] || {};
   return `
       <section class="hero-section home-hero">
+        <div class="home-hero-media">
+          <img src="${esc(hero.img || HERO_FALLBACK)}" data-fallback="${esc(HERO_FALLBACK)}" alt="${esc(hero.title || 'A Mini Kitchen event set-up')}" />
+        </div>
         <div class="container home-hero-copy">
           <span class="eyebrow">Mini Kitchen Catering · Aley, Lebanon</span>
           <h1 class="home-hero-title">Catering for weddings, birthdays &amp; every occasion</h1>
@@ -38,9 +41,6 @@ function heroSection() {
             <button class="btn btn-primary" data-action="nav:go" data-page="catering" data-scroll="planEventSection">Build your package</button>
             <button class="btn btn-outline" data-action="nav:go" data-page="catering-menus">See packages &amp; prices</button>
           </div>
-        </div>
-        <div class="home-hero-media">
-          <img src="${esc(hero.img || HERO_FALLBACK)}" data-fallback="${esc(HERO_FALLBACK)}" alt="${esc(hero.title || 'A Mini Kitchen event set-up')}" />
         </div>
       </section>`;
 }

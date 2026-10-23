@@ -16,6 +16,7 @@ const img = (src, alt, { fallback = '', lazy = true, cls = '' } = {}) =>
 export function pageHero({ eyebrow, title, text, actions = '', meta = [], photo, alt = '', fallback }) {
   return `
       <section class="hero-section page-hero${photo ? ' has-photo' : ''}">
+        ${photo ? `<div class="page-hero-bg">${img(photo, alt, { fallback, lazy: false })}</div>` : ''}
         <div class="container page-hero-inner">
           <div class="page-hero-copy">
             <span class="eyebrow">${eyebrow}</span>
@@ -24,7 +25,6 @@ export function pageHero({ eyebrow, title, text, actions = '', meta = [], photo,
             ${actions ? `<div class="hero-actions">${actions}</div>` : ''}
             ${meta.length ? `<ul class="hero-meta">${meta.map(m => `<li>${m}</li>`).join('')}</ul>` : ''}
           </div>
-          ${photo ? `<div class="page-hero-media">${img(photo, alt, { fallback, lazy: false })}</div>` : ''}
         </div>
       </section>`;
 }

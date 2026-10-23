@@ -96,15 +96,9 @@
    PAGE CONTENT
    ============================================================================ */
 @media (max-width: 1024px) {
-  .page-hero.has-photo .page-hero-inner {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .page-hero.has-photo .page-hero-copy {
-    max-width: 640px;
-  }
-  .page-hero-media img {
-    aspect-ratio: 16 / 9;
-    max-height: 380px;
+  /* Narrow screens: the text spans the photo, so darken it evenly */
+  .page-hero-bg::after {
+    background: rgba(20, 18, 15, 0.66);
   }
   .team-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -142,8 +136,8 @@
   .form-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .home-hero-media img {
-    height: clamp(280px, 52vh, 440px);
+  .home-hero {
+    min-height: clamp(420px, 78vh, 640px);
   }
   .fd-cat-stories-hint {
     display: none;
