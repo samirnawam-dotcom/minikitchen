@@ -153,10 +153,11 @@
 }
 
 .bo-topbar {
-  height: 72px;
+  /* Grows with its content: long tab titles wrap to two lines at laptop widths */
+  min-height: 72px;
   background: #ffffff;
   border-bottom: 1px solid var(--bo-border);
-  padding: 0 30px;
+  padding: 12px 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -178,9 +179,14 @@
   color: var(--bo-muted);
 }
 
+.bo-topbar > :first-child {
+  min-width: 0;
+}
+
 .bo-topbar-actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
   flex-wrap: wrap;
 }

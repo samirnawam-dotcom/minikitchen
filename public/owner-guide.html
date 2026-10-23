@@ -354,7 +354,7 @@
       /* How-to cards */
       .tasks {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
         gap: 14px;
       }
       .task {
@@ -381,6 +381,36 @@
         color: var(--muted);
       }
 
+      .shot {
+        margin: 0;
+        display: grid;
+        gap: 8px;
+        min-width: 0;
+      }
+      .shot a {
+        display: block;
+        border-radius: 10px;
+      }
+      .shot img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        box-shadow: 0 6px 22px rgba(20, 30, 25, 0.1);
+      }
+      .task .shot img {
+        box-shadow: none;
+      }
+      .shot figcaption {
+        font-size: 0.86rem;
+        color: var(--muted);
+      }
+      .shot-pair {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr));
+        gap: 18px;
+      }
       .callout {
         border-left: 3px solid var(--gold);
         background: var(--gold-soft);
@@ -471,6 +501,12 @@
               <span class="note">Change them in Settings, Theme &amp; LBP Rate.</span>
             </div>
           </div>
+          <figure class="shot">
+            <a href="guide/login.jpg" target="_blank" rel="noopener"
+              ><img src="guide/login.jpg" alt="Back Office sign-in screen" loading="lazy"
+            /></a>
+            <figcaption>The Back Office sign-in screen.</figcaption>
+          </figure>
         </section>
 
         <section id="daily">
@@ -512,6 +548,15 @@
               </div>
             </li>
           </ol>
+          <figure class="shot">
+            <a href="guide/dashboard.jpg" target="_blank" rel="noopener"
+              ><img src="guide/dashboard.jpg" alt="Back Office overview dashboard" loading="lazy"
+            /></a>
+            <figcaption>
+              The Overview Dashboard. The red number beside WhatsApp Orders &amp; Quotes counts new orders; the exchange
+              rate box is under Quick Website Controls.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="orders">
@@ -563,10 +608,36 @@
               </tbody>
             </table>
           </div>
+          <figure class="shot">
+            <a href="guide/orders.jpg" target="_blank" rel="noopener"
+              ><img src="guide/orders.jpg" alt="Order card in the orders tab" loading="lazy"
+            /></a>
+            <figcaption>
+              An order in WhatsApp Orders &amp; Quotes: pick the status from the dropdown, then Reply on WhatsApp, Print
+              Ticket or Proposal / PDF. Staff notes save on the right.
+            </figcaption>
+          </figure>
+          <figure class="shot">
+            <a href="guide/kds.jpg" target="_blank" rel="noopener"
+              ><img src="guide/kds.jpg" alt="Kitchen display board" loading="lazy"
+            /></a>
+            <figcaption>
+              The Kitchen Display. New orders on the left; the kitchen presses Start Preparing and the ticket moves
+              along. Timers turn amber at 20 minutes and red at 40.
+            </figcaption>
+          </figure>
           <div class="callout">
             <strong>Phone or walk-in order?</strong> Press <span class="ui">Log Manual Order / Quote</span> at the top
             of the Back Office so it appears in the same list and on the kitchen display.
           </div>
+          <figure class="shot">
+            <a href="guide/manual-order.jpg" target="_blank" rel="noopener"
+              ><img src="guide/manual-order.jpg" alt="Manual order form" loading="lazy"
+            /></a>
+            <figcaption>
+              The manual order form. Fill in the customer and what they ordered, then press Save to Back Office.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="backoffice">
@@ -652,17 +723,26 @@
               <span class="where">FineDine Menu (239+ Dishes)</span>
               <ol>
                 <li>Search for the dish.</li>
-                <li>Type the new price.</li>
+                <li>Type the new price in <span class="ui">Price (USD $)</span>.</li>
                 <li>Press <span class="ui">Save</span> on that row. The website updates straight away.</li>
               </ol>
+              <figure class="shot">
+                <a href="guide/menu.jpg" target="_blank" rel="noopener"
+                  ><img src="guide/menu.jpg" alt="Menu tab dish rows" loading="lazy"
+                /></a>
+                <figcaption>Each dish row: name, description, price, stock status, then Save.</figcaption>
+              </figure>
             </article>
             <article class="task">
               <h3>Mark a dish sold out</h3>
               <span class="where">FineDine Menu (239+ Dishes)</span>
               <ol>
                 <li>Find the dish.</li>
-                <li>Switch it to <span class="ui">Sold Out</span>. Customers see it greyed out and cannot add it.</li>
-                <li>Switch it back when it is available again.</li>
+                <li>
+                  Set <span class="ui">Stock Status</span> to <span class="ui">Sold Out</span> and press
+                  <span class="ui">Save</span>. Customers see it greyed out and cannot add it.
+                </li>
+                <li>Set it back to <span class="ui">In Stock</span> when it is available again.</li>
               </ol>
             </article>
             <article class="task">
@@ -676,6 +756,14 @@
                 </li>
                 <li>Press <span class="ui">Add Dish to Menu</span>.</li>
               </ol>
+              <figure class="shot">
+                <a href="guide/add-dish.jpg" target="_blank" rel="noopener"
+                  ><img src="guide/add-dish.jpg" alt="Add new dish form" loading="lazy"
+                /></a>
+                <figcaption>
+                  The Add New Dish form. Upload Photo takes a picture from your phone or computer.
+                </figcaption>
+              </figure>
             </article>
             <article class="task">
               <h3>Update the dollar rate</h3>
@@ -692,6 +780,15 @@
                 <li>Edit the WhatsApp numbers, address or opening hours.</li>
                 <li>Press <span class="ui">Save All Website Settings</span> at the bottom.</li>
               </ol>
+              <figure class="shot">
+                <a href="guide/settings.jpg" target="_blank" rel="noopener"
+                  ><img src="guide/settings.jpg" alt="WhatsApp numbers settings" loading="lazy"
+                /></a>
+                <figcaption>
+                  WhatsApp numbers: the “digits only” box is what WhatsApp uses; the “display phone” box is what
+                  customers read.
+                </figcaption>
+              </figure>
             </article>
             <article class="task">
               <h3>Add a customer review</h3>
@@ -701,6 +798,12 @@
                 <li>Enter the name, event, words and star rating.</li>
                 <li>Save. It appears in the reviews section of the website.</li>
               </ol>
+              <figure class="shot">
+                <a href="guide/reviews.jpg" target="_blank" rel="noopener"
+                  ><img src="guide/reviews.jpg" alt="Reviews tab" loading="lazy"
+                /></a>
+                <figcaption>Client Testimonials: edit a review in place and press Save, or add a new one.</figcaption>
+              </figure>
             </article>
             <article class="task">
               <h3>Print table QR codes</h3>
@@ -710,6 +813,12 @@
                 <li>Press <span class="ui">Print QR Standee</span>.</li>
                 <li>Guests who scan a table code see “You are seated at Table #” and a Call Waiter button.</li>
               </ol>
+              <figure class="shot">
+                <a href="guide/qrcodes.jpg" target="_blank" rel="noopener"
+                  ><img src="guide/qrcodes.jpg" alt="QR codes tab" loading="lazy"
+                /></a>
+                <figcaption>The QR Codes tab. Each card has its own print button.</figcaption>
+              </figure>
             </article>
             <article class="task">
               <h3>Change a photo</h3>
@@ -735,6 +844,32 @@
             <li>An order tracker where they enter their <code>MK-</code> number to see its status.</li>
             <li>QR codes are only in the Back Office. Customers never see the QR printing screen.</li>
           </ul>
+          <div class="shot-pair">
+            <figure class="shot">
+              <a href="guide/cart.jpg" target="_blank" rel="noopener"
+                ><img src="guide/cart.jpg" alt="Customer basket" loading="lazy"
+              /></a>
+              <figcaption>
+                The customer’s basket. “Send Order to WhatsApp Now” sends you the order and saves it in the Back Office.
+              </figcaption>
+            </figure>
+            <figure class="shot">
+              <a href="guide/tracker.jpg" target="_blank" rel="noopener"
+                ><img src="guide/tracker.jpg" alt="Customer order tracker" loading="lazy"
+              /></a>
+              <figcaption>
+                The order tracker. Its steps light up as you change the status in the Back Office.
+              </figcaption>
+            </figure>
+          </div>
+          <figure class="shot">
+            <a href="guide/table-banner.jpg" target="_blank" rel="noopener"
+              ><img src="guide/table-banner.jpg" alt="Table QR welcome banner" loading="lazy"
+            /></a>
+            <figcaption>
+              What a guest sees after scanning a table QR code: their table number and a Call Waiter button.
+            </figcaption>
+          </figure>
         </section>
 
         <section id="safety">
@@ -760,6 +895,12 @@
             </li>
             <li>The activity log in the same tab shows every sign-in, failed sign-in and change, with the time.</li>
           </ul>
+          <figure class="shot">
+            <a href="guide/security.jpg" target="_blank" rel="noopener"
+              ><img src="guide/security.jpg" alt="Security tab" loading="lazy"
+            /></a>
+            <figcaption>Security &amp; Admin Login: backup buttons at the top, password change below.</figcaption>
+          </figure>
         </section>
 
         <section id="help">
