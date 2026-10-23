@@ -84,9 +84,9 @@ const SITE_CONFIG = {
         canonicalPath: "/"
       },
       "catering-menus": {
-        title: "Catering Menus & Wedding Packages | Mini Kitchen Catering Aley, Lebanon",
-        description: "Explore Mini Kitchen's Wedding Catering Packages ($32–$45/guest), Corporate Event Buffets, Live Molten Cheddar & Shawarma Stations, and 239+ Lebanese & American FineDine dishes.",
-        keywords: "catering menu Lebanon, wedding catering prices Lebanon, Lebanese mezza buffet catering, live shawarma station wedding, molten cheddar fountain Lebanon, Mini Kitchen menus",
+        title: "Catering Packages & Menus | Mini Kitchen Catering Aley, Lebanon",
+        description: "Mini Kitchen catering packages: event buffets from $20 per person (Classic, Premium, VIP), Birthday Mini packages from $18 per person, live pasta, grill, shawarma & sajj stations, main course trays and mini bites.",
+        keywords: "catering packages Lebanon, wedding buffet price per person Lebanon, birthday catering Aley, live shawarma station, live pasta station, catering trays Lebanon, Mini Kitchen packages",
         canonicalPath: "/catering-menus.html"
       },
       restaurant: {
@@ -117,187 +117,325 @@ const SITE_CONFIG = {
   },
 
   // ==========================================================================
-  // CATERING PACKAGES & EVENT FORMULAS (SECTION 1 & SECTION 6)
+  // CATERING OFFER (from the owner's flyers). Prices are USD.
+  //   cateringTypes        — the four kinds of catering shown as entry cards on the home page
+  //   cateringChoiceGroups — the lists customers pick from inside a package ("4 appetizers").
+  //                          An empty `items` list means the team confirms the options by phone.
+  //   eventPackages        — per-person packages: type "buffet" (weddings & occasions) or
+  //                          "birthday" (Birthday Mini). `choices` link to a choice group with a
+  //                          count; count 0 = "selection included" (nothing to pick).
+  //   liveStationMenu      — live stations; each option is priced per person or per kg
+  //   mainCourseTrays      — main course trays (each serves 30–40 people)
+  //   miniBites            — "La2mi La2mi" mini bites; `unit` is not on the flyer yet
+  //   cateringExtras       — services priced on request (bar, plate service, waiters, chef)
   // ==========================================================================
-  cateringPackages: [
+  cateringTypes: [
     {
-      id: "pkg-wedding-royal",
-      category: "wedding",
-      categoryLabel: "Wedding Catering",
-      badge: "Most Popular for Weddings",
-      title: "The Royal Mountain Wedding Feast",
-      subtitle: "Luxury seated or grand buffet reception crafted for unforgettable Lebanese weddings",
-      pricePerPerson: "$45",
-      minGuests: "80+ Guests",
-      img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=85",
-      highlights: [
-        "Welcome Drink & Passed Canapés Bar upon guest arrival",
-        "Complete Authentic Lebanese Cold & Hot Mezza Spread (14+ varieties: Hommos, Moutabal, Wara2 Enab, Tabbouleh, Fattoush, Kebbe, Sambousik, Cheese Rkakat, Batata Harra, Lemony Makanek & Sejouk)",
-        "Live Charcoal Grill & Carving Station (Prime Halal Beef Fillet, Shish Tawouk, Kafta & Deboned Farrouj Msahab)",
-        "International Hot Chafing Dish Selection (Tagliatelle Shrimp, Grilled Chicken Breast in Mushroom Cream, Saffron Rice)",
-        "Royal Dessert & Live Homemade Knefe Table with Seasonal Fruit Display",
-        "Full Uniformed Waitstaff, Event Captain, Chafing Dishes & Luxury Table Setup"
-      ]
+      id: "buffet",
+      name: "Event Buffets",
+      nameAr: "بوفيهات المناسبات",
+      text: "Weddings and occasions — choose your appetizers, pastries, salads and hot main courses.",
+      tagline: "Catering for your special moments… memories that last. Every occasion, a unique taste.",
+      taglineAr: "بوفيهات مناسباتكم… لحظات لا تُنسى. لكل مناسبة طعمها الخاص.",
+      img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=85"
     },
     {
-      id: "pkg-wedding-sunset",
-      category: "wedding",
-      categoryLabel: "Wedding & Engagement",
-      badge: "Cocktail & Grazing",
-      title: "Sunset Garden Cocktail & Canapé Reception",
-      subtitle: "Chic outdoor cocktail reception for engagements, bridal showers, and modern garden weddings",
-      pricePerPerson: "$32",
-      minGuests: "50+ Guests",
-      img: "https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=1000&q=85",
-      highlights: [
-        "Artisan Grazing Table with Lebanese & Imported Cheeses, Halloumi Skewers & Fresh Fruits",
-        "Gourmet Mini Sliders Trio (Mom Style Beef, Crispy Zinger & Truffle Mushroom)",
-        "Mediterranean & Seafood Bite Shooters (Shrimp Provençal, Calamari Cones & Mini Quinoa Shrimp Cups)",
-        "Live Pasta & Truffle Mac Station cooked to order in front of guests",
-        "Mini Dessert Petits Fours, Brownie Bites, Cheesecake Cups & Fresh Mocktail Bar",
-        "Elegant High-Top Cocktail Styling, Floral Buffet Accents & Professional Servers"
-      ]
+      id: "birthday",
+      name: "Birthday Minis",
+      nameAr: "ميني بيرثداي",
+      text: "Mini sandwiches, bites, salads, pastries and desserts for birthday parties.",
+      tagline: "Celebrate your day with Mini Kitchen. Small Bites, Big Memories.",
+      taglineAr: "احتفل بيومك مع ميني كيتشن. نكهات صغيرة، ذكريات كبيرة.",
+      img: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1000&q=85"
     },
     {
-      id: "pkg-wedding-imperial",
-      category: "wedding",
-      categoryLabel: "Luxury Wedding",
-      badge: "All-Inclusive VIP",
-      title: "Grand Imperial Five-Station Gala",
-      subtitle: "Our pinnacle wedding production featuring 5 interactive live cooking stations & VIP table service",
-      pricePerPerson: "$60",
-      minGuests: "100+ Guests",
-      img: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1000&q=85",
-      highlights: [
-        "5 Interactive Chef-Manned Live Stations (Lebanese Mezza & Nayye Bar, Prime Beef Fillet Carving, Live Italian Pasta, Gourmet Sliders & Cheddar Fountain, Live Knefe & Crêpe Bar)",
-        "Premium Seafood Selection including Jumbo Shrimps, Smoked Salmon & Seafood Salad",
-        "Dedicated VIP Bride & Groom Table Concierge Service",
-        "Full Beverage, Fresh Juice, Specialty Turkish/Lebanese Rakwe Coffee & Digestif Bar",
-        "Complete Porcelain, Gold Cutlery, Linen & Buffet Architecture Included"
-      ]
-    },
-    {
-      id: "pkg-corporate-gala",
-      category: "corporate",
-      categoryLabel: "Corporate Events",
-      badge: "Executive Choice",
-      title: "Executive Corporate Gala & Annual Dinner Buffet",
-      subtitle: "Impressive, seamless catering for company milestones, conferences, and diplomatic receptions",
-      pricePerPerson: "$28",
-      minGuests: "30+ Guests",
-      img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1000&q=85",
-      highlights: [
-        "Selection of 8 Signature Cold & Hot Starters (Lebanese Mezza & American Finger Bites)",
-        "3 Premium Main Courses (Grilled Chicken Breast with Mushroom White Sauce, Beef Fillet Medallions & Mixed Grill)",
-        "Artisan Salads Corner (Seafood Salad, Chick Wick Honey Mustard, Rocca Halloum & Fattoush)",
-        "Executive Pastry, Cheesecake, Tiramisu & Fresh Juice Bar",
-        "On-time setup, sleek black & gold chafing dishes, and uniformed corporate hospitality crew"
-      ]
-    },
-    {
-      id: "pkg-corporate-launch",
-      category: "corporate",
-      categoryLabel: "Product Launches & Seminars",
-      badge: "Finger Food & Networking",
-      title: "Product Launch & Networking Canapé Package",
-      subtitle: "Zero-mess, high-impact bite-sized gastronomy designed for mingling, showrooms, and brand launches",
-      pricePerPerson: "$22",
-      minGuests: "25+ Guests",
-      img: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1000&q=85",
-      highlights: [
-        "10 Passed Bite-Sized Savory Creations per Guest (Mini Fajita Sub Rolls, Pesto Chicken Bites, Shrimp Pané Skewers, Mini Kebbe & Cheese Rkakat)",
-        "Signature Mini Burger & Wrap Platter Assortment",
-        "Specialty Coffee, Espresso, Cappuccino, Fresh Iced Teas & Mojito Bar",
-        "Branded Menu Cards & Custom Color-Coordinated Buffet Styling"
-      ]
-    },
-    {
-      id: "pkg-private-lebanese",
-      category: "private",
-      categoryLabel: "Private Parties & Gatherings",
-      badge: "Authentic Lebanese Formula",
-      title: "Authentic Lebanese Mezza & Mixed Grill Formula",
-      subtitle: "Our beloved Lebanese feast scaled for birthdays, family reunions, baptisms, and villa gatherings",
-      pricePerPerson: "$25",
-      minGuests: "4 to 200+ Guests ($100 per 4 guests)",
-      img: "https://rest.thrubits.com/uploads/restorants/7475002e-6c1d-4101-854a-71ffc18760a6_medium.jpg",
-      highlights: [
-        "Cold Mezza: Traditional Hommos, Moutabal, Wara2 Enab, Lebanese Twist Tabbouleh & Fattouch",
-        "Hot Mezza: Batata Harra, French Fries, Kebbe Lahme, Cheese Rkakat, Sambousik, Chhotty Sejouk, Lemony Makanek & Wings Provençal",
-        "Charcoal Main Course: Mixed Skewers (Shish Tawouk, Halal Meat & Kafta) OR Charcoal Farrouj Msahab",
-        "Lebanese Desserts (Homemade Knefe / 3eych El Saraya), Soft Drinks & Rakwe Coffee"
-      ]
-    },
-    {
-      id: "pkg-private-american",
-      category: "private",
-      categoryLabel: "Birthdays & Youth Parties",
-      badge: "Crowd Favorite",
-      title: "American Feast & Molten Cheddar Fountain Formula",
-      subtitle: "High-energy comfort food extravaganza featuring our famous 1KG Cheddar Fountain, burgers, and pastas",
-      pricePerPerson: "$25",
-      minGuests: "4 to 150+ Guests ($100 per 4 guests)",
-      img: "https://rest.thrubits.com/uploads/restorants/df4795db-abfa-4ca6-8e93-bfd2ac3a3b2a_medium.jpg",
-      highlights: [
-        "Signature Molten Cheddar Fountain Station with Crispy Chicken, Mozzarella Sticks, Jalapeño Poppers, BBQ/Buffalo Wings & Onion Rings",
-        "Starters & Salads: Garlic Bread, BBQ Cheese Nachos, Garden of Green Salad & Chicken Teriyaki Salad",
-        "Main Courses: Grilled Chicken Breast in Mushroom Sauce, Tagliatelle Alfredo & Specialty Burgers",
-        "Dessert Bar (Calzone Nutella, Fondant, Crêpes) & Chilled Soft Drinks"
-      ]
-    },
-    {
-      id: "pkg-private-breakfast",
-      category: "private",
-      categoryLabel: "Morning Gatherings &Brunch",
-      badge: "Mountain Morning Feast",
-      title: "Traditional Lebanese Mountain Breakfast & Bil Foron Saj",
-      subtitle: "Ideal for morning wedding prep, family brunches, and outdoor mountain gatherings",
-      pricePerPerson: "$15",
-      minGuests: "10+ Guests (or $36 Formula for 4)",
-      img: "https://rest.thrubits.com/uploads/restorants/3874c836-7655-42de-a7ab-13f1f0a6901d_medium.jpg",
-      highlights: [
-        "Live Bil Foron Manakish Selection: Zaatar, Akkawi & Mozzarella Jebne, Kechek Baladi, Halloum & Labneh bi Kawarma",
-        "Hot Morning Pots: Lebanese Foul Mix, Balila with Cumin & Garlic Oil, Hommos Fatteh with Tarator & Pine Nuts",
-        "Farm Eggs & Dairy: Eggs with Kawarma Baladi, Grilled Halloumi Platter, Labneh Platter & Makdous",
-        "Sweet Pancakes with Honey & Fruits, Traditional Rakwe Coffee & Fresh Mint Tea"
-      ]
-    }
-  ],
-
-  // ==========================================================================
-  // LIVE COOKING STATIONS (FOR WEDDINGS & EVENTS)
-  // ==========================================================================
-  liveStations: [
-    {
-      title: "The Molten Cheddar Fountain & Sliders Bar",
-      desc: "Our viral signature attraction! Flowing warm aged cheddar cheese paired with charcoal-grilled beef sliders, crispy chicken tenders, mozzarella sticks, wings, and curly fries.",
-      tag: "Signature Attraction",
-      img: "https://rest.thrubits.com/uploads/restorants/df4795db-abfa-4ca6-8e93-bfd2ac3a3b2a_medium.jpg"
-    },
-    {
-      title: "Live Charcoal Mixed Grill & Fillet Carving",
-      desc: "Our grill masters sear halal beef fillets, shish tawouk, kafta skewers, and marinated farrouj msahab live over glowing charcoal at your venue.",
-      tag: "Wedding Essential",
+      id: "stations",
+      name: "Live Stations",
+      nameAr: "المحطات الحية",
+      text: "Pasta, salad, grill, burger, sajj, shawarma and real fillet — cooked in front of your guests.",
+      tagline: "",
+      taglineAr: "",
       img: "https://rest.thrubits.com/uploads/restorants/cecfd5bb-ae60-499d-b744-ee80a3f19031_medium.jpg"
     },
     {
-      title: "Authentic Lebanese Mezza & Bil Foron Oven",
-      desc: "Freshly baked Zaatar, Jebne, Kechek, and Labneh bi Kawarma straight from the oven alongside 14+ artisan cold and hot Lebanese mezza dishes.",
-      tag: "Heritage Hospitality",
+      id: "trays",
+      name: "Trays & Mini Bites",
+      nameAr: "الأطباق الرئيسية والقضمات",
+      text: "Main course trays for 30–40 people and La2mi La2mi mini bites.",
+      tagline: "",
+      taglineAr: "",
       img: "https://rest.thrubits.com/uploads/restorants/7475002e-6c1d-4101-854a-71ffc18760a6_medium.jpg"
+    }
+  ],
+
+  cateringChoiceGroups: [
+    { id: "appetizers", name: "Appetizers", nameAr: "مقبلات", items: [] },
+    { id: "pastries", name: "Pastries", nameAr: "معجنات", items: [] },
+    { id: "salads", name: "Salads", nameAr: "سلطات", items: [] },
+    { id: "quiche", name: "Quiche", nameAr: "كيش", items: [] },
+    {
+      id: "hot-mains",
+      name: "Hot main courses",
+      nameAr: "أطباق رئيسية ساخنة",
+      items: [
+        { name: "Chicken with Rice", nameAr: "رز ع دجاج" },
+        { name: "Meat with Rice", nameAr: "رز لحمة" },
+        { name: "Sayadieh", nameAr: "صياديه" },
+        { name: "Paella", nameAr: "بايلا" },
+        { name: "Beef Fillet with Potatoes & Vegetables", nameAr: "لحمة فيليه مع بطاطا وخضار" },
+        { name: "Beef Stroganoff", nameAr: "بيف ستروغونوف" },
+        { name: "Chicken Stroganoff", nameAr: "تشكن ستروغونوف" },
+        { name: "Shrimp Stroganoff", nameAr: "شرمب ستروغونوف" },
+        { name: "Moroccan Chicken", nameAr: "مغربيه دجاج" },
+        { name: "Freekeh with Meat", nameAr: "فريكه لحم" },
+        { name: "Freekeh with Chicken", nameAr: "فريكه دجاج" },
+        { name: "Chicken Cashew", nameAr: "تشكن كاجو" },
+        { name: "Kibbeh Labanieh & Shish Barak", nameAr: "كبه لبنيه وشيش برك" },
+        { name: "Mixed Stuffed Vegetables", nameAr: "محاشي مشكله" },
+        { name: "Shahbai Roast with Vegetables & Potatoes", nameAr: "روستو شهبايه مع خضره وبطاطا" },
+        { name: "Fettuccine Alfredo", nameAr: "معكرونه الفريدو" },
+        { name: "Penne Arrabbiata", nameAr: "معكرونه اربياتا" },
+        { name: "Chicken Kabsa", nameAr: "كبسه دجاج" },
+        { name: "Meat Kabsa", nameAr: "كبسه لحم" },
+        { name: "Grilled Chicken with Potatoes & Vegetables", nameAr: "غرلد تشكن مع بطاطا وخضار" }
+      ]
+    },
+    { id: "desserts", name: "Desserts", nameAr: "حلويات", items: [] },
+    { id: "mini-sandwiches", name: "Mini sandwiches", nameAr: "ميني سندويشات", items: [] },
+    {
+      id: "mini-bites",
+      name: "Mini bites",
+      nameAr: "ميني قضمات",
+      items: [
+        { name: "Shawarma Beef", nameAr: "ميني شاورما لحم" },
+        { name: "Shawarma Chicken", nameAr: "ميني شاورما دجاج" },
+        { name: "Chicken Mix", nameAr: "ميني دجاج ميكس" },
+        { name: "Tuna Mix", nameAr: "ميني تونا ميكس" },
+        { name: "Sejok Mix", nameAr: "ميني سجق ميكس" },
+        { name: "Halloumi Cucumber", nameAr: "ميني حلومي خيار" },
+        { name: "Kaaki Labni", nameAr: "ميني كعكة لبنة" },
+        { name: "Kaaki Cheese", nameAr: "ميني كعكة جبنة" },
+        { name: "Kaaki Turkey & Cheese", nameAr: "ميني كعكة تركي وجبنة" }
+      ]
+    },
+    { id: "mini-salads", name: "Mini salads", nameAr: "ميني سلطات", items: [] },
+    { id: "mini-pastries", name: "Mini mo3ajanet (pastries)", nameAr: "ميني معجنات", items: [] },
+    { id: "mini-desserts", name: "Mini desserts", nameAr: "ميني حلويات", items: [] }
+  ],
+
+  eventPackages: [
+    {
+      id: "buffet-classic",
+      type: "buffet",
+      name: "Classic",
+      nameAr: "الباقة الكلاسيكية",
+      pricePerPerson: 20,
+      badge: "Ideal for weddings",
+      note: "",
+      choices: [
+        { group: "appetizers", count: 4 },
+        { group: "pastries", count: 5 },
+        { group: "salads", count: 5 },
+        { group: "hot-mains", count: 2 },
+        { group: "desserts", count: 0 }
+      ],
+      includes: [],
+      img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=85"
     },
     {
-      title: "Live Italian Pasta & Shrimp Tagliatelle Wheel",
-      desc: "Made-to-order Tagliatelle Shrimp, Penne Arrabiata, Four-Cheese Penne, and Truffle Mac & Cheese tossed live in front of your guests.",
-      tag: "Interactive Station",
-      img: "https://rest.thrubits.com/uploads/restorants/6fc84d0a-9543-4222-9927-3c9fe7612d20_medium.jpg"
+      id: "buffet-premium",
+      type: "buffet",
+      name: "Premium",
+      nameAr: "الباقة المميزة",
+      pricePerPerson: 25,
+      badge: "",
+      note: "",
+      choices: [
+        { group: "appetizers", count: 6 },
+        { group: "pastries", count: 8 },
+        { group: "salads", count: 5 },
+        { group: "quiche", count: 2 },
+        { group: "hot-mains", count: 3 },
+        { group: "desserts", count: 0 }
+      ],
+      includes: [],
+      img: "https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=1000&q=85"
     },
     {
-      title: "Live Homemade Knefe, Crêpe & Nutella Calzone Bar",
-      desc: "Warm golden Lebanese Knefe, Lotus & Kinder crêpes, Pain Perdu, and oven-baked Nutella Calzones prepared fresh for a sweet finale.",
-      tag: "Sweet Finale",
+      id: "buffet-vip",
+      type: "buffet",
+      name: "VIP",
+      nameAr: "الباقة الفاخرة",
+      pricePerPerson: 30,
+      badge: "",
+      note: "",
+      choices: [
+        { group: "appetizers", count: 8 },
+        { group: "pastries", count: 8 },
+        { group: "salads", count: 8 },
+        { group: "quiche", count: 3 },
+        { group: "hot-mains", count: 4 },
+        { group: "desserts", count: 0 }
+      ],
+      includes: ["Live pasta station"],
+      img: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1000&q=85"
+    },
+    {
+      id: "birthday-classic",
+      type: "birthday",
+      name: "Classic",
+      nameAr: "الباقة الكلاسيكية",
+      pricePerPerson: 18,
+      badge: "",
+      note: "",
+      choices: [
+        { group: "mini-sandwiches", count: 2 },
+        { group: "mini-bites", count: 2 },
+        { group: "mini-salads", count: 2 },
+        { group: "mini-pastries", count: 2 },
+        { group: "mini-desserts", count: 2 }
+      ],
+      includes: [],
+      img: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1000&q=85"
+    },
+    {
+      id: "birthday-premium",
+      type: "birthday",
+      name: "Premium",
+      nameAr: "الباقة المميزة",
+      pricePerPerson: 25,
+      badge: "",
+      note: "",
+      choices: [
+        { group: "mini-sandwiches", count: 3 },
+        { group: "mini-bites", count: 3 },
+        { group: "mini-salads", count: 3 },
+        { group: "mini-pastries", count: 3 },
+        { group: "mini-desserts", count: 3 }
+      ],
+      includes: [],
+      img: "https://rest.thrubits.com/uploads/restorants/df4795db-abfa-4ca6-8e93-bfd2ac3a3b2a_medium.jpg"
+    },
+    {
+      id: "birthday-vip",
+      type: "birthday",
+      name: "VIP",
+      nameAr: "الباقة الفاخرة",
+      pricePerPerson: 28,
+      badge: "",
+      note: "",
+      choices: [
+        { group: "mini-sandwiches", count: 5 },
+        { group: "mini-bites", count: 5 },
+        { group: "mini-salads", count: 5 },
+        { group: "mini-pastries", count: 5 },
+        { group: "mini-desserts", count: 5 }
+      ],
+      includes: [],
       img: "https://rest.thrubits.com/uploads/restorants/f940752b-2b90-4efb-aad5-22b13acdf2f3_medium.jpg"
     }
+  ],
+
+  liveStationMenu: [
+    {
+      id: "station-pasta",
+      name: "Live pasta station",
+      nameAr: "محطة الباستا الحية",
+      options: [
+        { label: "Classic", labelAr: "كلاسيك", price: 3, unit: "person" },
+        { label: "VIP", labelAr: "VIP", price: 5, unit: "person" }
+      ]
+    },
+    {
+      id: "station-salad",
+      name: "Live salad station",
+      nameAr: "محطة السلطات الحية",
+      options: [
+        { label: "Classic", labelAr: "كلاسيك", price: 3, unit: "person" },
+        { label: "VIP", labelAr: "VIP", price: 6, unit: "person" }
+      ]
+    },
+    {
+      id: "station-mashewe",
+      name: "Live mashewe (grill) station",
+      nameAr: "محطة المشاوي الحية",
+      options: [
+        { label: "Classic", labelAr: "كلاسيك", price: 8, unit: "person" },
+        { label: "VIP", labelAr: "VIP", price: 12, unit: "person" }
+      ]
+    },
+    {
+      id: "station-burger",
+      name: "Live burger & sandwiches station",
+      nameAr: "محطة البرغر والسندويشات الحية",
+      options: [
+        { label: "Classic", labelAr: "كلاسيك", price: 4, unit: "person" },
+        { label: "VIP", labelAr: "VIP", price: 6, unit: "person" }
+      ]
+    },
+    {
+      id: "station-sajj",
+      name: "Live sajj station",
+      nameAr: "محطة الساج الحية",
+      options: [{ label: "Sajj", labelAr: "ساج", price: 2, unit: "person" }]
+    },
+    {
+      id: "station-shawarma",
+      name: "Live shawarma station",
+      nameAr: "محطة الشاورما الحية",
+      options: [
+        { label: "Chicken (1 kg)", labelAr: "دجاج (1 كغ)", price: 25, unit: "kg" },
+        { label: "Beef (1 kg)", labelAr: "لحم (1 كغ)", price: 35, unit: "kg" }
+      ]
+    },
+    {
+      id: "station-real-fillet",
+      name: "Live real fillet station",
+      nameAr: "محطة الريال فيليه الحية",
+      options: [{ label: "Real fillet (1 kg)", labelAr: "ريال فيليه (1 كغ)", price: 45, unit: "kg" }]
+    }
+  ],
+
+  mainCourseTrays: [
+    { id: "tray-chicken-rice", name: "Chicken with Rice", nameAr: "رز ع دجاج", price: 150, serves: "30–40 people" },
+    { id: "tray-meat-rice", name: "Meat with Rice", nameAr: "رز لحمة", price: 180, serves: "30–40 people" },
+    { id: "tray-sayadieh", name: "Sayadieh", nameAr: "صياديه", price: 160, serves: "30–40 people" },
+    { id: "tray-paella", name: "Paella", nameAr: "بايلا", price: 210, serves: "30–40 people" },
+    { id: "tray-beef-fillet", name: "Beef Fillet with Potatoes & Vegetables (3 kg)", nameAr: "لحمة فيليه مع بطاطا وخضار (3 كغ)", price: 300, serves: "30–40 people" },
+    { id: "tray-beef-stroganoff", name: "Beef Stroganoff", nameAr: "بيف ستروغونوف", price: 180, serves: "30–40 people" },
+    { id: "tray-chicken-stroganoff", name: "Chicken Stroganoff", nameAr: "تشكن ستروغونوف", price: 150, serves: "30–40 people" },
+    { id: "tray-shrimp-stroganoff", name: "Shrimp Stroganoff", nameAr: "شرمب ستروغونوف", price: 200, serves: "30–40 people" },
+    { id: "tray-moroccan-chicken", name: "Moroccan Chicken", nameAr: "مغربيه دجاج", price: 180, serves: "30–40 people" },
+    { id: "tray-freekeh-meat", name: "Freekeh with Meat", nameAr: "فريكه لحم", price: 200, serves: "30–40 people" },
+    { id: "tray-freekeh-chicken", name: "Freekeh with Chicken", nameAr: "فريكه دجاج", price: 180, serves: "30–40 people" },
+    { id: "tray-chicken-cashew", name: "Chicken Cashew", nameAr: "تشكن كاجو", price: 150, serves: "30–40 people" },
+    { id: "tray-kibbeh-labanieh", name: "Kibbeh Labanieh & Shish Barak", nameAr: "كبه لبنيه وشيش برك", price: 150, serves: "30–40 people" },
+    { id: "tray-stuffed-vegetables", name: "Mixed Stuffed Vegetables", nameAr: "محاشي مشكله", price: 180, serves: "30–40 people" },
+    { id: "tray-shahbai-roast", name: "Shahbai Roast with Vegetables & Potatoes", nameAr: "روستو شهبايه مع خضره وبطاطا", price: 180, serves: "30–40 people" },
+    { id: "tray-fettuccine-alfredo", name: "Fettuccine Alfredo", nameAr: "معكرونه الفريدو", price: 120, serves: "30–40 people" },
+    { id: "tray-penne-arrabbiata", name: "Penne Arrabbiata", nameAr: "معكرونه اربياتا", price: 100, serves: "30–40 people" },
+    { id: "tray-chicken-kabsa", name: "Chicken Kabsa", nameAr: "كبسه دجاج", price: 150, serves: "30–40 people" },
+    { id: "tray-meat-kabsa", name: "Meat Kabsa", nameAr: "كبسه لحم", price: 180, serves: "30–40 people" },
+    { id: "tray-grilled-chicken", name: "Grilled Chicken with Potatoes & Vegetables", nameAr: "غرلد تشكن مع بطاطا وخضار", price: 150, serves: "30–40 people" }
+  ],
+
+  miniBites: [
+    { id: "bite-shawarma-beef", name: "Shawarma Beef", nameAr: "ميني شاورما لحم", desc: "Mini beef shawarma bites", price: 18, unit: "" },
+    { id: "bite-shawarma-chicken", name: "Shawarma Chicken", nameAr: "ميني شاورما دجاج", desc: "Mini chicken shawarma bites", price: 18, unit: "" },
+    { id: "bite-chicken-mix", name: "Chicken Mix", nameAr: "ميني دجاج ميكس", desc: "", price: 18, unit: "" },
+    { id: "bite-tuna-mix", name: "Tuna Mix", nameAr: "ميني تونا ميكس", desc: "", price: 20, unit: "" },
+    { id: "bite-sejok-mix", name: "Sejok Mix", nameAr: "ميني سجق ميكس", desc: "", price: 18, unit: "" },
+    { id: "bite-halloumi-cucumber", name: "Halloumi Cucumber", nameAr: "ميني حلومي خيار", desc: "", price: 18, unit: "" },
+    { id: "bite-kaaki-labni", name: "Kaaki Labni", nameAr: "ميني كعكة لبنة", desc: "", price: 12, unit: "" },
+    { id: "bite-kaaki-cheese", name: "Kaaki Cheese", nameAr: "ميني كعكة جبنة", desc: "", price: 12, unit: "" },
+    { id: "bite-kaaki-turkey-cheese", name: "Kaaki Turkey & Cheese", nameAr: "ميني كعكة تركي وجبنة", desc: "", price: 13, unit: "" }
+  ],
+
+  cateringExtras: [
+    { id: "extra-bar", name: "Bar", nameAr: "بار" },
+    { id: "extra-plate-service", name: "Plate service", nameAr: "خدمة الصحون" },
+    { id: "extra-waiters", name: "Waiters", nameAr: "نُدُل" },
+    { id: "extra-chef", name: "Chef", nameAr: "شيف" }
   ],
 
   // ==========================================================================
@@ -459,16 +597,8 @@ const SITE_CONFIG = {
   ],
 
   // ==========================================================================
-  // INTERACTIVE EVENT CALCULATOR STATION ADD-ONS & CLIENT TESTIMONIALS
+  // CLIENT TESTIMONIALS
   // ==========================================================================
-  stationAddons: [
-    { id: "st-burger", name: "Live Charcoal Burger & Cheddar Syringe Station", pricePerGuest: 5 },
-    { id: "st-saj", name: "Live Lebanese Saj & Bil Foron Bakery Station", pricePerGuest: 4 },
-    { id: "st-pasta", name: "Live Italian Pasta & Truffle Parmesan Wheel", pricePerGuest: 5 },
-    { id: "st-knefe", name: "Live Oriental Knefe & Dessert Bar", pricePerGuest: 4 },
-    { id: "st-welcome", name: "Welcome Mocktail & Grazing Canapé Reception", pricePerGuest: 3 }
-  ],
-
   testimonials: [
     {
       name: "Nadine & Karim H.",

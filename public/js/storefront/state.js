@@ -1,4 +1,4 @@
-// UI state of the storefront (current page, tabs, filters, calculator, cart) plus cart persistence.
+// UI state of the storefront (current page, tabs, filters, package builder, cart) plus cart persistence.
 // Content (site config, menu, LBP rate) lives in ./config.js; this module only holds visitor state.
 
 import { loadJson, saveJson, getItem } from '../shared/storage.js';
@@ -31,12 +31,8 @@ function loadCart() {
 
 export const state = {
   currentPage: 'catering', // one of PAGE_IDS
-  homeShowcaseTab: 'packages', // 'packages' | 'weddings' | 'stations'
-  cateringMenusTab: 'packages', // 'packages' | 'alacarte'
+  cateringMenusTab: 'buffet', // 'buffet' | 'birthday' | 'stations' | 'trays' | 'bites'
   restoViewTab: 'menu', // 'menu' | 'atmosphere'
-  cateringPkgFilter: 'all',
-  cateringAlaCarteCat: 'all',
-  cateringAlaCarteSearch: '',
   deliveryCategory: 'all',
   deliverySearch: '',
   restoCategory: 'all',
@@ -50,9 +46,23 @@ export const state = {
   selectedZoneId: rawTable ? 'zone-pickup' : getItem(ZONE_KEY) || 'zone-ain-al-remmaneh',
   appliedPromoCode: '',
   cartFormCache: rawTable ? { address: `Table #${tableNumber} (Aley Terrace Dine-In)` } : {},
-  calcGuests: 120,
-  calcPkgIdx: 0,
-  calcStations: ['st-burger'],
+  // "Build your package" (package-builder.js): everything the visitor has chosen or typed so far
+  builder: {
+    pkgId: '',
+    guests: 50,
+    picks: {}, // choice group id -> chosen dish names
+    stationOpt: {}, // station id -> index of the per-person option
+    kg: {}, // "stationId:optionIndex" -> kg
+    trays: {}, // tray id -> quantity
+    bites: {}, // mini bite id -> quantity
+    extras: [], // extra ids (priced on request)
+    prefs: '',
+    date: '',
+    location: '',
+    name: '',
+    phone: '',
+    notes: ''
+  },
   modalCtx: null,
   cart: loadCart()
 };

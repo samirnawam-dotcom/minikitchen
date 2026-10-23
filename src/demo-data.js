@@ -50,14 +50,54 @@ function getDemoOrders() {
       customerName: 'Nadine Karam & Marc Haddad',
       customerPhone: '+961 71 445 890',
       address: 'Private Garden Villa, Bhamdoun, Mount Lebanon',
-      eventType: 'Wedding Reception',
+      eventType: 'Event buffet',
       eventDate: '2026-11-14',
       guests: 160,
-      packageSelected: 'The Royal Mountain Wedding Feast ($45/guest)',
-      notes:
-        'We would love to add the Live Molten Cheddar Fountain station for the after-party and schedule a tasting in Aley.',
-      items: [],
-      totalUsd: 7200,
+      packageSelected: 'Event buffet · Classic ($20/person)',
+      notes: 'We would love to schedule a tasting in Aley.',
+      items: [
+        {
+          id: 'buffet-classic',
+          title: 'Event buffet · Classic · $20 × 160 guests',
+          qty: 1,
+          priceValue: 3200,
+          modifiers: [],
+          note: ''
+        },
+        {
+          id: 'appetizers',
+          title: '4 appetizers — options to confirm',
+          qty: 1,
+          priceValue: 0,
+          modifiers: [],
+          note: ''
+        },
+        {
+          id: 'hot-mains',
+          title: 'Hot main courses (2)',
+          qty: 1,
+          priceValue: 0,
+          modifiers: ['Freekeh with Chicken', 'Beef Stroganoff'],
+          note: ''
+        },
+        {
+          id: 'station-pasta',
+          title: 'Live pasta station — VIP · $5 × 160 guests',
+          qty: 1,
+          priceValue: 800,
+          modifiers: [],
+          note: ''
+        },
+        {
+          id: 'extra-waiters',
+          title: 'Extra: Waiters (priced on request)',
+          qty: 1,
+          priceValue: 0,
+          modifiers: [],
+          note: ''
+        }
+      ],
+      totalUsd: 4000,
       lbpRate: 89500,
       staffNotes: 'Tasting scheduled for Saturday at 4:00 PM in Ain Al Remmaneh.',
       whatsappText:
@@ -92,13 +132,13 @@ function getDemoOrders() {
       customerName: 'Cedar Tech Holding (Maya Saab)',
       customerPhone: '+961 1 889 230',
       address: 'Souk El Gharb Conference Hall',
-      eventType: 'Corporate Event / Gala',
+      eventType: 'Event buffet',
       eventDate: '2026-10-25',
       guests: 65,
-      packageSelected: 'Executive Corporate Gala Buffet ($28/guest)',
-      notes: 'Include vegetarian mezza options and specialty coffee bar.',
+      packageSelected: 'Event buffet · Premium ($25/person)',
+      notes: 'Include vegetarian options.',
       items: [],
-      totalUsd: 1820,
+      totalUsd: 1625,
       lbpRate: 89500,
       staffNotes: 'Deposit received, menu finalized.',
       whatsappText: 'NEW CATERING QUOTATION REQUEST — MINI KITCHEN CATERING\nClient: Cedar Tech Holding\nGuests: 65'

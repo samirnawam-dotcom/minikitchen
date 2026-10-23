@@ -1,10 +1,9 @@
-// Catering / event quote forms (catering home "Request a Quote" and the contact page inquiry form):
-// formats the inquiry for WhatsApp and records it in the Back Office. Both forms share field IDs.
+// Contact page inquiry form: formats the inquiry for WhatsApp and records it in the Back Office.
+// (Catering packages are requested through "Build your package", see ./package-builder.js.)
 
 import { registerActions } from '../shared/actions.js';
 import { allocateOrderId, recordOrder } from './orders.js';
 import { openWhatsApp } from './whatsapp.js';
-import { navigateToPage } from './navigation.js';
 import { showToast } from './toast.js';
 
 const value = id => document.getElementById(id)?.value || '';
@@ -66,19 +65,6 @@ function submitQuoteForm() {
   openWhatsApp(brand, msg, true);
 }
 
-/** "Select" on a package card: jump to the quote form on the home page and preselect the package. */
-function prefillPackageInQuote(pkgLabel) {
-  navigateToPage('catering', 'planEventSection');
-  setTimeout(() => {
-    const sel = document.getElementById('quotePackage');
-    if (!sel || !sel.options) return;
-    const title = pkgLabel.split(' (')[0];
-    const match = [...sel.options].find(opt => opt.value.includes(title));
-    if (match) sel.value = match.value;
-  }, 200);
-}
-
 registerActions({
-  'quote:submit': submitQuoteForm,
-  'quote:select-package': el => prefillPackageInQuote(el.dataset.label || '')
+  'quote:submit': submitQuoteForm
 });

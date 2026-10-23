@@ -135,7 +135,7 @@ A snapshot is copied to `data/backups/` daily and kept for `BACKUP_RETENTION_DAY
 `https://samirnawam-dotcom.github.io/minikitchen/` on every push to `main`. One-time setup: **Settings → Pages →
 Build and deployment → Source: GitHub Actions**. Build it locally with `npm run build:static` (output in `dist/`).
 
-The static copy has no server: browsing, the menu, cart, calculator and quote forms work, and orders go out via
+The static copy has no server: browsing, the menu, cart, package builder and quote forms work, and orders go out via
 WhatsApp, but nothing is saved to the database and the Back Office, online menu editing and order tracking are not
 available. Use the server deployment below for the full system.
 

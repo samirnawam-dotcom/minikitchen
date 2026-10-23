@@ -1,6 +1,6 @@
 /* storefront/layout.css — Site chrome: preloader, sticky header, side navigation drawer, footer,
    floating WhatsApp button and toast.
-   Part 3 of 8; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 3 of 9; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    PRELOADER
@@ -260,6 +260,18 @@
   height: 2px;
 }
 
+/* Restaurant and delivery are side businesses: after a hairline, a size smaller */
+.nav-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--line-strong);
+  flex-shrink: 0;
+}
+
+.nav-pill-secondary {
+  font-size: 0.8rem;
+}
+
 .header-right {
   display: flex;
   align-items: center;
@@ -471,6 +483,21 @@
   font-size: 1.02rem;
 }
 
+.drawer-group-label {
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 6px 4px 0;
+}
+
+.drawer-menu-secondary .drawer-item-icon {
+  width: 30px;
+  height: 30px;
+  font-size: 0.8rem;
+}
+
 .drawer-item-desc {
   display: block;
   font-size: 0.8rem;
@@ -606,6 +633,15 @@
   display: flex;
   flex-direction: column;
   gap: 9px;
+}
+
+.footer-col .footer-subhead {
+  margin: 28px 0 12px;
+  color: var(--text-muted);
+}
+
+.footer-links-secondary .footer-link-btn {
+  font-size: var(--fs-xs);
 }
 
 .footer-link-btn {

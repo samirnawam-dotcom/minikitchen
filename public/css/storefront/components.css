@@ -1,7 +1,7 @@
-/* storefront/components.css — Buttons, section rhythm, heroes, photo strip, gallery grid and viewer,
-   services, packages, live stations, reviews, forms, about / restaurant / contact blocks and the
-   event budget calculator.
-   Part 4 of 8; files are linked in this order in views/storefront.html (cascade order matters).
+/* storefront/components.css — Buttons, section rhythm, heroes, gallery grid and viewer, tabs and chips,
+   package cards, reviews, forms and about / restaurant / contact blocks.
+   (The catering offer and the package builder are styled in catering.css.)
+   Part 4 of 9; files are linked in this order in views/storefront.html (cascade order matters).
    (The static 404 page and Back Office notice also load tokens + base + this file for .btn.) */
 
 /* ============================================================================
@@ -327,7 +327,7 @@
 }
 
 /* ============================================================================
-   PHOTO STRIP, GALLERY GRID & FULL-SCREEN VIEWER
+   GALLERY GRID & FULL-SCREEN VIEWER
    ============================================================================ */
 .gallery-tile {
   position: relative;
@@ -374,21 +374,6 @@
 .gallery-tile:focus-visible .gallery-tile-caption {
   opacity: 1;
   transform: none;
-}
-
-.photo-strip {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 6px;
-}
-
-.photo-strip .gallery-tile {
-  aspect-ratio: 4 / 5;
-  border-radius: 0;
-}
-
-.photo-strip .gallery-tile-caption {
-  display: none;
 }
 
 /* Editorial rhythm (shapes are set in pages/sections.js): tall, wide and square photos */
@@ -520,40 +505,8 @@ html.lightbox-lock body {
 }
 
 /* ============================================================================
-   SERVICES, PACKAGES & LIVE STATIONS
+   TABS, CHIPS & PACKAGE CARDS
    ============================================================================ */
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(24px, 3.5vw, 48px);
-}
-
-.service-card-media {
-  border-radius: var(--radius-photo);
-  overflow: hidden;
-  background: var(--bg-sunken);
-}
-
-.service-card-media img {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  transition: transform 1.2s var(--ease);
-}
-
-.service-card:hover .service-card-media img {
-  transform: scale(1.03);
-}
-
-.service-card-title {
-  font-size: 1.55rem;
-  margin: 22px 0 8px;
-}
-
-.service-card-text {
-  color: var(--text-muted);
-  margin-bottom: 16px;
-}
 
 .segmented {
   display: flex;
@@ -718,27 +671,6 @@ html.lightbox-lock body {
   margin-bottom: 16px;
 }
 
-.package-highlights {
-  list-style: none;
-  flex: 1;
-  margin-bottom: 22px;
-  border-top: 1px solid var(--line);
-}
-
-.package-highlights li {
-  padding: 9px 0;
-  border-bottom: 1px solid var(--line);
-  font-size: 0.88rem;
-  color: var(--text);
-}
-
-.package-highlights span {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
 .package-card-footer {
   display: flex;
   flex-wrap: wrap;
@@ -746,48 +678,6 @@ html.lightbox-lock body {
 }
 
 .package-card-footer .btn {
-  flex: 1;
-}
-
-.stations-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
-  gap: 24px;
-}
-
-.station-card {
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.station-card-media img {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  background: var(--bg-sunken);
-}
-
-.station-card-body {
-  padding: 22px 24px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex: 1;
-}
-
-.station-card-title {
-  font-size: 1.25rem;
-  margin: 8px 0;
-}
-
-.station-card-text {
-  color: var(--text-muted);
-  font-size: 0.92rem;
-  margin-bottom: 16px;
   flex: 1;
 }
 
@@ -889,8 +779,7 @@ html.lightbox-lock body {
   grid-column: 1 / -1;
 }
 
-.form-group label,
-.calc-label {
+.form-group label {
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--ink);
@@ -934,45 +823,6 @@ textarea.form-control {
 
 .form-submit {
   margin-top: 20px;
-}
-
-/* Quote section on the home page */
-.quote-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  gap: clamp(32px, 6vw, 80px);
-  align-items: start;
-}
-
-.quote-intro-text {
-  color: var(--text-muted);
-  margin: 18px 0 28px;
-}
-
-.contact-lines {
-  list-style: none;
-  border-top: 1px solid var(--line);
-}
-
-.contact-lines li {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--line);
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.contact-lines a {
-  direction: ltr;
-}
-
-.contact-line-label {
-  font-size: var(--fs-xs);
-  font-weight: 500;
-  color: var(--text-muted);
 }
 
 /* ============================================================================
@@ -1204,181 +1054,4 @@ textarea.form-control {
 .contact-aside .hero-actions {
   margin-top: 0;
   gap: 8px;
-}
-
-/* ============================================================================
-   EVENT BUDGET CALCULATOR
-   ============================================================================ */
-.calc-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  gap: 24px;
-  align-items: stretch;
-}
-
-.calc-panel,
-.calc-summary {
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card);
-  padding: clamp(22px, 3vw, 34px);
-}
-
-.calc-panel .form-group + .form-group {
-  margin-top: 26px;
-}
-
-.calc-guests-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.calc-guests-input {
-  width: 100px;
-  text-align: center;
-  font-weight: 700;
-}
-
-.calc-range {
-  width: 100%;
-  margin-top: 8px;
-  accent-color: var(--brand-primary);
-  cursor: pointer;
-}
-
-.calc-range-scale {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.74rem;
-  color: var(--text-muted);
-}
-
-.calc-options {
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--line);
-}
-
-.calc-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 2px;
-  border-bottom: 1px solid var(--line);
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.calc-option-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.calc-option input {
-  width: 17px;
-  height: 17px;
-  flex-shrink: 0;
-  accent-color: var(--ink);
-}
-
-.calc-option.checked {
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.calc-option-price {
-  white-space: nowrap;
-  color: var(--brand-ink);
-  font-weight: 600;
-  font-size: 0.86rem;
-}
-
-.calc-summary {
-  display: flex;
-  flex-direction: column;
-  border-top: 2px solid var(--brand-primary);
-}
-
-.calc-summary-title {
-  font-size: 1.45rem;
-  margin: 10px 0 6px;
-}
-
-.calc-breakdown {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-}
-
-.calc-figures {
-  margin: 22px 0;
-  padding: 20px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  flex: 1;
-}
-
-.calc-figure-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin-bottom: 18px;
-}
-
-.calc-figure-row strong {
-  color: var(--ink);
-  font-size: 1.1rem;
-}
-
-.calc-total-label {
-  font-size: var(--fs-eyebrow);
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.calc-total {
-  font-family: var(--font-serif);
-  font-size: clamp(2.2rem, 4vw, 2.8rem);
-  color: var(--ink);
-  line-height: 1.15;
-  margin-top: 4px;
-}
-
-.calc-total-lbp {
-  font-size: 0.88rem;
-  color: var(--brand-ink);
-  font-weight: 600;
-}
-
-.check-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 22px;
-  font-size: 0.88rem;
-}
-
-.check-list li {
-  position: relative;
-  padding-inline-start: 22px;
-}
-
-.check-list li::before {
-  content: '';
-  position: absolute;
-  inset-inline-start: 2px;
-  top: 0.45em;
-  width: 9px;
-  height: 5px;
-  border-left: 1.5px solid var(--brand-ink);
-  border-bottom: 1.5px solid var(--brand-ink);
-  transform: rotate(-45deg);
 }

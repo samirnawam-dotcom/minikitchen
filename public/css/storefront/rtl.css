@@ -1,5 +1,5 @@
 /* storefront/rtl.css — Right-to-left (Arabic) adjustments.
-   Part 8 of 8; linked last in views/storefront.html. Spacing, borders and badge positions use
+   Part 9 of 9; linked last in views/storefront.html. Spacing, borders and badge positions use
    logical properties (margin-inline-start, inset-inline-end…) elsewhere, so they mirror on their
    own; this file only covers what logical properties cannot: slide/hover movements and text. */
 

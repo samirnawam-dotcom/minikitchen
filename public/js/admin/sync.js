@@ -102,8 +102,12 @@ export async function refreshFromServer({ silent = false, background = false } =
   return true;
 }
 
+// Catering keys replaced by eventPackages / liveStationMenu (2026 catering offer); dropped on save.
+const RETIRED_KEYS = ['cateringPackages', 'liveStations', 'stationAddons'];
+
 /** Saves data.siteConfig (+ LBP rate). Returns true on success. */
 export async function saveSiteConfig() {
+  for (const key of RETIRED_KEYS) delete data.siteConfig[key];
   cacheSiteConfig();
   try {
     const result = await api.saveSiteConfig(data.siteConfig, data.lbpRate);

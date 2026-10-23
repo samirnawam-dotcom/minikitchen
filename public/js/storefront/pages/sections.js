@@ -1,5 +1,6 @@
 // Building blocks shared by several pages: page hero, section header, photo gallery tiles (opened in
-// the full-screen viewer, see ../lightbox.js), catering package card and client reviews.
+// the full-screen viewer, see ../lightbox.js) and client reviews. Catering package cards live in
+// ../catering-offer.js.
 // Config text is always escaped; `title` / `text` / `actions` arguments are trusted page markup.
 
 import { esc } from '../../shared/dom.js';
@@ -83,36 +84,6 @@ export function uniqueByImage(...lists) {
     seen.add(item.img);
     return true;
   });
-}
-
-export function packageCard(pkg) {
-  const highlights = (pkg.highlights || []).slice(0, 3);
-  const inquiry = `Hello Mini Kitchen Catering! I am interested in the *${pkg.title}* (${pkg.pricePerPerson}/guest). Could you share availability and a customized quote?`;
-  return `
-      <article class="package-card">
-        <div class="package-card-media">
-          ${img(pkg.img, pkg.title)}
-          ${pkg.badge ? `<span class="package-badge">${esc(pkg.badge)}</span>` : ''}
-        </div>
-        <div class="package-card-body">
-          <div class="package-card-cat">${esc(pkg.categoryLabel)} · ${esc(pkg.minGuests)}</div>
-          <h3 class="package-card-title">${esc(pkg.title)}</h3>
-          <div class="package-card-price"><span>${esc(pkg.pricePerPerson)}</span> per guest</div>
-          <p class="package-card-sub">${esc(pkg.subtitle)}</p>
-          <ul class="package-highlights">
-            ${highlights.map(h => `<li><span>${esc(h)}</span></li>`).join('')}
-          </ul>
-          <div class="package-card-footer">
-            <button class="btn btn-whatsapp btn-sm" data-action="wa:open" data-brand="catering" data-msg="${esc(inquiry)}">
-              <i class="fa-brands fa-whatsapp"></i> Ask on WhatsApp
-            </button>
-            <button class="btn btn-outline btn-sm" data-action="quote:select-package" data-label="${esc(`${pkg.title} (${pkg.pricePerPerson}/guest)`)}">
-              Request a quote
-            </button>
-          </div>
-        </div>
-      </article>
-    `;
 }
 
 export function testimonialsSection({ tone = 'ivory' } = {}) {

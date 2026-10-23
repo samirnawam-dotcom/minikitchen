@@ -88,9 +88,9 @@ function buildContactPage() {
                 <div class="form-group">
                   <label for="quoteEventType">About *</label>
                   <select id="quoteEventType" class="form-control" required>
-                    <option value="Wedding Catering Inquiry">Wedding catering</option>
-                    <option value="Corporate Catering Inquiry">Corporate catering</option>
-                    <option value="Private Party / Birthday Catering">Private party / birthday</option>
+                    <option value="Event Buffet (Wedding / Occasion)">Event buffet — wedding or occasion</option>
+                    <option value="Birthday Mini Catering">Birthday Mini</option>
+                    <option value="Live Stations / Trays / Mini Bites">Live stations, trays or mini bites</option>
                     <option value="Restaurant Table Reservation">Restaurant table booking</option>
                     <option value="Delivery / Group Order">Delivery / group order</option>
                   </select>

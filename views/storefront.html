@@ -60,6 +60,7 @@
     <link rel="stylesheet" href="css/storefront/base.css" />
     <link rel="stylesheet" href="css/storefront/layout.css" />
     <link rel="stylesheet" href="css/storefront/components.css" />
+    <link rel="stylesheet" href="css/storefront/catering.css" />
     <link rel="stylesheet" href="css/storefront/menu.css" />
     <link rel="stylesheet" href="css/storefront/panels.css" />
     <link rel="stylesheet" href="css/storefront/responsive.css" />
@@ -216,17 +217,31 @@
 
         <nav class="header-center-nav" aria-label="Primary navigation">
           <button class="nav-pill active" data-nav-page="catering" data-action="nav:go" data-page="catering">
-            Catering
+            Home
           </button>
           <button class="nav-pill" data-nav-page="catering-menus" data-action="nav:go" data-page="catering-menus">
-            Menus & Packages
+            Packages & Menus
           </button>
-          <button class="nav-pill" data-nav-page="restaurant" data-action="nav:go" data-page="restaurant">
-            Restaurant
-          </button>
-          <button class="nav-pill" data-nav-page="delivery" data-action="nav:go" data-page="delivery">Delivery</button>
           <button class="nav-pill" data-nav-page="about" data-action="nav:go" data-page="about">About Us</button>
           <button class="nav-pill" data-nav-page="contact" data-action="nav:go" data-page="contact">Contact</button>
+          <!-- Side businesses: after a hairline, smaller -->
+          <span class="nav-divider" aria-hidden="true"></span>
+          <button
+            class="nav-pill nav-pill-secondary"
+            data-nav-page="restaurant"
+            data-action="nav:go"
+            data-page="restaurant"
+          >
+            Restaurant
+          </button>
+          <button
+            class="nav-pill nav-pill-secondary"
+            data-nav-page="delivery"
+            data-action="nav:go"
+            data-page="delivery"
+          >
+            Delivery
+          </button>
         </nav>
 
         <div class="header-right">
@@ -280,43 +295,23 @@
             <button class="drawer-menu-item" data-nav-page="catering" data-action="nav:go" data-page="catering">
               <span class="drawer-item-icon"><i class="fa-solid fa-champagne-glasses"></i></span>
               <span class="drawer-item-text">
-                <span class="drawer-item-title">Catering</span>
-                <span class="drawer-item-desc">Weddings, corporate & private events</span>
+                <span class="drawer-item-title">Home</span>
+                <span class="drawer-item-desc">Catering for weddings, birthdays & occasions</span>
               </span>
               <i class="fa-solid fa-chevron-right drawer-item-arrow"></i>
             </button>
           </li>
           <li>
             <button
-              class="drawer-menu-item drawer-menu-sub"
+              class="drawer-menu-item"
               data-nav-page="catering-menus"
               data-action="nav:go"
               data-page="catering-menus"
             >
               <span class="drawer-item-icon"><i class="fa-solid fa-book-open"></i></span>
               <span class="drawer-item-text">
-                <span class="drawer-item-title">Menus & Packages</span>
-                <span class="drawer-item-desc">Event packages, trays & budget calculator</span>
-              </span>
-              <i class="fa-solid fa-chevron-right drawer-item-arrow"></i>
-            </button>
-          </li>
-          <li>
-            <button class="drawer-menu-item" data-nav-page="restaurant" data-action="nav:go" data-page="restaurant">
-              <span class="drawer-item-icon"><i class="fa-solid fa-mountain-sun"></i></span>
-              <span class="drawer-item-text">
-                <span class="drawer-item-title">Restaurant</span>
-                <span class="drawer-item-desc">Terrace dining in Ain Al Remmaneh</span>
-              </span>
-              <i class="fa-solid fa-chevron-right drawer-item-arrow"></i>
-            </button>
-          </li>
-          <li>
-            <button class="drawer-menu-item" data-nav-page="delivery" data-action="nav:go" data-page="delivery">
-              <span class="drawer-item-icon"><i class="fa-solid fa-motorcycle"></i></span>
-              <span class="drawer-item-text">
-                <span class="drawer-item-title">Delivery</span>
-                <span class="drawer-item-desc">Order online, send on WhatsApp</span>
+                <span class="drawer-item-title">Packages & Menus</span>
+                <span class="drawer-item-desc">Buffets, Birthday Minis, live stations & trays</span>
               </span>
               <i class="fa-solid fa-chevron-right drawer-item-arrow"></i>
             </button>
@@ -337,6 +332,40 @@
               <span class="drawer-item-text">
                 <span class="drawer-item-title">Contact</span>
                 <span class="drawer-item-desc">Phone, WhatsApp, form & map</span>
+              </span>
+              <i class="fa-solid fa-chevron-right drawer-item-arrow"></i>
+            </button>
+          </li>
+        </ul>
+
+        <div class="drawer-group-label" id="drawerAlsoLabel">Also from Mini Kitchen</div>
+        <ul class="drawer-menu-list drawer-menu-secondary">
+          <li>
+            <button
+              class="drawer-menu-item drawer-menu-sub"
+              data-nav-page="restaurant"
+              data-action="nav:go"
+              data-page="restaurant"
+            >
+              <span class="drawer-item-icon"><i class="fa-solid fa-mountain-sun"></i></span>
+              <span class="drawer-item-text">
+                <span class="drawer-item-title">Restaurant</span>
+                <span class="drawer-item-desc">Terrace dining in Ain Al Remmaneh</span>
+              </span>
+              <i class="fa-solid fa-chevron-right drawer-item-arrow"></i>
+            </button>
+          </li>
+          <li>
+            <button
+              class="drawer-menu-item drawer-menu-sub"
+              data-nav-page="delivery"
+              data-action="nav:go"
+              data-page="delivery"
+            >
+              <span class="drawer-item-icon"><i class="fa-solid fa-motorcycle"></i></span>
+              <span class="drawer-item-text">
+                <span class="drawer-item-title">Delivery</span>
+                <span class="drawer-item-desc">Order online, send on WhatsApp</span>
               </span>
               <i class="fa-solid fa-chevron-right drawer-item-arrow"></i>
             </button>
@@ -470,18 +499,31 @@
           </div>
 
           <div class="footer-col">
-            <h4>Pages</h4>
+            <h4>Catering</h4>
             <ul class="footer-links">
-              <li><button class="footer-link-btn" data-action="nav:go" data-page="catering">Catering</button></li>
+              <li><button class="footer-link-btn" data-action="nav:go" data-page="catering">Home</button></li>
               <li>
                 <button class="footer-link-btn" data-action="nav:go" data-page="catering-menus">
-                  Menus & Packages
+                  Packages & Menus
                 </button>
               </li>
-              <li><button class="footer-link-btn" data-action="nav:go" data-page="restaurant">Restaurant</button></li>
-              <li><button class="footer-link-btn" data-action="nav:go" data-page="delivery">Delivery</button></li>
+              <li>
+                <button
+                  class="footer-link-btn"
+                  data-action="nav:go"
+                  data-page="catering"
+                  data-scroll="planEventSection"
+                >
+                  Build your package
+                </button>
+              </li>
               <li><button class="footer-link-btn" data-action="nav:go" data-page="about">About Us</button></li>
               <li><button class="footer-link-btn" data-action="nav:go" data-page="contact">Contact</button></li>
+            </ul>
+            <h4 class="footer-subhead">Also from Mini Kitchen</h4>
+            <ul class="footer-links footer-links-secondary">
+              <li><button class="footer-link-btn" data-action="nav:go" data-page="restaurant">Restaurant</button></li>
+              <li><button class="footer-link-btn" data-action="nav:go" data-page="delivery">Delivery</button></li>
             </ul>
           </div>
 

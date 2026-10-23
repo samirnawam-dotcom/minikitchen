@@ -1,7 +1,7 @@
-/* storefront/menu.css — Menu explorer shared by the catering trays, restaurant and delivery menus:
+/* storefront/menu.css — Menu explorer shared by the restaurant and delivery menus:
    table welcome banner, category circles, search / currency / layout / dietary toolbar, category
    sections, list cards and photo-grid cards.
-   Part 5 of 8; files are linked in this order in views/storefront.html (cascade order matters). */
+   Part 6 of 9; files are linked in this order in views/storefront.html (cascade order matters). */
 
 .fd-menu-shell {
   display: flex;

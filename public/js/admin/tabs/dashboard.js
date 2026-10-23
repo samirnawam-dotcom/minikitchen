@@ -2,7 +2,7 @@
 
 import { registerActions } from '../../shared/actions.js';
 import { byId } from '../../shared/dom.js';
-import { data } from '../state.js';
+import { data, siteList } from '../state.js';
 import { formatUsd, formatLbp } from '../format.js';
 import { registerTab, renderActiveTab } from '../router.js';
 import { saveSiteConfig } from '../sync.js';
@@ -26,7 +26,7 @@ function kpiCard(label, icon, iconStyle, value, foot) {
 }
 
 function render() {
-  const { orders, menuCategories, siteConfig, lbpRate } = data;
+  const { orders, menuCategories, lbpRate } = data;
   const newCount = orders.filter(o => o.status === 'new').length;
   const delivery = orders.filter(o => o.type === 'delivery_order');
   const catering = orders.filter(o => o.type === 'catering_quote');
@@ -60,7 +60,7 @@ function render() {
         'fa-solid fa-crown',
         'background:rgba(197,155,39,0.16); color:var(--bo-gold-dark);',
         `${catering.length} Events`,
-        `${(siteConfig.cateringPackages || []).length} Active Packages • ${tableLeads.length} Table/Chat Leads`
+        `${siteList('eventPackages').length} Active Packages • ${tableLeads.length} Table/Chat Leads`
       )}
       ${kpiCard(
         'FineDine Digital Menu Status',

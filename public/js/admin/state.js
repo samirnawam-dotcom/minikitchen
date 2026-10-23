@@ -73,7 +73,7 @@ export const ui = {
   menuCatFilter: 'all',
   menuStockFilter: 'all', // all | available | soldout
   menuSearch: '',
-  cateringSubTab: 'packages', // packages | stations
+  cateringSubTab: 'packages', // packages | groups | stations | trays | bites | extras
   contentSubTab: 'cateringGallery', // cateringGallery | restaurantGallery | teamMembers | behindTheScenes
   seoPageKey: 'catering',
   tableQrCount: 12,
