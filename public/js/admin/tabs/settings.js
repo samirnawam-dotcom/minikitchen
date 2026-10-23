@@ -330,7 +330,7 @@ registerActions({
 });
 
 registerTab('settings', {
-  title: 'Website Settings, Dark/Light Theme, WhatsApp Numbers & Currency Rate',
-  subtitle: 'Update WhatsApp phone numbers, default website theme, USD to LBP rate, opening hours & delivery areas',
+  title: 'Settings',
+  subtitle: '',
   render
 });

@@ -195,7 +195,7 @@ registerActions({
 });
 
 registerTab('menu', {
-  title: 'FineDine Digital Menu & Dish Manager',
-  subtitle: 'Add, edit, price, or toggle Sold Out status across all 22 categories and 239+ dishes',
+  title: 'Menu',
+  subtitle: '',
   render
 });

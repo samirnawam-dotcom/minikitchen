@@ -145,7 +145,7 @@ registerActions({
 });
 
 registerTab('dashboard', {
-  title: 'Executive Overview & Live WhatsApp Feed',
-  subtitle: 'Real-time summary of WhatsApp delivery orders, wedding catering quotes, and menu performance',
+  title: 'Dashboard',
+  subtitle: '',
   render
 });

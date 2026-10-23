@@ -152,7 +152,7 @@ registerActions({
 });
 
 registerTab('seo', {
-  title: 'Search Engine Optimization (SEO) & Google Snippet Manager',
-  subtitle: 'Manage Google Search titles, meta descriptions, local Aley keywords & OpenGraph previews for all 6 pages',
+  title: 'Google Search',
+  subtitle: '',
   render
 });

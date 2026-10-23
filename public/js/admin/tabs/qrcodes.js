@@ -225,7 +225,7 @@ registerActions({
 });
 
 registerTab('qrcodes', {
-  title: '3-Menu QR Code Studio & Table Tent Printer',
-  subtitle: 'Manage and print scannable QR codes for Catering, Restaurant Dine-In, and Delivery menus',
+  title: 'QR Codes',
+  subtitle: '',
   render
 });

@@ -88,7 +88,7 @@ async function submitLogin() {
     await refreshFromServer({ silent: true });
     showToast(
       result.user?.mustChangePassword
-        ? 'Please set a new password in the Security & Admin Login tab.'
+        ? 'Please set a new password in the Account tab.'
         : `Welcome back, ${result.user?.displayName || 'Mini Kitchen Admin'}!`
     );
   } catch (err) {

@@ -260,7 +260,7 @@ registerActions({
 });
 
 registerTab('catering', {
-  title: 'Catering Event Packages & Live Cooking Stations',
-  subtitle: 'Manage wedding packages, corporate formulas, per-guest pricing, and interactive stations',
+  title: 'Packages',
+  subtitle: '',
   render
 });
