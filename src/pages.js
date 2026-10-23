@@ -111,6 +111,43 @@ function assetHash(rel) {
   return hash;
 }
 
+// ES modules are served under /assets/<version>/js/... where <version> covers every file in
+// public/js. Relative imports inside a module inherit that prefix, so after a deploy the browser
+// fetches the whole module graph fresh and can never mix old and new modules, even when the web
+// server in front of Node (Passenger/nginx serving public/ directly) lets browsers cache /js/*.
+const JS_DIR = path.join(config.PUBLIC_DIR, 'js');
+let jsVersionCache = { key: null, hash: '0' };
+
+function listFiles(dir) {
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  return entries.flatMap(e => {
+    const full = path.join(dir, e.name);
+    return e.isDirectory() ? listFiles(full) : e.isFile() ? [full] : [];
+  });
+}
+
+function jsVersion() {
+  const key = listFiles(JS_DIR)
+    .sort()
+    .map(file => {
+      const stats = fs.statSync(file);
+      return `${file}:${stats.mtimeMs}:${stats.size}`;
+    })
+    .join('|');
+  if (key !== jsVersionCache.key) {
+    jsVersionCache = { key, hash: crypto.createHash('sha1').update(key).digest('hex').slice(0, 8) };
+  }
+  return jsVersionCache.hash;
+}
+
+const versionedAsset = asset =>
+  asset.startsWith('js/') ? `assets/${jsVersion()}/${asset}` : `${asset}?v=${assetHash(asset)}`;
+
 const templateCache = new Map();
 
 function loadTemplate(file) {
@@ -133,13 +170,13 @@ function renderPage(name) {
   const view = PAGES[name];
   if (!view) return null;
   const { text, assets, mtimeMs } = loadTemplate(path.join(config.VIEWS_DIR, view));
-  const version = [mtimeMs, ...assets.map(assetHash)].join(':');
+  const version = [mtimeMs, jsVersion(), ...assets.map(assetHash)].join(':');
   const cached = renderCache.get(name);
   if (cached && cached.version === version) return cached;
 
   const vars = pageVars(name);
   const html = text
-    .replace(ASSET_RE, (_, attr, asset) => `${attr}="${asset}?v=${assetHash(asset)}"`)
+    .replace(ASSET_RE, (_, attr, asset) => `${attr}="${versionedAsset(asset)}"`)
     .replace(/\{\{(\w+)\}\}/g, (match, key) => (key in vars ? escapeAttr(vars[key]) : match));
 
   const entry = { html, version };
@@ -147,4 +184,4 @@ function renderPage(name) {
   return entry;
 }
 
-module.exports = { renderPage, PAGES, STOREFRONT_PAGES };
+module.exports = { renderPage, jsVersion, PAGES, STOREFRONT_PAGES };

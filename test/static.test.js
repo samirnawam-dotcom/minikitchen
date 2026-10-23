@@ -41,6 +41,24 @@ test('assets are fingerprinted and cached immutably', async () => {
   assert.match(res.headers.get('cache-control'), /immutable/);
 });
 
+test('scripts load from a versioned path so a deploy never mixes old and new modules', async () => {
+  const html = await (await get('/')).text();
+  const m = html.match(/src="(assets\/[0-9a-f]{8}\/js\/storefront\/main\.js)"/);
+  assert.ok(m, 'entry module is served under assets/<version>/');
+  const entry = await get(`/${m[1]}`);
+  assert.equal(entry.status, 200);
+  assert.match(entry.headers.get('cache-control'), /immutable/);
+  // Relative imports resolve under the same prefix
+  const nested = await get(`/${m[1].replace('storefront/main.js', 'shared/actions.js')}`);
+  assert.equal(nested.status, 200);
+  assert.match(nested.headers.get('content-type'), /javascript/);
+  // An outdated version still loads but is not cached forever
+  const stale = await get('/assets/00000000/js/storefront/main.js');
+  assert.equal(stale.status, 200);
+  assert.doesNotMatch(stale.headers.get('cache-control'), /immutable/);
+  assert.equal((await get('/assets/00000000/js/../../server.js')).status, 404);
+});
+
 test('admin page is never cached or indexed', async () => {
   const res = await get('/admin');
   assert.equal(res.status, 200);
