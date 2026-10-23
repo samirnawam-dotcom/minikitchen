@@ -1,93 +1,5 @@
-/* storefront/responsive.css — Responsive breakpoints for the sections above.
-   Part 7 of 14; files are linked in this order in views/storefront.html (cascade order matters). */
-
-/* ============================================================================
-   RESPONSIVE BREAKPOINTS (MOBILE, TABLET & LAPTOP OPTIMIZATION)
-   ============================================================================ */
-.nav-drawer-header .brand-logo-wrap,
-.site-footer .brand-logo-wrap {
-  padding-inline-start: 0;
-  border-inline-start: none;
-}
-
-@media (max-width: 1320px) {
-  .header-center-nav {
-    gap: 16px;
-  }
-  .nav-pill {
-    font-size: 0.81rem;
-  }
-}
-
-@media (max-width: 1080px) {
-  .header-center-nav {
-    display: none;
-  }
-}
-
-@media (max-width: 1120px) {
-  .brands-trio-grid {
-    grid-template-columns: 1fr;
-  }
-  .footer-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .top-announcement {
-    font-size: 0.74rem;
-  }
-  .top-announcement-right {
-    display: none;
-  }
-  .header-inner {
-    min-height: 68px;
-    gap: 10px;
-  }
-  .hamburger-btn {
-    padding: 9px 14px;
-  }
-  .brand-logo-img {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-  }
-  .brand-logo-title {
-    font-size: 1.08rem;
-  }
-  .brand-logo-sub {
-    font-size: 0.58rem;
-    letter-spacing: 0.08em;
-  }
-  .btn-whatsapp-header {
-    padding: 10px 14px;
-  }
-  .btn-whatsapp-header span.wa-text {
-    display: none;
-  }
-  .hero-cta-group .btn {
-    width: 100%;
-    white-space: normal;
-  }
-  .packages-grid,
-  .gallery-grid,
-  .menu-items-grid {
-    grid-template-columns: 1fr;
-  }
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-  .form-card {
-    padding: 24px 18px;
-  }
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-  .section-pad {
-    padding: 60px 0;
-  }
-}
+/* storefront/responsive.css — Breakpoints for everything above (laptop → tablet → phone).
+   Part 7 of 8; files are linked in this order in views/storefront.html (cascade order matters). */
 
 /* ============================================================================
    HEADER FIT
@@ -97,12 +9,12 @@
    ============================================================================ */
 .site-header .container {
   max-width: 1560px;
-  padding: 0 24px;
 }
 
 @media (max-width: 1560px) {
   .btn-whatsapp-header {
-    padding: 0 12px;
+    width: 40px;
+    padding: 0;
   }
   .btn-whatsapp-header .wa-text {
     display: none;
@@ -111,10 +23,10 @@
 
 @media (max-width: 1440px) {
   .header-center-nav {
-    gap: 16px;
+    gap: 20px;
   }
   .nav-pill {
-    font-size: 0.81rem;
+    font-size: 0.86rem;
   }
 }
 
@@ -125,71 +37,212 @@
 }
 
 @media (max-width: 560px) {
+  :root {
+    --header-h: 66px;
+    --gutter: 16px;
+  }
   .site-header .container {
     padding: 0 14px;
   }
-  .header-left {
+  .header-inner {
     gap: 10px;
   }
-  .hamburger-btn {
-    padding: 9px 11px;
+  .header-left {
+    gap: 12px;
+  }
+  .brand-logo-wrap {
+    padding-inline-start: 12px;
+    gap: 10px;
   }
   .hamburger-label,
   .header-pref-btn {
     display: none;
   }
-}
-
-/* Form fields: let grid columns shrink below their content (long <select> options) */
-.form-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.form-group {
-  min-width: 0;
-}
-.form-group input,
-.form-group select,
-.form-group textarea {
-  min-width: 0;
-  max-width: 100%;
-}
-
-@media (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: minmax(0, 1fr);
+  .header-right {
+    gap: 8px;
   }
-}
-
-@media (max-width: 560px) {
-  .form-card {
-    padding: 26px 18px;
-  }
-}
-
-/* Hero photo is slightly scaled for depth; clip it so it never widens the page */
-.hero-bg-media {
-  overflow: hidden;
-}
-
-@media (max-width: 560px) {
-  /* Long button labels wrap instead of running off narrow screens */
-  .btn {
-    max-width: 100%;
-    white-space: normal;
+  .header-cart-btn {
+    padding: 0 12px;
   }
 }
 
 @media (max-width: 400px) {
-  /* The floating "WhatsApp Us Now" button is on every page, so drop the header copy */
+  /* The floating WhatsApp button is on every page, so drop the header one */
   .btn-whatsapp-header {
     display: none;
   }
   .brand-logo-title {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
+  }
+  .brand-logo-sub {
+    letter-spacing: 0.12em;
   }
   .brand-logo-img {
     width: 36px;
     height: 36px;
     min-width: 36px;
+  }
+}
+
+/* ============================================================================
+   PAGE CONTENT
+   ============================================================================ */
+@media (max-width: 1024px) {
+  .page-hero.has-photo .page-hero-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-hero.has-photo .page-hero-copy {
+    max-width: 640px;
+  }
+  .page-hero-media img {
+    aspect-ratio: 16 / 9;
+    max-height: 380px;
+  }
+  .team-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .quote-layout,
+  .contact-layout,
+  .calc-layout,
+  .visit-panel,
+  .split,
+  .contact-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .split-media img {
+    aspect-ratio: 4 / 3;
+  }
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .gallery-grid .tile-tail {
+    grid-column: 1 / -1;
+  }
+  /* The photo strip becomes a swipeable row */
+  .photo-strip {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-inline: 6px;
+  }
+  .photo-strip::-webkit-scrollbar {
+    display: none;
+  }
+  .photo-strip .gallery-tile {
+    flex: 0 0 42%;
+    scroll-snap-align: start;
+  }
+  .fd-split-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .services-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+  .service-card-media img {
+    aspect-ratio: 3 / 2;
+  }
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .photo-strip .gallery-tile {
+    flex-basis: 62%;
+  }
+  .home-hero-media img {
+    height: clamp(280px, 52vh, 440px);
+  }
+  .fd-cat-stories-hint {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .btn {
+    max-width: 100%;
+    white-space: normal;
+    padding-inline: 20px;
+  }
+  .home-hero .hero-actions .btn {
+    flex: 1 1 100%;
+  }
+  .page-hero .hero-actions .btn {
+    flex: 1 1 auto;
+  }
+  .team-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .stat {
+    padding: 16px 6px;
+  }
+  .stat-value {
+    font-size: 1.6rem;
+  }
+  .segmented {
+    gap: 4px 20px;
+  }
+  .segmented-btn {
+    font-size: 0.88rem;
+  }
+  .fd-toolbar-actions {
+    width: 100%;
+  }
+  .fd-bag-btn {
+    flex: 1 1 100%;
+  }
+  .fd-item-media {
+    width: 96px;
+    min-width: 96px;
+    height: 96px;
+  }
+  .fd-modal-hero {
+    height: 200px;
+  }
+  .fd-modal-body,
+  .modal-body {
+    padding: 18px;
+  }
+  .fd-modal-footer,
+  .modal-header {
+    padding: 14px 18px;
+  }
+  .tracker-step-label {
+    font-size: 0.64rem;
+  }
+  .lightbox {
+    padding: 64px 12px 84px;
+  }
+  .lightbox-prev,
+  .lightbox-next {
+    top: auto;
+    bottom: 18px;
+    margin-top: 0;
+  }
+  .floating-wa-container {
+    bottom: 16px;
+    inset-inline-end: 16px;
+  }
+  .floating-wa-btn {
+    height: 48px;
+    padding: 0 18px;
+  }
+  .fd-floating-order-bar {
+    bottom: 76px;
   }
 }

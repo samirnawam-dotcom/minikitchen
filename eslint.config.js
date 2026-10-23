@@ -23,10 +23,5 @@ module.exports = [
   {
     files: ['public/js/**/*.js'],
     languageOptions: { sourceType: 'module', globals: { ...globals.browser } }
-  },
-  {
-    files: ['public/js/theme-init.js'],
-    languageOptions: { sourceType: 'script' },
-    rules: { 'no-var': 'off' }
   }
 ];

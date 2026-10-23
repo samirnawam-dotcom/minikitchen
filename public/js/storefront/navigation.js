@@ -40,7 +40,7 @@ export function closeDrawers() {
 // ---------------------------------------------------------------------------
 // Header
 // ---------------------------------------------------------------------------
-const HEADER_SUBTITLES = { restaurant: 'Restaurant • Aley', delivery: 'Delivery • Fast Order' };
+const HEADER_SUBTITLES = { restaurant: 'Restaurant · Aley', delivery: 'Delivery · Aley' };
 const HEADER_WA_LABELS = { restaurant: 'Book a Table', delivery: 'Order on WhatsApp', catering: 'Catering WhatsApp' };
 
 export function renderHeaderActiveStates() {

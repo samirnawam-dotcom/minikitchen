@@ -1,4 +1,4 @@
-// Small bottom-right notification toast.
+// Small bottom-corner notification toast (styled by .mk-toast in css/storefront/layout.css).
 
 import { esc } from '../shared/dom.js';
 
@@ -10,14 +10,12 @@ export function showToast(message) {
   if (!toast) {
     toast = document.createElement('div');
     toast.id = 'mkToast';
-    toast.style.cssText =
-      'position:fixed; bottom:90px; inset-inline-end:24px; background:#0e1015; color:#fff; border:1px solid var(--brand-primary); padding:14px 22px; border-radius:12px; font-weight:700; font-size:0.88rem; z-index:3000; box-shadow:0 12px 30px rgba(0,0,0,0.35); transition: opacity 0.3s ease;';
+    toast.className = 'mk-toast';
+    toast.setAttribute('role', 'status');
     document.body.appendChild(toast);
   }
-  toast.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#25d366; margin-inline-end: 8px;"></i> ${esc(message)}`;
-  toast.style.opacity = '1';
+  toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${esc(message)}</span>`;
+  toast.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    toast.style.opacity = '0';
-  }, 2800);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
 }

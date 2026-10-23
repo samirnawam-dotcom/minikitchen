@@ -8,11 +8,10 @@ export const INLINE_DISH_SVG =
   'data:image/svg+xml;utf8,' +
   encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
-        <rect width="400" height="300" fill="#181b22"/>
-        <circle cx="200" cy="140" r="64" stroke="#c59b27" stroke-width="2.5" fill="rgba(197,155,39,0.08)"/>
-        <circle cx="200" cy="140" r="46" stroke="rgba(197,155,39,0.35)" stroke-width="1.5" stroke-dasharray="4 4"/>
-        <text x="200" y="148" text-anchor="middle" fill="#e6c45a" font-family="Georgia, serif" font-size="22" font-weight="bold">MK</text>
-        <text x="200" y="236" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="sans-serif" font-size="13" letter-spacing="2">MINI KITCHEN</text>
+        <rect width="400" height="300" fill="#f1ece2"/>
+        <circle cx="200" cy="138" r="46" stroke="#c59b27" stroke-width="1.5" fill="none"/>
+        <text x="200" y="147" text-anchor="middle" fill="#8a6914" font-family="Georgia, serif" font-size="24">MK</text>
+        <text x="200" y="222" text-anchor="middle" fill="#69625a" font-family="sans-serif" font-size="12" letter-spacing="3">MINI KITCHEN</text>
       </svg>`
   );
 export function initImageFallbacks() {

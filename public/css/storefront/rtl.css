@@ -1,5 +1,5 @@
 /* storefront/rtl.css — Right-to-left (Arabic) adjustments.
-   Part 14 of 14; linked last in views/storefront.html. Spacing, borders and badge positions use
+   Part 8 of 8; linked last in views/storefront.html. Spacing, borders and badge positions use
    logical properties (margin-inline-start, inset-inline-end…) elsewhere, so they mirror on their
    own; this file only covers what logical properties cannot: slide/hover movements and text. */
 
@@ -29,10 +29,17 @@
   transform: translateX(0);
 }
 
-/* Drawer links nudge toward the reading direction on hover */
-[dir='rtl'] .drawer-menu-item:hover,
-[dir='rtl'] .drawer-menu-item.active {
-  transform: translateX(-4px);
+/* Arrows that nudge forward on hover keep their mirrored direction */
+[dir='rtl'] .drawer-menu-item:hover .drawer-item-arrow,
+[dir='rtl'] .drawer-menu-item.active .drawer-item-arrow,
+[dir='rtl'] .text-link:hover .fa-arrow-right {
+  transform: scaleX(-1) translateX(3px);
+}
+
+[dir='rtl'] .section-header-start .section-title::after {
+  background:
+    linear-gradient(var(--brand-primary), var(--brand-primary)) right / 48px 1px no-repeat,
+    linear-gradient(270deg, var(--line-strong), transparent);
 }
 
 /* Directional arrow icons point the other way */
