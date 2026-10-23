@@ -8,7 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const config = require('../src/config');
-const { renderPage, STOREFRONT_PAGES } = require('../src/pages');
+const { renderPage, jsVersion, STOREFRONT_PAGES } = require('../src/pages');
 
 const OUT = path.resolve(process.argv[2] || path.join(config.ROOT, 'dist'));
 const BASE = String(process.env.BASE_PATH || '').replace(/\/+$/, '');
@@ -38,6 +38,8 @@ const ADMIN_NOTICE = `<!doctype html>
 function build() {
   fs.rmSync(OUT, { recursive: true, force: true });
   fs.cpSync(config.PUBLIC_DIR, OUT, { recursive: true });
+  // Pages load their scripts from assets/<version>/js/ (see jsVersion in src/pages.js).
+  fs.cpSync(path.join(config.PUBLIC_DIR, 'js'), path.join(OUT, 'assets', jsVersion(), 'js'), { recursive: true });
 
   for (const name of Object.keys(STOREFRONT_PAGES)) {
     const { html } = renderPage(name);

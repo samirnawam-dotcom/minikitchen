@@ -17,12 +17,22 @@
   transition:
     opacity 0.55s var(--ease),
     visibility 0.55s var(--ease);
+  /* Safety net: if the scripts never run, never leave the site covered */
+  animation: mk-preloader-timeout 0.55s var(--ease) 6s forwards;
 }
 
 .mk-preloader.mk-preloader-hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+}
+
+@keyframes mk-preloader-timeout {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
 }
 
 .mk-preloader-inner {

@@ -5,7 +5,7 @@ const path = require('path');
 const zlib = require('zlib');
 const crypto = require('crypto');
 const config = require('./config');
-const { renderPage, PAGES } = require('./pages');
+const { renderPage, jsVersion, PAGES } = require('./pages');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -34,6 +34,9 @@ const NO_INDEX_FILES = new Set(['admin.html', '404.html', 'owner-guide.html']);
 const PUBLIC_ROOT = path.resolve(config.PUBLIC_DIR);
 const UPLOADS_ROOT = path.resolve(config.UPLOADS_DIR);
 const UPLOAD_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']);
+
+// /assets/<version>/js/... -> public/js/... (see jsVersion in pages.js)
+const VERSIONED_JS_RE = /^\/assets\/([0-9a-f]{8})\/(js\/.+)$/;
 
 // In-memory cache of file contents + pre-compressed variants, invalidated by mtime/size.
 const cache = new Map();
@@ -151,8 +154,10 @@ function cacheControlFor(abs, parsedUrl) {
   const base = path.basename(abs);
   if (base === 'admin.html') return 'no-store';
   if (ext === '.html') return 'no-cache';
-  // Assets referenced with a content hash (?v=...) by the build step can be cached forever.
+  // Assets referenced with a content hash (?v=... or /assets/<version>/) can be cached forever.
   if (parsedUrl.searchParams.has('v')) return 'public, max-age=31536000, immutable';
+  const versioned = VERSIONED_JS_RE.exec(parsedUrl.pathname);
+  if (versioned && versioned[1] === jsVersion()) return 'public, max-age=31536000, immutable';
   if (['.css', '.js', '.mjs', '.json', '.webmanifest', '.xml', '.txt'].includes(ext)) return 'no-cache';
   return 'public, max-age=604800';
 }
@@ -223,8 +228,12 @@ function serveStatic(req, res, parsedUrl) {
   const pageName = pathname && resolvePageName(pathname);
   if (pageName) return sendEntry(req, res, loadPage(pageName), pageName, parsedUrl);
 
-  const resolved =
-    pathname && pathname.startsWith('/uploads/') ? resolveUpload(pathname) : resolvePublicPath(parsedUrl.pathname);
+  const versioned = VERSIONED_JS_RE.exec(parsedUrl.pathname);
+  const resolved = versioned
+    ? resolvePublicPath(`/${versioned[2]}`)
+    : pathname && pathname.startsWith('/uploads/')
+      ? resolveUpload(pathname)
+      : resolvePublicPath(parsedUrl.pathname);
   if (resolved.error === 400) {
     res.statusCode = 400;
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
