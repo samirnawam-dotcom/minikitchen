@@ -5,7 +5,7 @@ import { registerActions } from '../../shared/actions.js';
 import { state } from '../state.js';
 import { configList } from '../config.js';
 import { renderMenuExplorer } from '../menu-view.js';
-import { renderMenuQrCodeBar } from '../qr.js';
+import { renderTableBanner } from '../table-banner.js';
 import { registerPage, renderMainView } from '../view.js';
 import { heroSection, packageCard } from './sections.js';
 
@@ -17,7 +17,7 @@ function packagesTab() {
   const filtered =
     state.cateringPkgFilter === 'all' ? allPackages : allPackages.filter(p => p.category === state.cateringPkgFilter);
   return `
-                ${renderMenuQrCodeBar('catering')}
+                ${renderTableBanner()}
                 <div class="filter-tabs" style="margin-bottom:28px;">
                   ${filterButton('all', `All Packages (${allPackages.length})`)}
                   ${filterButton('wedding', '<i class="fa-solid fa-rings-wedding"></i> Wedding Catering')}

@@ -19,7 +19,6 @@ import { openOrderTracker } from './order-tracker.js';
 import './whatsapp.js';
 import './cart-drawer.js';
 import './dish-modal.js';
-import './qr.js';
 import './menu-view.js';
 import './event-calculator.js';
 import './quote-form.js';

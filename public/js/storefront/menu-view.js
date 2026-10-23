@@ -8,7 +8,7 @@ import { esc } from '../shared/dom.js';
 import { state, cartCount, cartSubtotal } from './state.js';
 import { content } from './config.js';
 import { formatPrice } from './format.js';
-import { renderMenuQrCodeBar } from './qr.js';
+import { renderTableBanner } from './table-banner.js';
 import { render, renderMainView } from './view.js';
 
 /** Menu categories offered as catering trays. */
@@ -267,7 +267,7 @@ export function renderMenuExplorer(mode) {
   return `
       <div class="fd-menu-shell" id="fdMenuTopAnchor">
         <!-- 0. DEDICATED QR CODE BAR FOR THIS MENU -->
-        ${renderMenuQrCodeBar(mode)}
+        ${renderTableBanner()}
 
         <!-- 1. FINEDINE VISUAL CATEGORY STORY CAROUSEL -->
         <div class="fd-cat-stories-wrap">
