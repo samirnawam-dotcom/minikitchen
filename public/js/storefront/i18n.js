@@ -1,6 +1,6 @@
-// Arabic / English switch: sets lang/dir (RTL) on <html> and translates the site chrome
-// (navigation pills, hamburger label, language buttons). Page content stays in English, except the
-// catering offer, which shows its Arabic names (so the page is re-rendered on a switch).
+// Arabic / English switch: sets lang/dir (RTL) on <html>, translates the fixed page frame (header,
+// drawers, footer — see translateStatic in ./i18n-strings.js) and re-renders the page, whose
+// templates read every visible string through t(). English stays exactly as written in the code.
 
 import { registerActions } from '../shared/actions.js';
 import { setItem } from '../shared/storage.js';
@@ -8,25 +8,8 @@ import { state, LANG_STORAGE_KEY } from './state.js';
 import { renderHeaderActiveStates } from './navigation.js';
 import { render } from './view.js';
 import { showToast } from './toast.js';
-
-const NAV_LABELS = {
-  ar: {
-    catering: 'الرئيسية',
-    'catering-menus': 'الباقات والقوائم',
-    restaurant: 'المطعم',
-    delivery: 'التوصيل',
-    about: 'من نحن',
-    contact: 'تواصل معنا'
-  },
-  en: {
-    catering: 'Home',
-    'catering-menus': 'Packages & Menus',
-    restaurant: 'Restaurant',
-    delivery: 'Delivery',
-    about: 'About Us',
-    contact: 'Contact'
-  }
-};
+import { renderCartDrawer } from './cart-drawer.js';
+import { translateStatic } from './i18n-strings.js';
 
 export function applySiteLanguage(lang) {
   const clean = lang === 'ar' ? 'ar' : 'en';
@@ -36,28 +19,25 @@ export function applySiteLanguage(lang) {
   document.body.classList.toggle('rtl-mode', clean === 'ar');
   setItem(LANG_STORAGE_KEY, clean);
 
+  translateStatic();
+
+  // The language buttons always name the other language, in that language.
   const headerLabel = document.getElementById('langToggleLabel');
   if (headerLabel) headerLabel.textContent = clean === 'ar' ? 'EN' : 'العربية';
+  const headerBtn = document.getElementById('langToggleBtn');
+  if (headerBtn) {
+    headerBtn.setAttribute('lang', clean === 'ar' ? 'en' : 'ar');
+    headerBtn.setAttribute('aria-label', clean === 'ar' ? 'Switch to English' : 'التبديل إلى العربية');
+  }
 
   const drawerLangBtn = document.getElementById('drawerLangSwitchBtn');
   if (drawerLangBtn) {
+    drawerLangBtn.setAttribute('lang', clean === 'ar' ? 'en' : 'ar');
     drawerLangBtn.innerHTML =
       clean === 'ar'
-        ? '<i class="fa-solid fa-globe"></i> <span>English (EN)</span>'
-        : '<i class="fa-solid fa-globe"></i> <span>العربية (AR)</span>';
+        ? '<i class="fa-solid fa-globe" aria-hidden="true"></i> <span>English</span>'
+        : '<i class="fa-solid fa-globe" aria-hidden="true"></i> <span>العربية</span>';
   }
-
-  const labels = NAV_LABELS[clean];
-  document.querySelectorAll('.header-center-nav .nav-pill[data-nav-page]').forEach(btn => {
-    const key = btn.getAttribute('data-nav-page');
-    if (labels[key]) btn.textContent = labels[key];
-  });
-
-  const alsoLabel = document.getElementById('drawerAlsoLabel');
-  if (alsoLabel) alsoLabel.textContent = clean === 'ar' ? 'أيضاً من ميني كيتشن' : 'Also from Mini Kitchen';
-
-  const hamLabel = document.querySelector('.hamburger-label');
-  if (hamLabel) hamLabel.textContent = clean === 'ar' ? 'القائمة' : 'Menu';
 }
 
 function toggleSiteLanguage() {
@@ -65,7 +45,8 @@ function toggleSiteLanguage() {
   applySiteLanguage(next);
   renderHeaderActiveStates();
   render();
-  showToast(next === 'ar' ? 'تم تفعيل اللغة العربية (Arabic RTL Enabled)' : 'Switched language to English');
+  renderCartDrawer();
+  showToast(next === 'ar' ? 'تم التبديل إلى العربية' : 'Switched to English');
 }
 
 registerActions({ 'lang:toggle': toggleSiteLanguage });

@@ -4,6 +4,7 @@
 
 import { esc } from '../shared/dom.js';
 import { state } from './state.js';
+import { t } from './i18n-strings.js';
 
 /** HTML for the table banner, or '' when the page was not opened from a table QR code. */
 export function renderTableBanner() {
@@ -14,12 +15,12 @@ export function renderTableBanner() {
           <div class="table-banner-left">
             <div class="table-banner-num">${table}</div>
             <div>
-              <div class="eyebrow">Welcome to Mini Kitchen Restaurant</div>
-              <div class="table-banner-title">You are at table ${table} · dine-in, no delivery fee</div>
+              <div class="eyebrow">${t('Welcome to Mini Kitchen Restaurant')}</div>
+              <div class="table-banner-title">${t('You are at table {table} · dine-in, no delivery fee', { table })}</div>
             </div>
           </div>
           <button type="button" class="btn btn-outline btn-sm" data-action="wa:open" data-brand="restaurant" data-msg="Hello! Table #${table} is requesting a waiter please." data-skip-log>
-            <i class="fa-solid fa-bell-concierge"></i> Call waiter
+            <i class="fa-solid fa-bell-concierge"></i> ${t('Call waiter')}
           </button>
         </div>
       `;

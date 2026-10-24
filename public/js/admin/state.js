@@ -5,7 +5,7 @@ import DEFAULT_SITE_CONFIG from '../data/site-config.js';
 import { MENU_CATEGORIES as DEFAULT_MENU_CATEGORIES } from '../data/menu.js';
 import { deepClone } from '../shared/dom.js';
 import { loadJson, saveJson, getItem, setItem, removeItem } from '../shared/storage.js';
-import { CATERING_MENU_VERSION, upgradeCateringMenu } from '../shared/catering-menu.js';
+import { CATERING_LIST_KEYS, CATERING_MENU_VERSION, upgradeCateringList } from '../shared/catering-menu.js';
 
 export const DEFAULT_LBP_RATE = 89500;
 
@@ -91,12 +91,14 @@ export const ui = {
 
 // ---- Server data setters (also refresh the local cache) -------------------------------------
 
-/** Fills dish lists saved empty before they were published (see shared/catering-menu.js). */
+/** Brings saved catering lists up to date: empty dish lists, old default Arabic (see shared/catering-menu.js). */
 function upgradeSiteConfig(config) {
   if (!config || typeof config !== 'object') return config;
-  if (Array.isArray(config.cateringChoiceGroups)) {
-    config.cateringChoiceGroups = upgradeCateringMenu(config, DEFAULT_SITE_CONFIG);
+  const upgraded = {};
+  for (const key of CATERING_LIST_KEYS) {
+    if (Array.isArray(config[key])) upgraded[key] = upgradeCateringList(config, DEFAULT_SITE_CONFIG, key);
   }
+  Object.assign(config, upgraded);
   config.cateringMenuVersion = CATERING_MENU_VERSION;
   return config;
 }

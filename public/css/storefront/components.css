@@ -1512,6 +1512,12 @@ textarea.form-control {
   margin: 0 auto 28px;
 }
 
+.nf-text-ar,
+.nf-actions [lang='ar'] {
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', var(--font-sans);
+  line-height: 1.8;
+}
+
 .nf-actions {
   display: flex;
   flex-wrap: wrap;

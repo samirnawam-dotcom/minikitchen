@@ -51,6 +51,13 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <!-- Arabic site (lang="ar"): IBM Plex Sans Arabic for text, Noto Naskh Arabic for headings.
+         Google serves them in unicode-range subsets, so English pages download only the few glyphs
+         of the "العربية" language button. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -218,7 +225,7 @@
             />
             <div class="brand-logo-text">
               <span class="brand-logo-title">Mini Kitchen</span>
-              <span class="brand-logo-sub" id="headerBrandSub">Catering & Events</span>
+              <span class="brand-logo-sub" id="headerBrandSub" data-i18n-skip>Catering & Events</span>
             </div>
           </div>
         </div>
@@ -257,6 +264,7 @@
             class="header-pref-btn"
             id="langToggleBtn"
             data-action="lang:toggle"
+            data-i18n-skip
             title="العربية / English"
             aria-label="Switch language"
           >
@@ -266,7 +274,13 @@
             <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
             <span class="cart-count-badge">0</span>
           </button>
-          <button class="btn-whatsapp-header" id="headerWaBtn" data-action="wa:open" data-brand="catering">
+          <button
+            class="btn-whatsapp-header"
+            id="headerWaBtn"
+            data-action="wa:open"
+            data-brand="catering"
+            data-i18n-skip
+          >
             <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
             <span class="wa-text">Catering WhatsApp</span>
           </button>
@@ -384,7 +398,13 @@
           <button class="drawer-utility-item" data-action="tracker:open">
             <i class="fa-solid fa-truck-fast"></i> <span>Track an order</span>
           </button>
-          <button type="button" class="drawer-utility-item" data-action="lang:toggle" id="drawerLangSwitchBtn">
+          <button
+            type="button"
+            class="drawer-utility-item"
+            data-action="lang:toggle"
+            id="drawerLangSwitchBtn"
+            data-i18n-skip
+          >
             <i class="fa-solid fa-globe"></i> <span>العربية (AR)</span>
           </button>
           <a href="admin.html" class="drawer-utility-item">

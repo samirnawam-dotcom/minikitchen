@@ -5,6 +5,7 @@
 
 import { registerActions } from '../shared/actions.js';
 import { esc } from '../shared/dom.js';
+import { t } from './i18n-strings.js';
 
 let slides = [];
 let index = 0;
@@ -21,11 +22,11 @@ function ensureDom() {
   box.className = 'lightbox';
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-modal', 'true');
-  box.setAttribute('aria-label', 'Photo viewer');
+  box.setAttribute('aria-label', t('Photo viewer'));
   box.setAttribute('data-action', 'lightbox:backdrop');
   box.innerHTML = `
-      <button type="button" class="lightbox-btn lightbox-close" data-action="lightbox:close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-      <button type="button" class="lightbox-btn lightbox-prev" data-action="lightbox:prev" aria-label="Previous photo"><i class="fa-solid fa-chevron-left"></i></button>
+      <button type="button" class="lightbox-btn lightbox-close" data-action="lightbox:close" aria-label="${t('Close')}"><i class="fa-solid fa-xmark"></i></button>
+      <button type="button" class="lightbox-btn lightbox-prev" data-action="lightbox:prev" aria-label="${t('Previous photo')}"><i class="fa-solid fa-chevron-left"></i></button>
       <figure class="lightbox-figure">
         <img class="lightbox-img" alt="" />
         <figcaption class="lightbox-caption">
@@ -33,7 +34,7 @@ function ensureDom() {
           <span class="lightbox-count"></span>
         </figcaption>
       </figure>
-      <button type="button" class="lightbox-btn lightbox-next" data-action="lightbox:next" aria-label="Next photo"><i class="fa-solid fa-chevron-right"></i></button>`;
+      <button type="button" class="lightbox-btn lightbox-next" data-action="lightbox:next" aria-label="${t('Next photo')}"><i class="fa-solid fa-chevron-right"></i></button>`;
   box.addEventListener('touchstart', e => (touchStartX = e.changedTouches[0].clientX), { passive: true });
   box.addEventListener(
     'touchend',
@@ -72,13 +73,18 @@ function step(delta) {
 function open(tile) {
   const group = tile.dataset.lightbox;
   const tiles = [...document.querySelectorAll(`[data-action="lightbox:open"][data-lightbox="${CSS.escape(group)}"]`)];
-  slides = tiles.map(t => {
-    const imgEl = t.querySelector('img');
-    return { src: imgEl?.currentSrc || imgEl?.src || '', alt: imgEl?.alt || '', caption: t.dataset.caption || '' };
+  slides = tiles.map(tileEl => {
+    const imgEl = tileEl.querySelector('img');
+    return { src: imgEl?.currentSrc || imgEl?.src || '', alt: imgEl?.alt || '', caption: tileEl.dataset.caption || '' };
   });
   index = Math.max(0, tiles.indexOf(tile));
   lastFocus = document.activeElement;
   const box = ensureDom();
+  // The viewer is built once; its labels follow the language chosen since then.
+  box.setAttribute('aria-label', t('Photo viewer'));
+  box.querySelector('.lightbox-close').setAttribute('aria-label', t('Close'));
+  box.querySelector('.lightbox-prev').setAttribute('aria-label', t('Previous photo'));
+  box.querySelector('.lightbox-next').setAttribute('aria-label', t('Next photo'));
   show();
   box.classList.add('open');
   document.documentElement.classList.add('lightbox-lock');

@@ -8,6 +8,7 @@ import { trackOrder } from './api.js';
 import { content } from './config.js';
 import { getLastOrderId, loadLocalOrders } from './orders.js';
 import { closeDrawers } from './navigation.js';
+import { isAr, t } from './i18n-strings.js';
 
 const STAGES = [
   { key: 'new', label: 'Order Received', icon: 'fa-receipt' },
@@ -43,13 +44,13 @@ export function openOrderTracker(prefillId) {
     prefillId || new URLSearchParams(window.location.search).get('track') || getLastOrderId() || 'MK-1001';
 
   backdrop.innerHTML = `
-      <div class="modal-dialog tracker-dialog" role="dialog" aria-modal="true" aria-label="Track an order">
+      <div class="modal-dialog tracker-dialog" role="dialog" aria-modal="true" aria-label="${t('Track an order')}">
         <div class="modal-header">
           <div>
-            <span class="eyebrow">Order tracker</span>
-            <h3 class="modal-title">Track your order or quote</h3>
+            <span class="eyebrow">${t('Order tracker')}</span>
+            <h3 class="modal-title">${t('Track your order or quote')}</h3>
           </div>
-          <button type="button" class="drawer-close-btn" data-action="tracker:close" aria-label="Close tracker">
+          <button type="button" class="drawer-close-btn" data-action="tracker:close" aria-label="${t('Close tracker')}">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
@@ -60,18 +61,18 @@ export function openOrderTracker(prefillId) {
               type="text"
               id="trackOrderInput"
               class="form-control tracker-input"
-              placeholder="Order reference, e.g. MK-1001"
-              aria-label="Order reference"
+              placeholder="${t('Order reference, e.g. MK-1001')}"
+              aria-label="${t('Order reference')}"
               value="${esc(String(initialId).replace(/^#/, ''))}"
               required
             />
             <button type="submit" class="btn btn-primary">
-              <i class="fa-solid fa-magnifying-glass"></i> Track
+              <i class="fa-solid fa-magnifying-glass"></i> ${t('Track')}
             </button>
           </form>
 
           <div id="trackOrderResultBox" class="tracker-result">
-            <div class="tracker-loading">Looking up your order…</div>
+            <div class="tracker-loading">${t('Looking up your order…')}</div>
           </div>
         </div>
       </div>
@@ -91,8 +92,8 @@ function renderNotFound(cleanId) {
   return `
         <div class="tracker-card tracker-empty">
           <i class="fa-solid fa-circle-exclamation"></i>
-          <h4>Order #${esc(cleanId)} not found</h4>
-          <p>Please check the reference on your WhatsApp message, for example <b>MK-1001</b>.</p>
+          <h4>${t('Order #{id} not found', { id: esc(cleanId) })}</h4>
+          <p>${t('Please check the reference on your WhatsApp message, for example <b>MK-1001</b>.')}</p>
           <div class="chip-row chip-row-center">
             ${tryButton('MK-1001')}
             ${tryButton('MK-1002')}
@@ -105,7 +106,7 @@ function renderNotFound(cleanId) {
 function renderTimeline(order) {
   if (order.status === 'cancelled') {
     return `<div class="tracker-cancelled">
-                <i class="fa-solid fa-ban"></i> This order was cancelled. Message us on WhatsApp if you need help.
+                <i class="fa-solid fa-ban"></i> ${t('This order was cancelled. Message us on WhatsApp if you need help.')}
               </div>`;
   }
   const currentIdx = Math.max(
@@ -119,7 +120,7 @@ function renderTimeline(order) {
                   return `
                       <li class="tracker-step ${step}">
                         <span class="tracker-step-icon"><i class="fa-solid ${st.icon}"></i></span>
-                        <span class="tracker-step-label">${st.label}</span>
+                        <span class="tracker-step-label">${t(st.label)}</span>
                       </li>`;
                 }).join('')}
               </ol>
@@ -136,11 +137,11 @@ function renderSummary(order) {
       })
       .join('');
   }
-  const row = (label, value) => (value ? `<div><b>${label}:</b> ${esc(value)}</div>` : '');
+  const row = (label, value) => (value ? `<div><b>${t(label)}:</b> ${esc(value)}</div>` : '');
   return `<div class="tracker-facts">
             ${row('Occasion', order.eventType)}
             ${row('Event date', order.eventDate)}
-            ${order.guests ? `<div><b>Guests:</b> ${esc(order.guests)}</div>` : ''}
+            ${order.guests ? `<div><b>${t('Guests')}:</b> ${esc(order.guests)}</div>` : ''}
             ${row('Package', order.packageSelected)}
           </div>`;
 }
@@ -152,7 +153,7 @@ function renderOrder(order) {
   const updated = new Date(order.updatedAt || order.createdAt);
   const updatedText = Number.isNaN(updated.getTime())
     ? '—'
-    : updated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    : updated.toLocaleTimeString(isAr() ? 'ar-LB-u-nu-latn' : [], { hour: '2-digit', minute: '2-digit' });
   const brand = BRANDS.includes(order.brand) ? order.brand : 'delivery';
   const chatMsg = `Hello Mini Kitchen! I am checking on my Order Reference *#${order.id}*.`;
 
@@ -160,25 +161,25 @@ function renderOrder(order) {
       <div class="tracker-card">
         <div class="tracker-card-head">
           <div>
-            <span class="eyebrow">Reference #${id}</span>
+            <span class="eyebrow">${t('Reference #{id}', { id })}</span>
             <h4 class="tracker-card-title">
-              ${esc(order.customerFirstName || order.customerName || 'Valued Guest')} — ${ORDER_TYPE_LABELS[order.type] || 'Delivery Order'}
+              ${esc(order.customerFirstName || order.customerName || t('Valued Guest'))} — ${t(ORDER_TYPE_LABELS[order.type] || 'Delivery Order')}
             </h4>
           </div>
           <button type="button" class="chip" data-action="tracker:try" data-id="${id}">
-            <i class="fa-solid fa-arrows-rotate"></i> Refresh
+            <i class="fa-solid fa-arrows-rotate"></i> ${t('Refresh')}
           </button>
         </div>
 
         ${renderTimeline(order)}
 
         <div class="tracker-summary">
-          <div class="tracker-summary-label">Summary</div>
+          <div class="tracker-summary-label">${t('Summary')}</div>
           ${renderSummary(order)}
           ${
             total > 0
               ? `<div class="tracker-total">
-                  <span>Total</span>
+                  <span>${t('Total')}</span>
                   <span>$${total.toFixed(2)} <small>(${Math.round(total * rate).toLocaleString('en-US')} L.L.)</small></span>
                 </div>`
               : ''
@@ -186,7 +187,7 @@ function renderOrder(order) {
         </div>
 
         <div class="tracker-foot">
-          <span class="tracker-updated"><i class="fa-regular fa-clock"></i> Updated ${updatedText}</span>
+          <span class="tracker-updated"><i class="fa-regular fa-clock"></i> ${t('Updated {time}', { time: updatedText })}</span>
           <button
             type="button"
             class="btn btn-whatsapp btn-sm"
@@ -195,7 +196,7 @@ function renderOrder(order) {
             data-msg="${esc(chatMsg)}"
             data-skip-log
           >
-            <i class="fa-brands fa-whatsapp"></i> Ask about #${id}
+            <i class="fa-brands fa-whatsapp"></i> ${t('Ask about #{id}', { id })}
           </button>
         </div>
       </div>
@@ -206,7 +207,7 @@ async function lookupOrder(rawId) {
   const box = document.getElementById('trackOrderResultBox');
   if (!box) return;
   const cleanId = normaliseId(rawId);
-  box.innerHTML = `<div class="tracker-loading"><i class="fa-solid fa-spinner fa-spin"></i> Looking up <b>#${esc(cleanId)}</b>…</div>`;
+  box.innerHTML = `<div class="tracker-loading"><i class="fa-solid fa-spinner fa-spin"></i> ${t('Looking up <b>#{id}</b>…', { id: esc(cleanId) })}</div>`;
 
   // Fall back to this browser's own records when the server cannot be reached
   const order =

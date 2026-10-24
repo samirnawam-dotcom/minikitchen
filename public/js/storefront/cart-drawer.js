@@ -13,6 +13,7 @@ import { openWhatsApp } from './whatsapp.js';
 import { showCartDrawer, closeCartDrawer } from './navigation.js';
 import { render } from './view.js';
 import { showToast } from './toast.js';
+import { isAr, ltr, minutesText, t } from './i18n-strings.js';
 
 const FORM_FIELDS = {
   name: 'cartCustName',
@@ -35,12 +36,12 @@ function renderEmptyCart(bodyEl, totalEl) {
   bodyEl.innerHTML = `
         <div class="cart-empty">
           <i class="fa-solid fa-bag-shopping"></i>
-          <h4>Your basket is empty</h4>
-          <p>Open the menu and tap any dish to add it.</p>
+          <h4>${t('Your basket is empty')}</h4>
+          <p>${t('Open the menu and tap any dish to add it.')}</p>
           <div class="cart-empty-actions">
-            <button class="btn btn-primary btn-block" data-action="nav:go" data-page="delivery">Browse the menu</button>
+            <button class="btn btn-primary btn-block" data-action="nav:go" data-page="delivery">${t('Browse the menu')}</button>
             <button class="btn btn-outline btn-block" data-action="tracker:open">
-              <i class="fa-solid fa-truck-fast"></i> Track an order
+              <i class="fa-solid fa-truck-fast"></i> ${t('Track an order')}
             </button>
           </div>
         </div>
@@ -57,19 +58,21 @@ function renderCartRows() {
         item.modifiers && item.modifiers.length > 0
           ? `<div class="cart-item-mods">${esc(item.modifiers.join(', '))}</div>`
           : '';
-      const noteText = item.note ? `<div class="cart-item-note">Note: “${esc(item.note)}”</div>` : '';
+      const noteText = item.note
+        ? `<div class="cart-item-note">${t('Note: “{note}”', { note: esc(item.note) })}</div>`
+        : '';
       return `
         <div class="cart-item-row">
           <div class="cart-item-info">
             <div class="cart-item-title">${esc(item.title)}</div>
             ${modsText}
             ${noteText}
-            <div class="cart-item-price">${formatPrice(item.priceValue)} each · <b>${formatPrice(sub)}</b></div>
+            <div class="cart-item-price">${t('{price} each', { price: formatPrice(item.priceValue) })} · <b>${formatPrice(sub)}</b></div>
           </div>
           <div class="cart-qty-controls">
-            <button class="cart-qty-btn" data-action="cart:qty" data-key="${key}" data-delta="-1" aria-label="One less">−</button>
+            <button class="cart-qty-btn" data-action="cart:qty" data-key="${key}" data-delta="-1" aria-label="${t('One less')}">−</button>
             <span class="cart-qty-val">${item.qty}</span>
-            <button class="cart-qty-btn" data-action="cart:qty" data-key="${key}" data-delta="1" aria-label="One more">+</button>
+            <button class="cart-qty-btn" data-action="cart:qty" data-key="${key}" data-delta="1" aria-label="${t('One more')}">+</button>
           </div>
         </div>
       `;
@@ -85,8 +88,8 @@ function renderPromoSection(pricing) {
                   ${activePromos
                     .map(
                       p => `
-                    <button type="button" class="promo-chip" data-action="cart:promo" data-code="${esc(p.code)}" title="${esc(p.label)}">
-                      ${esc(p.code)} <span>${esc(p.label)}</span>
+                    <button type="button" class="promo-chip" data-action="cart:promo" data-code="${esc(p.code)}" title="${esc(t(p.label))}">
+                      ${esc(p.code)} <span>${esc(t(p.label))}</span>
                     </button>
                   `
                     )
@@ -95,26 +98,26 @@ function renderPromoSection(pricing) {
       : '';
   let status = '';
   if (pricing.promoObj) {
-    status = `<div class="promo-status ok"><i class="fa-solid fa-circle-check"></i> ${esc(pricing.promoObj.label)} applied (−${formatPrice(pricing.discountUsd)})</div>`;
+    status = `<div class="promo-status ok"><i class="fa-solid fa-circle-check"></i> ${t('{label} applied ({amount})', { label: esc(t(pricing.promoObj.label)), amount: ltr(`−${formatPrice(pricing.discountUsd)}`) })}</div>`;
   } else if (pricing.promoError) {
     status = `<div class="promo-status error">${esc(pricing.promoError)}</div>`;
   }
 
   return `
         <div class="form-group">
-          <label for="cartPromoInput">Promo code</label>
+          <label for="cartPromoInput">${t('Promo code')}</label>
           <div class="promo-row">
             <input
               type="text"
               id="cartPromoInput"
               class="form-control form-control-sm promo-input"
-              placeholder="e.g. WELCOME10"
+              placeholder="${t('e.g. WELCOME10')}"
               value="${esc(state.appliedPromoCode)}"
             />
-            <button type="button" class="btn btn-outline btn-sm" data-action="cart:promo">Apply</button>
+            <button type="button" class="btn btn-outline btn-sm" data-action="cart:promo">${t('Apply')}</button>
             ${
               state.appliedPromoCode
-                ? `<button type="button" class="btn btn-outline btn-sm" data-action="cart:promo" data-code="" aria-label="Remove promo code">✕</button>`
+                ? `<button type="button" class="btn btn-outline btn-sm" data-action="cart:promo" data-code="" aria-label="${t('Remove promo code')}">✕</button>`
                 : ''
             }
           </div>
@@ -127,22 +130,22 @@ function renderCustomerForm() {
   const v = key => esc(state.cartFormCache[key] || '');
   return `
       <div class="cart-block">
-        <h5 class="cart-block-title">Your details</h5>
+        <h5 class="cart-block-title">${t('Your details')}</h5>
         <div class="form-group">
-          <label for="cartCustName">Name *</label>
-          <input type="text" id="cartCustName" class="form-control" value="${v('name')}" placeholder="e.g. Rami" />
+          <label for="cartCustName">${t('Name')} *</label>
+          <input type="text" id="cartCustName" class="form-control" value="${v('name')}" placeholder="${t('e.g. Rami')}" />
         </div>
         <div class="form-group">
-          <label for="cartCustPhone">Phone / WhatsApp *</label>
-          <input type="tel" id="cartCustPhone" class="form-control" value="${v('phone')}" placeholder="e.g. +961 3 123 456" />
+          <label for="cartCustPhone">${t('Phone / WhatsApp')} *</label>
+          <input type="tel" id="cartCustPhone" class="form-control" value="${v('phone')}" placeholder="${t('e.g. +961 3 123 456')}" />
         </div>
         <div class="form-group">
-          <label for="cartCustAddress">Address or table *</label>
-          <input type="text" id="cartCustAddress" class="form-control" value="${v('address')}" placeholder="Street, building, floor" />
+          <label for="cartCustAddress">${t('Address or table')} *</label>
+          <input type="text" id="cartCustAddress" class="form-control" value="${v('address')}" placeholder="${t('Street, building, floor')}" />
         </div>
         <div class="form-group">
-          <label for="cartCustNotes">Note for the kitchen</label>
-          <input type="text" id="cartCustNotes" class="form-control" value="${v('notes')}" placeholder="e.g. extra garlic, call on arrival" />
+          <label for="cartCustNotes">${t('Note for the kitchen')}</label>
+          <input type="text" id="cartCustNotes" class="form-control" value="${v('notes')}" placeholder="${t('e.g. extra garlic, call on arrival')}" />
         </div>
       </div>
     `;
@@ -164,21 +167,21 @@ export function renderCartDrawer() {
   bodyEl.innerHTML = `
       <div class="cart-items">
         <div class="cart-items-head">
-          <span class="eyebrow">Items · ${cartCount()}</span>
-          <button class="cart-clear-btn" data-action="cart:clear">Clear all</button>
+          <span class="eyebrow">${t('Items')} · ${cartCount()}</span>
+          <button class="cart-clear-btn" data-action="cart:clear">${t('Clear all')}</button>
         </div>
         ${renderCartRows()}
       </div>
 
       <div class="cart-block">
         <div class="form-group">
-          <label for="cartZoneSelect">Delivery area or dine-in</label>
+          <label for="cartZoneSelect">${t('Delivery area or dine-in')}</label>
           <select id="cartZoneSelect" class="form-control form-control-sm" data-on-change="cart:zone">
             ${zones
               .map(
                 z => `
               <option value="${esc(z.id)}" ${pricing.activeZone?.id === z.id ? 'selected' : ''}>
-                ${esc(z.name)} — ${Number(z.feeUsd) > 0 ? `+$${Number(z.feeUsd).toFixed(2)}` : 'FREE'} (${esc(z.eta || '25 min')})
+                ${esc(t(z.name))} — ${Number(z.feeUsd) > 0 ? ltr(`+$${Number(z.feeUsd).toFixed(2)}`) : t('FREE')} (${esc(minutesText(z.eta || '25 min'))})
               </option>
             `
               )
@@ -189,14 +192,14 @@ export function renderCartDrawer() {
         ${renderPromoSection(pricing)}
 
         <dl class="cart-summary">
-          <div><dt>Items</dt><dd>${formatPrice(pricing.subtotalUsd)}</dd></div>
-          <div><dt>Delivery (${esc(pricing.activeZone?.name || 'Aley')})</dt><dd>${pricing.deliveryFeeUsd > 0 ? `+${formatPrice(pricing.deliveryFeeUsd)}` : 'FREE'}</dd></div>
+          <div><dt>${t('Items')}</dt><dd>${formatPrice(pricing.subtotalUsd)}</dd></div>
+          <div><dt>${t('Delivery ({zone})', { zone: esc(t(pricing.activeZone?.name || 'Aley')) })}</dt><dd>${pricing.deliveryFeeUsd > 0 ? ltr(`+${formatPrice(pricing.deliveryFeeUsd)}`) : t('FREE')}</dd></div>
           ${
             pricing.discountUsd > 0
-              ? `<div class="discount"><dt>Promo (${esc(pricing.promoObj.code)})</dt><dd>−${formatPrice(pricing.discountUsd)}</dd></div>`
+              ? `<div class="discount"><dt>${t('Promo ({code})', { code: esc(pricing.promoObj.code) })}</dt><dd>${ltr(`−${formatPrice(pricing.discountUsd)}`)}</dd></div>`
               : ''
           }
-          <div class="grand"><dt>Total</dt><dd>${formatPrice(pricing.grandTotalUsd)}</dd></div>
+          <div class="grand"><dt>${t('Total')}</dt><dd>${formatPrice(pricing.grandTotalUsd)}</dd></div>
         </dl>
       </div>
 
@@ -217,7 +220,12 @@ function applyPromoCode(code) {
   renderCartDrawer();
   const pricing = computeCartPricing();
   if (pricing.promoObj) {
-    showToast(`Promo code ${pricing.promoObj.code} applied (-${formatPrice(pricing.discountUsd)})!`);
+    showToast(
+      t('Promo code {code} applied ({amount})!', {
+        code: pricing.promoObj.code,
+        amount: ltr(`-${formatPrice(pricing.discountUsd)}`)
+      })
+    );
   } else if (pricing.promoError) {
     showToast(pricing.promoError);
   }
@@ -250,6 +258,7 @@ function buildOrderMessage({ orderId, name, phone, address, notes, zoneLabel, pr
     `*Phone:* ${phone}`,
     `*${state.tableNumber ? 'Table' : 'Zone & Address'}:* ${address}`,
     `*Order Notes:* ${notes}`,
+    ...(isAr() ? [`*Preferred language:* Arabic / العربية`] : []),
     `-----------------------------------------`,
     `*SELECTED MENU ITEMS:*`,
     ...itemLines,
@@ -305,7 +314,7 @@ function checkoutViaWhatsApp() {
   });
 
   rememberLastOrderId(orderId);
-  showToast(`Order #${orderId} recorded & opening WhatsApp...`);
+  showToast(t('Order #{id} recorded & opening WhatsApp...', { id: orderId }));
   openWhatsApp(state.tableNumber ? 'restaurant' : 'delivery', message, true);
 }
 

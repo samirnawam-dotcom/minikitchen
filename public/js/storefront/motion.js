@@ -6,6 +6,7 @@
 //  • the showcase strip glides on its own in CSS (see .showcase-track) and pauses on hover or focus.
 
 import { registerActions } from '../shared/actions.js';
+import { t } from './i18n-strings.js';
 import { state } from './state.js';
 import { onAfterRender } from './view.js';
 
@@ -102,7 +103,7 @@ registerActions({
     if (!hero) return;
     hero.paused = !hero.paused;
     el.setAttribute('aria-pressed', String(hero.paused));
-    el.setAttribute('aria-label', hero.paused ? 'Play the slideshow' : 'Pause the slideshow');
+    el.setAttribute('aria-label', t(hero.paused ? 'Play the slideshow' : 'Pause the slideshow'));
     el.querySelector('i')?.classList.replace(
       hero.paused ? 'fa-pause' : 'fa-play',
       hero.paused ? 'fa-play' : 'fa-pause'

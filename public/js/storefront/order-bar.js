@@ -2,6 +2,7 @@
 
 import { state, cartCount, cartSubtotal } from './state.js';
 import { formatPrice } from './format.js';
+import { t } from './i18n-strings.js';
 
 export function updateCartBadges() {
   const total = cartCount();
@@ -31,10 +32,10 @@ export function renderOrderBar() {
       <div class="fd-floating-order-left">
         <div class="fd-floating-bag-badge">${totalCount}</div>
         <div>
-          <div class="fd-floating-label">Your basket</div>
+          <div class="fd-floating-label">${t('Your basket')}</div>
           <div class="fd-floating-total">${formatPrice(cartSubtotal())}</div>
         </div>
       </div>
-      <button class="btn btn-whatsapp btn-sm" data-action="cart:open">Review &amp; send</button>
+      <button class="btn btn-whatsapp btn-sm" data-action="cart:open">${t('Review &amp; send')}</button>
     `;
 }

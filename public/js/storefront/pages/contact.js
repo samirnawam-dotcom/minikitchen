@@ -5,6 +5,7 @@ import { esc } from '../../shared/dom.js';
 import { content } from '../config.js';
 import { registerPage } from '../view.js';
 import { pageHero } from './sections.js';
+import { t } from '../i18n-strings.js';
 
 function contactCard({ brand, eyebrow, title, text, phone, phoneHref, lines, cta }) {
   return `
@@ -12,12 +13,12 @@ function contactCard({ brand, eyebrow, title, text, phone, phoneHref, lines, cta
               <span class="eyebrow">${eyebrow}</span>
               <h2 class="contact-card-title">${title}</h2>
               <p class="contact-card-text">${text}</p>
-              <a class="contact-card-phone" href="tel:${esc(phoneHref)}"><i class="fa-solid fa-phone" aria-hidden="true"></i> ${esc(phone)}</a>
+              <a class="contact-card-phone" href="tel:${esc(phoneHref)}"><i class="fa-solid fa-phone" aria-hidden="true"></i> <span class="ltr">${esc(phone)}</span></a>
               <ul class="contact-card-lines">${lines.map(l => `<li>${l}</li>`).join('')}</ul>
               <button class="btn btn-whatsapp btn-block" data-action="wa:open" data-brand="${brand}">
                 <i class="fa-brands fa-whatsapp"></i> ${cta}
               </button>
-              ${brand === 'catering' ? '<button type="button" class="text-link contact-card-link" data-action="builder:start">Or build your package online <i class="fa-solid fa-arrow-right"></i></button>' : ''}
+              ${brand === 'catering' ? `<button type="button" class="text-link contact-card-link" data-action="builder:start">${t('Or build your package online')} <i class="fa-solid fa-arrow-right"></i></button>` : ''}
             </article>`;
 }
 
@@ -26,9 +27,11 @@ function buildContactPage() {
 
   return `
       ${pageHero({
-        eyebrow: 'Contact',
-        title: 'Talk to the right team',
-        text: 'Catering and weddings, a table at the restaurant, or a delivery order — we answer on WhatsApp and by phone.'
+        eyebrow: t('Contact'),
+        title: t('Talk to the right team'),
+        text: t(
+          'Catering and weddings, a table at the restaurant, or a delivery order — we answer on WhatsApp and by phone.'
+        )
       })}
 
       <section class="section-pad section-tight-top">
@@ -36,36 +39,36 @@ function buildContactPage() {
           <div class="contact-cards">
             ${contactCard({
               brand: 'catering',
-              eyebrow: 'Weddings & events',
-              title: 'Catering',
-              text: 'Packages, corporate events, private parties and live stations.',
+              eyebrow: t('Weddings & events'),
+              title: t('Catering'),
+              text: t('Packages, corporate events, private parties and live stations.'),
               phone: contacts.catering.phoneDisplay,
               phoneHref: `+${contacts.catering.whatsappNumber}`,
               lines: [
-                `Second line <span class="ltr">${esc(contacts.catering.secondaryDisplay)}</span>`,
-                esc(contacts.catering.email)
+                `${t('Second line')} <span class="ltr">${esc(contacts.catering.secondaryDisplay)}</span>`,
+                `<span class="ltr">${esc(contacts.catering.email)}</span>`
               ],
-              cta: 'Message catering'
+              cta: t('Message catering')
             })}
             ${contactCard({
               brand: 'restaurant',
-              eyebrow: 'Dine in',
-              title: 'Restaurant',
-              text: 'Table bookings, group dining and birthday tables in Ain Al Remmaneh.',
+              eyebrow: t('Dine in'),
+              title: t('Restaurant'),
+              text: t('Table bookings, group dining and birthday tables in Ain Al Remmaneh.'),
               phone: contacts.restaurant.phoneDisplay,
               phoneHref: `+${contacts.restaurant.whatsappNumber}`,
-              lines: [esc(location.hours), esc(location.short)],
-              cta: 'Book a table'
+              lines: [esc(t(location.hours)), esc(t(location.short))],
+              cta: t('Book a table')
             })}
             ${contactCard({
               brand: 'delivery',
-              eyebrow: 'Home & office',
-              title: 'Delivery',
-              text: 'Hot food delivered across Aley, Bhamdoun, Souk El Gharb, Kahale and nearby.',
+              eyebrow: t('Home & office'),
+              title: t('Delivery'),
+              text: t('Hot food delivered across Aley, Bhamdoun, Souk El Gharb, Kahale and nearby.'),
               phone: contacts.delivery.phoneDisplay,
               phoneHref: `+${contacts.delivery.whatsappNumber}`,
-              lines: [esc(location.hours), 'Or order from our online menu'],
-              cta: 'Order delivery'
+              lines: [esc(t(location.hours)), t('Or order from our online menu')],
+              cta: t('Order delivery')
             })}
           </div>
         </div>
@@ -74,71 +77,71 @@ function buildContactPage() {
       <section class="section-pad section-ivory">
         <div class="container contact-layout">
           <div class="form-card">
-            <h2 class="form-card-title">Send us a message</h2>
-            <p class="form-card-text">Fill in the details and press send — the message opens in WhatsApp with the right team.</p>
+            <h2 class="form-card-title">${t('Send us a message')}</h2>
+            <p class="form-card-text">${t('Fill in the details and press send — the message opens in WhatsApp with the right team.')}</p>
             <form data-on-submit="quote:submit">
               <div class="form-grid">
                 <div class="form-group">
-                  <label for="quoteName">Your name *</label>
-                  <input type="text" id="quoteName" class="form-control" placeholder="Full name" required />
+                  <label for="quoteName">${t('Your name')} *</label>
+                  <input type="text" id="quoteName" class="form-control" placeholder="${t('Full name')}" required />
                 </div>
                 <div class="form-group">
-                  <label for="quotePhone">Phone *</label>
+                  <label for="quotePhone">${t('Phone')} *</label>
                   <input type="tel" id="quotePhone" class="form-control" placeholder="+961 …" required />
                 </div>
                 <div class="form-group">
-                  <label for="quoteEventType">About *</label>
+                  <label for="quoteEventType">${t('About')} *</label>
                   <select id="quoteEventType" class="form-control" required>
-                    <option value="Event Buffet (Wedding / Occasion)">Event buffet — wedding or occasion</option>
-                    <option value="Birthday Mini Catering">Birthday Mini</option>
-                    <option value="Live Stations / Trays / Mini Bites">Live stations, trays or mini bites</option>
-                    <option value="Restaurant Table Reservation">Restaurant table booking</option>
-                    <option value="Delivery / Group Order">Delivery / group order</option>
+                    <option value="Event Buffet (Wedding / Occasion)">${t('Event buffet — wedding or occasion')}</option>
+                    <option value="Birthday Mini Catering">${t('Birthday Mini')}</option>
+                    <option value="Live Stations / Trays / Mini Bites">${t('Live stations, trays or mini bites')}</option>
+                    <option value="Restaurant Table Reservation">${t('Restaurant table booking')}</option>
+                    <option value="Delivery / Group Order">${t('Delivery / group order')}</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="quoteGuests">Number of guests *</label>
-                  <input type="number" id="quoteGuests" class="form-control" placeholder="e.g. 100" required />
+                  <label for="quoteGuests">${t('Number of guests')} *</label>
+                  <input type="number" id="quoteGuests" class="form-control" placeholder="${t('e.g. 100')}" required />
                 </div>
                 <div class="form-group">
-                  <label for="quoteDate">Date *</label>
+                  <label for="quoteDate">${t('Date')} *</label>
                   <input type="date" id="quoteDate" class="form-control" required />
                 </div>
                 <div class="form-group">
-                  <label for="quoteLocation">Location / venue *</label>
-                  <input type="text" id="quoteLocation" class="form-control" placeholder="e.g. Aley, Beirut, villa…" required />
+                  <label for="quoteLocation">${t('Location / venue')} *</label>
+                  <input type="text" id="quoteLocation" class="form-control" placeholder="${t('e.g. Aley, Beirut, villa…')}" required />
                 </div>
                 <div class="form-group full">
-                  <label for="quotePackage">Package or services</label>
-                  <input type="text" id="quotePackage" class="form-control" placeholder="e.g. Wedding buffet, live burger station, mezza" />
+                  <label for="quotePackage">${t('Package or services')}</label>
+                  <input type="text" id="quotePackage" class="form-control" placeholder="${t('e.g. Wedding buffet, live burger station, mezza')}" />
                 </div>
                 <div class="form-group full">
-                  <label for="quoteNotes">Message</label>
-                  <textarea id="quoteNotes" class="form-control" rows="3" placeholder="Questions or special requests…"></textarea>
+                  <label for="quoteNotes">${t('Message')}</label>
+                  <textarea id="quoteNotes" class="form-control" rows="3" placeholder="${t('Questions or special requests…')}"></textarea>
                 </div>
               </div>
               <button type="submit" class="btn btn-whatsapp btn-block form-submit">
-                <i class="fa-brands fa-whatsapp"></i> Send on WhatsApp
+                <i class="fa-brands fa-whatsapp"></i> ${t('Send on WhatsApp')}
               </button>
             </form>
           </div>
 
           <div class="contact-aside">
-            <span class="eyebrow">Find us</span>
-            <h2 class="visit-panel-title">Ain Al Remmaneh, Aley</h2>
+            <span class="eyebrow">${t('Find us')}</span>
+            <h2 class="visit-panel-title">${t('Ain Al Remmaneh, Aley')}</h2>
             <ul class="info-list">
-              <li><i class="fa-solid fa-location-dot"></i> <span>${esc(location.full)}</span></li>
-              <li><i class="fa-regular fa-clock"></i> <span>${esc(location.hours)}</span></li>
-              <li><i class="fa-regular fa-envelope"></i> <a href="mailto:${esc(contacts.catering.email)}">${esc(contacts.catering.email)}</a></li>
+              <li><i class="fa-solid fa-location-dot"></i> <span>${esc(t(location.full))}</span></li>
+              <li><i class="fa-regular fa-clock"></i> <span>${esc(t(location.hours))}</span></li>
+              <li><i class="fa-regular fa-envelope"></i> <a class="ltr" href="mailto:${esc(contacts.catering.email)}">${esc(contacts.catering.email)}</a></li>
             </ul>
             <div class="map-frame">
-              <iframe src="${esc(location.mapEmbedUrl)}" title="Map: Mini Kitchen, Ain Al Remmaneh" loading="lazy" allowfullscreen=""></iframe>
+              <iframe src="${esc(location.mapEmbedUrl)}" title="${t('Map: Mini Kitchen, Ain Al Remmaneh')}" loading="lazy" allowfullscreen=""></iframe>
             </div>
             <div class="hero-actions">
-              <a class="btn btn-outline btn-sm" href="${esc(location.googleMapsUrl)}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i> Open in Google Maps</a>
+              <a class="btn btn-outline btn-sm" href="${esc(location.googleMapsUrl)}" target="_blank" rel="noopener"><i class="fa-solid fa-diamond-turn-right"></i> ${t('Open in Google Maps')}</a>
               <a class="btn btn-outline btn-sm" href="${esc(socials.instagram)}" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> ${esc(socials.instagramHandle)}</a>
-              <a class="btn btn-outline btn-sm" href="${esc(socials.tiktok)}" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i> TikTok</a>
-              <a class="btn btn-outline btn-sm" href="${esc(socials.facebook)}" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+              <a class="btn btn-outline btn-sm" href="${esc(socials.tiktok)}" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i> ${t('TikTok')}</a>
+              <a class="btn btn-outline btn-sm" href="${esc(socials.facebook)}" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> ${t('Facebook')}</a>
             </div>
           </div>
         </div>

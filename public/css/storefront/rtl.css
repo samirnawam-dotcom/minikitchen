@@ -3,9 +3,62 @@
    logical properties (margin-inline-start, inset-inline-end…) elsewhere, so they mirror on their
    own; this file only covers what logical properties cannot: slide/hover movements and text. */
 
-/* Page content is English while the layout is mirrored: give every paragraph the direction of its
-   own text so punctuation stays at the right end ("…your order." not ".…your order"), and keep
-   text right-aligned to match the mirrored layout. */
+/* ---- Arabic typography (html[lang='ar'], set by js/storefront/i18n.js) ----------------------
+   Text: IBM Plex Sans Arabic; headings: Noto Naskh Arabic — a calm humanist sans and a classic
+   Naskh that sit well beside Plus Jakarta Sans and Playfair Display. The Latin fonts stay first so
+   English second lines, prices and the logo keep the brand faces; Arabic letters fall through to
+   the Arabic fonts (then to the system's Arabic fonts while the web fonts load). */
+html[lang='ar'] {
+  --font-sans:
+    'Plus Jakarta Sans', 'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Segoe UI', Tahoma, 'Geeza Pro', sans-serif;
+  --font-serif: 'Playfair Display', 'Noto Naskh Arabic', 'Noto Sans Arabic', 'Times New Roman', 'Geeza Pro', serif;
+  --fs-eyebrow: 0.84rem;
+}
+
+/* Arabic letters join: tracking breaks the joins, and capitals do not exist. Eyebrows and small
+   labels are set in tracked capitals in English; in Arabic they become plain medium-weight text. */
+html[lang='ar'] body,
+html[lang='ar'] body * {
+  letter-spacing: normal !important;
+  text-transform: none !important;
+}
+
+/* Arabic has taller ascenders and descenders (and dots) than Latin: open up the tight heading
+   line-heights so lines do not touch. */
+html[lang='ar'] body {
+  line-height: 1.8;
+}
+html[lang='ar']
+  :is(
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    .home-hero-title,
+    .page-hero-title,
+    .section-title,
+    .stat-value,
+    .builder-total,
+    .builder-bar-total,
+    .package-card-price
+  ) {
+  line-height: 1.45;
+}
+html[lang='ar'] .brand-logo-sub {
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+/* Synthetic italics look broken in Arabic script */
+html[lang='ar'] :is(.review-quote, .menu-course-empty, .cart-item-note) {
+  font-style: normal;
+}
+
+/* Every paragraph takes the direction of its own text, so an English second line (or a stray
+   English word from the owner's content) keeps its punctuation in place, and text stays
+   right-aligned to match the mirrored layout. Phone numbers and order references are wrapped
+   in .ltr or Unicode isolates so their digits keep their order. */
 [dir='rtl'] body {
   text-align: right;
 }
@@ -51,4 +104,9 @@
 [dir='rtl'] .fa-angle-left,
 [dir='rtl'] .fa-arrow-right-long {
   transform: scaleX(-1);
+}
+
+/* The language buttons name Arabic in Arabic on the English site too */
+:is(.header-pref-btn, .drawer-utility-item)[lang='ar'] {
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', var(--font-sans);
 }

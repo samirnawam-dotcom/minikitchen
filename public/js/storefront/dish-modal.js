@@ -9,12 +9,13 @@ import { addCartLine } from './cart.js';
 import { formatPrice } from './format.js';
 import { render } from './view.js';
 import { showToast } from './toast.js';
+import { minutesText, t } from './i18n-strings.js';
 
 const BADGES = {
-  Popular: '<span class="fd-badge popular">Popular</span>',
-  Spicy: '<span class="fd-badge spicy"><i class="fa-solid fa-pepper-hot"></i> Spicy</span>',
-  Vegetarian: '<span class="fd-badge vegetarian"><i class="fa-solid fa-leaf"></i> Vegetarian</span>',
-  Sharing: '<span class="fd-badge sharing">Sharing</span>'
+  Popular: () => `<span class="fd-badge popular">${t('Popular')}</span>`,
+  Spicy: () => `<span class="fd-badge spicy"><i class="fa-solid fa-pepper-hot"></i> ${t('Spicy')}</span>`,
+  Vegetarian: () => `<span class="fd-badge vegetarian"><i class="fa-solid fa-leaf"></i> ${t('Vegetarian')}</span>`,
+  Sharing: () => `<span class="fd-badge sharing">${t('Sharing')}</span>`
 };
 
 function ensureModalDom() {
@@ -35,9 +36,9 @@ function renderModifierGroups(modGroups) {
       (grp, gIdx) => `
         <div class="fd-mod-group">
           <div class="fd-mod-header">
-            <span class="fd-mod-name">${esc(grp.name)}</span>
+            <span class="fd-mod-name">${esc(t(grp.name))}</span>
             <span class="fd-mod-pill ${grp.required ? 'required' : 'optional'}">
-              ${grp.required ? 'Required · choose 1' : 'Optional'}
+              ${grp.required ? t('Required · choose 1') : t('Optional')}
             </span>
           </div>
           <div class="fd-mod-options-list">
@@ -56,7 +57,7 @@ function renderModifierGroups(modGroups) {
                     ${opt.default ? 'checked' : ''}
                     data-on-change="dish:recalc"
                   />
-                  <span>${esc(opt.label)}</span>
+                  <span>${esc(t(opt.label))}</span>
                 </span>
                 <span class="fd-mod-option-price">
                   ${opt.price > 0 ? `+ ${formatPrice(opt.price)}` : ''}
@@ -81,16 +82,16 @@ export function openDishModal(itemId, mode) {
   state.modalCtx = { item, cat, mode: mode || 'delivery', qty: 1, modGroups };
 
   const backdrop = ensureModalDom();
-  const badgesHtml = (item.badges || []).map(b => BADGES[b] || '').join('');
+  const badgesHtml = (item.badges || []).map(b => (BADGES[b] ? BADGES[b]() : '')).join('');
 
   backdrop.innerHTML = `
-      <div class="fd-modal-dialog" role="dialog" aria-modal="true">
+      <div class="fd-modal-dialog" role="dialog" aria-modal="true" aria-label="${esc(item.title)}">
         <div class="fd-modal-hero">
           <img src="${esc(item.img)}" data-fallback="${esc(item.fallbackImg)}" alt="${esc(item.title)}" />
-          <button class="fd-modal-close" data-action="dish:close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+          <button class="fd-modal-close" data-action="dish:close" aria-label="${t('Close')}"><i class="fa-solid fa-xmark"></i></button>
           <div class="fd-modal-hero-badges">
-            <span class="fd-modal-chip">${esc(cat.name)}</span>
-            <span class="fd-modal-chip"><i class="fa-regular fa-clock"></i> ${esc(item.prepTime || '15–20 min')}</span>
+            <span class="fd-modal-chip">${esc(t(cat.name))}</span>
+            <span class="fd-modal-chip"><i class="fa-regular fa-clock"></i> ${esc(minutesText(item.prepTime || '15–20 min'))}</span>
             ${badgesHtml}
           </div>
         </div>
@@ -101,30 +102,30 @@ export function openDishModal(itemId, mode) {
             <span class="fd-modal-base-price">${formatPrice(item.priceValue)}</span>
           </div>
           <p class="fd-modal-desc">
-            ${esc(item.desc || 'Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen using signature Mini Kitchen ingredients.')}
+            ${esc(item.desc || t('Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen using signature Mini Kitchen ingredients.'))}
           </p>
 
           ${renderModifierGroups(modGroups)}
 
           <div class="fd-modal-notes-wrap">
-            <label for="fdModalSpecialNote">Note for the kitchen (optional)</label>
+            <label for="fdModalSpecialNote">${t('Note for the kitchen (optional)')}</label>
             <input
               type="text"
               id="fdModalSpecialNote"
               class="form-control"
-              placeholder="e.g. no pickles, allergy note…"
+              placeholder="${t('e.g. no pickles, allergy note…')}"
             />
           </div>
         </div>
 
         <div class="fd-modal-footer">
           <div class="fd-qty-stepper">
-            <button type="button" class="fd-qty-btn" data-action="dish:qty" data-delta="-1">−</button>
+            <button type="button" class="fd-qty-btn" data-action="dish:qty" data-delta="-1" aria-label="${t('One less')}">−</button>
             <span class="fd-qty-val" id="fdModalQtyDisplay">1</span>
-            <button type="button" class="fd-qty-btn" data-action="dish:qty" data-delta="1">+</button>
+            <button type="button" class="fd-qty-btn" data-action="dish:qty" data-delta="1" aria-label="${t('One more')}">+</button>
           </div>
           <button type="button" class="fd-modal-submit-btn" id="fdModalSubmitBtn" data-action="dish:add">
-            <span>Add to basket</span>
+            <span>${t('Add to basket')}</span>
             <span id="fdModalLiveTotal">${formatPrice(item.priceValue)}</span>
           </button>
         </div>
@@ -181,13 +182,13 @@ function confirmModalAdd() {
 
   closeDishModal();
   render();
-  showToast(`Added ${qty}x "${item.title}" to your Order!`);
+  showToast(t('Added {qty}x "{title}" to your Order!', { qty, title: item.title }));
 }
 
 registerActions({
   // <div data-action="dish:open" data-id="mk-item-12" data-mode="delivery">
   'dish:open': el => openDishModal(el.dataset.id, el.dataset.mode),
-  'dish:sold-out': () => showToast('This dish is currently marked Sold Out.'),
+  'dish:sold-out': () => showToast(t('This dish is currently marked Sold Out.')),
   'dish:close': closeDishModal,
   'dish:backdrop': (el, event) => {
     if (event.target === el) closeDishModal();

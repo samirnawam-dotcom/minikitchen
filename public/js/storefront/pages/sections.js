@@ -5,6 +5,7 @@
 
 import { esc } from '../../shared/dom.js';
 import { content, getTestimonials } from '../config.js';
+import { t } from '../i18n-strings.js';
 
 const img = (src, alt, { fallback = '', lazy = true, cls = '' } = {}) =>
   `<img src="${esc(src)}" data-fallback="${esc(fallback)}" alt="${esc(alt)}"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'} decoding="async"${cls ? ` class="${cls}"` : ''} />`;
@@ -44,11 +45,13 @@ export function sectionHeader({ eyebrow, title, text, align = 'center' }) {
  * `item` needs { img, title } and may carry a caption field named by `captionKey`.
  */
 export function galleryTile(item, group, captionKey, shape = '') {
-  const caption = [item.title, captionKey ? item[captionKey] : ''].filter(Boolean).join(' — ');
+  // Owner text shows as written; the published default captions have an Arabic version.
+  const title = t(item.title || '');
+  const caption = [title, captionKey ? t(item[captionKey] || '') : ''].filter(Boolean).join(' — ');
   return `
-            <button type="button" class="gallery-tile${shape ? ` ${shape}` : ''}" data-action="lightbox:open" data-lightbox="${esc(group)}" data-caption="${esc(caption)}" aria-label="${esc(`View photo: ${item.title || 'Mini Kitchen'}`)}">
-              ${img(item.img, item.title || 'Mini Kitchen')}
-              ${item.title ? `<span class="gallery-tile-caption">${esc(item.title)}</span>` : ''}
+            <button type="button" class="gallery-tile${shape ? ` ${shape}` : ''}" data-action="lightbox:open" data-lightbox="${esc(group)}" data-caption="${esc(caption)}" aria-label="${esc(t('View photo: {title}', { title: title || 'Mini Kitchen' }))}">
+              ${img(item.img, title || 'Mini Kitchen')}
+              ${title ? `<span class="gallery-tile-caption">${esc(title)}</span>` : ''}
             </button>`;
 }
 
@@ -93,7 +96,7 @@ export function testimonialsSection({ tone = 'ivory' } = {}) {
   return `
       <section class="section-pad section-${tone}">
         <div class="container">
-          ${sectionHeader({ eyebrow: 'Kind words', title: 'What our guests say' })}
+          ${sectionHeader({ eyebrow: t('Kind words'), title: t('What our guests say') })}
           <div class="reviews-grid">
             ${reviews
               .map(r => {
@@ -101,13 +104,13 @@ export function testimonialsSection({ tone = 'ivory' } = {}) {
                 return `
               <figure class="review-card">
                 <span class="review-mark" aria-hidden="true">“</span>
-                <div class="review-stars" role="img" aria-label="${stars} out of 5 stars">${'<i class="fa-solid fa-star" aria-hidden="true"></i>'.repeat(stars)}</div>
-                <blockquote class="review-quote">${esc(r.quote || r.caption || r.desc || '')}</blockquote>
+                <div class="review-stars" role="img" aria-label="${esc(t('{n} out of 5 stars', { n: stars }))}">${'<i class="fa-solid fa-star" aria-hidden="true"></i>'.repeat(stars)}</div>
+                <blockquote class="review-quote">${esc(t(r.quote || r.caption || r.desc || ''))}</blockquote>
                 <figcaption class="review-author">
                   <img src="${esc(r.img || content.config.logos.main)}" data-fallback="" alt="" loading="lazy" width="48" height="48" />
                   <span>
-                    <span class="review-name">${esc(r.name || r.title || 'Valued Client')}</span>
-                    <span class="review-role">${esc(r.role || r.category || r.tag || 'Mini Kitchen client')}</span>
+                    <span class="review-name">${esc(t(r.name || r.title || 'Valued Client'))}</span>
+                    <span class="review-role">${esc(t(r.role || r.category || r.tag || 'Mini Kitchen client'))}</span>
                   </span>
                 </figcaption>
               </figure>`;
