@@ -4,6 +4,7 @@
 import { state, saveCart, cartSubtotal } from './state.js';
 import { getDeliveryZones, getPromoCodes } from './config.js';
 import { updateCartBadges } from './order-bar.js';
+import { t } from './i18n-strings.js';
 
 /** Adds a dish (with chosen modifiers / note) to the cart, merging identical lines. */
 export function addCartLine({ item, qty, unitPrice, modifiers, note }) {
@@ -58,9 +59,12 @@ export function computeCartPricing() {
     const codeUpper = state.appliedPromoCode.trim().toUpperCase();
     const found = getPromoCodes().find(p => p.active !== false && String(p.code || '').toUpperCase() === codeUpper);
     if (!found) {
-      promoError = `Promo code "${codeUpper}" is not valid.`;
+      promoError = t('Promo code "{code}" is not valid.', { code: codeUpper });
     } else if (subtotalUsd < (Number(found.minOrderUsd) || 0)) {
-      promoError = `Code ${found.code} requires a minimum order of $${Number(found.minOrderUsd).toFixed(2)}.`;
+      promoError = t('Code {code} requires a minimum order of {amount}.', {
+        code: found.code,
+        amount: `$${Number(found.minOrderUsd).toFixed(2)}`
+      });
     } else {
       promoObj = found;
       if (found.type === 'percent') {

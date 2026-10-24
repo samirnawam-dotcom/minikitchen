@@ -23,13 +23,18 @@ import { openWhatsApp } from './whatsapp.js';
 import { navigateToPage } from './navigation.js';
 import { showToast } from './toast.js';
 import { onAfterRender } from './view.js';
+import { guestsText, isAr, t } from './i18n-strings.js';
 import {
   TYPE_LABELS,
+  typeLabel,
+  localIncluded,
+  selectionLabel,
   findGroup,
   findPackage,
   groupItems,
   localName,
   money,
+  moneyEn,
   nameBlock,
   packages,
   price,
@@ -43,7 +48,10 @@ const CATERING_PAGES = ['catering', 'catering-menus'];
 const b = () => state.builder;
 
 const clampInt = (value, min, max) => Math.min(max, Math.max(min, Math.floor(Number(value) || 0)));
+/** "Event buffet · Classic" in English, for the WhatsApp message and the Back Office record. */
 const pkgLabel = pkg => `${TYPE_LABELS[pkg.type] || 'Package'} · ${pkg.name}`;
+/** The same label in the visitor's language, for the page. */
+const localPkgLabel = pkg => `${typeLabel(pkg.type)} · ${localName(pkg)}`;
 /** Picked dish names that still exist in the owner's list (a draft may be older than the menu). */
 const picksFor = groupId => {
   const picks = b().picks[groupId] || [];
@@ -121,7 +129,10 @@ function packageChoices(pkg) {
 // Estimate
 // ---------------------------------------------------------------------------
 
-/** Every priced line of the request, in the order they are shown and sent. */
+/**
+ * Every priced line of the request, in the order they are shown and sent. `label` is English (sent
+ * on WhatsApp and recorded for the Back Office); `display` is the same line in the visitor's language.
+ */
 function estimateLines() {
   const s = b();
   const guests = s.guests;
@@ -131,7 +142,8 @@ function estimateLines() {
     lines.push({
       kind: 'package',
       id: pkg.id,
-      label: `${pkgLabel(pkg)} · ${money(pkg.pricePerPerson)} × ${guests} guests`,
+      label: `${pkgLabel(pkg)} · ${moneyEn(pkg.pricePerPerson)} × ${guests} guests`,
+      display: `${localPkgLabel(pkg)} · ${money(pkg.pricePerPerson)} × ${guestsText(guests)}`,
       qty: 1,
       unit: price(pkg.pricePerPerson) * guests
     });
@@ -144,7 +156,8 @@ function estimateLines() {
           lines.push({
             kind: 'station',
             id: st.id,
-            label: `${st.name} — ${opt.label} · ${money(opt.price)} / kg`,
+            label: `${st.name} — ${opt.label} · ${moneyEn(opt.price)} / kg`,
+            display: `${localName(st)} — ${localName(opt, 'label')} · ${t('{price} / kg', { price: money(opt.price) })}`,
             qty: kg,
             unit: price(opt.price)
           });
@@ -153,7 +166,8 @@ function estimateLines() {
         lines.push({
           kind: 'station',
           id: st.id,
-          label: `${st.name} — ${opt.label} · ${money(opt.price)} × ${guests} guests`,
+          label: `${st.name} — ${opt.label} · ${moneyEn(opt.price)} × ${guests} guests`,
+          display: `${localName(st)} — ${localName(opt, 'label')} · ${money(opt.price)} × ${guestsText(guests)}`,
           qty: 1,
           unit: price(opt.price) * guests
         });
@@ -162,13 +176,29 @@ function estimateLines() {
   }
   for (const tray of cateringList('mainCourseTrays')) {
     const qty = Number(s.trays[tray.id]) || 0;
-    if (qty > 0) lines.push({ kind: 'tray', id: tray.id, label: `Tray: ${tray.name}`, qty, unit: price(tray.price) });
+    if (qty > 0) {
+      lines.push({
+        kind: 'tray',
+        id: tray.id,
+        label: `Tray: ${tray.name}`,
+        display: t('Tray: {name}', { name: localName(tray) }),
+        qty,
+        unit: price(tray.price)
+      });
+    }
   }
   for (const bite of cateringList('miniBites')) {
     const qty = Number(s.bites[bite.id]) || 0;
     if (qty > 0) {
       const unit = bite.unit ? ` (${bite.unit})` : '';
-      lines.push({ kind: 'bite', id: bite.id, label: `Mini bites: ${bite.name}${unit}`, qty, unit: price(bite.price) });
+      lines.push({
+        kind: 'bite',
+        id: bite.id,
+        label: `Mini bites: ${bite.name}${unit}`,
+        display: `${t('Mini bites: {name}', { name: localName(bite) })}${bite.unit ? ` (${t(bite.unit)})` : ''}`,
+        qty,
+        unit: price(bite.price)
+      });
     }
   }
   return lines;
@@ -189,17 +219,17 @@ function summaryHtml() {
                     ? lines
                         .map(
                           l => `
-                <li><span>${l.qty > 1 ? `${l.qty} × ` : ''}${esc(l.label)}</span><strong>${money(lineTotal(l))}</strong></li>`
+                <li><span>${l.qty > 1 ? `${l.qty} × ` : ''}${esc(l.display)}</span><strong>${money(lineTotal(l))}</strong></li>`
                         )
                         .join('')
-                    : '<li class="builder-lines-empty">Choose a package, a station, trays or mini bites to see an estimate.</li>'
+                    : `<li class="builder-lines-empty">${t('Choose a package, a station, trays or mini bites to see an estimate.')}</li>`
                 }
-                ${extras.map(e => `<li><span>${esc(localName(e))}</span><em>On request</em></li>`).join('')}
+                ${extras.map(e => `<li><span>${esc(localName(e))}</span><em>${t('On request')}</em></li>`).join('')}
               </ul>
-              <div class="builder-total-label">Estimated total</div>
+              <div class="builder-total-label">${t('Estimated total')}</div>
               <div class="builder-total" id="builderTotal">${money(total)}</div>
               <div class="builder-total-lbp">${total > 0 ? lbp(total) : ''}</div>
-              <p class="builder-fineprint">${extras.length ? 'Extras are priced on request. ' : ''}Our team confirms the final menu and price with you on WhatsApp.</p>`;
+              <p class="builder-fineprint">${extras.length ? `${t('Extras are priced on request.')} ` : ''}${t('Our team confirms the final menu and price with you on WhatsApp.')}</p>`;
 }
 
 function refreshSummary() {
@@ -230,30 +260,34 @@ function progressSteps() {
     {
       key: 'package',
       target: 'pbStepPackage',
-      label: 'Package',
+      label: t('Package'),
       done: (!!pkg || addons) && s.guests >= 1,
-      meta: pkg ? `${localName(pkg)} · ${s.guests} guests` : addons ? 'No package' : 'Choose one'
+      meta: pkg ? `${localName(pkg)} · ${guestsText(s.guests)}` : addons ? t('No package') : t('Choose one')
     },
     {
       key: 'dishes',
       target: 'pbStepChoices',
-      label: 'Dishes',
+      label: t('Dishes'),
       done: pkg ? picked === required.length : addons,
-      meta: pkg ? (required.length ? `${picked} of ${required.length} done` : 'Included') : 'With a package'
+      meta: pkg
+        ? required.length
+          ? t('{n} of {total} done', { n: picked, total: required.length })
+          : t('Included')
+        : t('With a package')
     },
     {
       key: 'addons',
       target: 'pbStepAddons',
-      label: 'Add-ons',
+      label: t('Add-ons'),
       done: addons,
-      meta: addons ? 'Added' : 'Optional'
+      meta: addons ? t('Added') : t('Optional')
     },
     {
       key: 'details',
       target: 'pbStepDetails',
-      label: 'Your details',
+      label: t('Your details'),
       done: !!s.name.trim() && phoneOk(),
-      meta: 'Name & phone'
+      meta: t('Name & phone')
     }
   ];
   const current = steps.find(st => !st.done && st.key !== 'addons');
@@ -268,7 +302,7 @@ function progressHtml() {
                 <button type="button" data-action="builder:goto" data-target="${st.target}"${st.current ? ' aria-current="step"' : ''}>
                   <span class="builder-progress-dot" aria-hidden="true">${st.done ? '<i class="fa-solid fa-check"></i>' : i + 1}</span>
                   <span class="builder-progress-text"><span class="builder-progress-label">${st.label}</span><span class="builder-progress-meta">${esc(st.meta)}</span></span>
-                  <span class="sr-only">${st.done ? '(done)' : '(to do)'}</span>
+                  <span class="sr-only">${st.done ? t('(done)') : t('(to do)')}</span>
                 </button>
               </li>`
     )
@@ -286,16 +320,16 @@ function refreshProgress() {
 
 function packageSelect() {
   const option = p =>
-    `<option value="${esc(p.id)}" ${b().pkgId === p.id ? 'selected' : ''}>${esc(localName(p))} — ${money(p.pricePerPerson)} / person</option>`;
+    `<option value="${esc(p.id)}" ${b().pkgId === p.id ? 'selected' : ''}>${esc(localName(p))} — ${t('{price} / person', { price: money(p.pricePerPerson) })}</option>`;
   const group = (type, label) => {
     const list = packages(type);
     return list.length ? `<optgroup label="${label}">${list.map(option).join('')}</optgroup>` : '';
   };
   return `
                 <select id="pbPackage" class="form-control" data-on-change="builder:package">
-                  <option value="" ${b().pkgId ? '' : 'selected'}>No package — stations, trays or mini bites only</option>
-                  ${group('buffet', 'Event buffets (weddings &amp; occasions)')}
-                  ${group('birthday', 'Birthday Mini')}
+                  <option value="" ${b().pkgId ? '' : 'selected'}>${t('No package — stations, trays or mini bites only')}</option>
+                  ${group('buffet', t('Event buffets (weddings &amp; occasions)'))}
+                  ${group('birthday', t('Birthday Mini'))}
                 </select>`;
 }
 
@@ -304,15 +338,15 @@ function choiceGroupHtml({ group, items, count, required }) {
   if (count === 0) {
     return `
                 <div class="builder-group builder-group-info">
-                  <div class="builder-group-head"><span class="builder-group-title">${esc(state.lang === 'ar' ? `تشكيلة ${title}` : `Selection of ${title.toLowerCase()}`)}</span><span class="builder-tag">Included</span></div>
+                  <div class="builder-group-head"><span class="builder-group-title">${esc(selectionLabel(group))}</span><span class="builder-tag">${t('Included')}</span></div>
                   ${items.length ? `<p class="builder-group-note">${items.map(i => esc(localName(i))).join(' · ')}</p>` : ''}
                 </div>`;
   }
   if (items.length === 0) {
     return `
                 <div class="builder-group builder-group-info">
-                  <div class="builder-group-head"><span class="builder-group-title">${count} × ${esc(title)}</span><span class="builder-tag">To confirm</span></div>
-                  <p class="builder-group-note">Our team will confirm the ${esc(title.toLowerCase())} options with you. Add any wishes under “Your preferences”.</p>
+                  <div class="builder-group-head"><span class="builder-group-title">${count} × ${esc(title)}</span><span class="builder-tag">${t('To confirm')}</span></div>
+                  <p class="builder-group-note">${t('Our team will confirm the {list} options with you. Add any wishes under “Your preferences”.', { list: esc(isAr() ? title : title.toLowerCase()) })}</p>
                 </div>`;
   }
   const picks = picksFor(group.id);
@@ -320,8 +354,8 @@ function choiceGroupHtml({ group, items, count, required }) {
   return `
                 <fieldset class="builder-group" data-group="${esc(group.id)}" data-required="${required}">
                   <legend class="builder-group-head">
-                    <span class="builder-group-title">${esc(title)} — choose ${required}</span>
-                    <span class="builder-counter${full ? ' done' : ''}" data-counter="${esc(group.id)}" aria-live="polite">${picks.length} of ${required} chosen</span>
+                    <span class="builder-group-title">${esc(title)} — ${t('choose {n}', { n: required })}</span>
+                    <span class="builder-counter${full ? ' done' : ''}" data-counter="${esc(group.id)}" aria-live="polite">${t('{n} of {total} chosen', { n: picks.length, total: required })}</span>
                   </legend>
                   <div class="builder-checks">
                     ${items
@@ -342,7 +376,7 @@ function choiceGroupHtml({ group, items, count, required }) {
 function packageSection() {
   const pkg = findPackage(b().pkgId);
   if (!pkg) {
-    return `<p class="builder-help">Pick a package above to choose your dishes, or skip it and add stations, trays or mini bites below.</p>`;
+    return `<p class="builder-help">${t('Pick a package above to choose your dishes, or skip it and add stations, trays or mini bites below.')}</p>`;
   }
   const choices = packageChoices(pkg);
   const hasOpenGroups = choices.some(c => c.count > 0 && c.items.length === 0);
@@ -351,14 +385,14 @@ function packageSection() {
               ${choices.map(choiceGroupHtml).join('')}
               ${
                 includes.length
-                  ? `<div class="builder-group builder-group-info"><div class="builder-group-head"><span class="builder-group-title">${includes.map(esc).join(' · ')}</span><span class="builder-tag">Included</span></div></div>`
+                  ? `<div class="builder-group builder-group-info"><div class="builder-group-head"><span class="builder-group-title">${includes.map(i => esc(localIncluded(i))).join(' · ')}</span><span class="builder-tag">${t('Included')}</span></div></div>`
                   : ''
               }
               ${
                 hasOpenGroups
                   ? `<div class="form-group full">
-                <label for="pbPrefs">Your preferences (optional)</label>
-                <textarea id="pbPrefs" class="form-control" rows="2" data-on-input="builder:field" data-field="prefs" placeholder="Dishes you love, allergies, vegetarian guests…">${esc(b().prefs)}</textarea>
+                <label for="pbPrefs">${t('Your preferences (optional)')}</label>
+                <textarea id="pbPrefs" class="form-control" rows="2" data-on-input="builder:field" data-field="prefs" placeholder="${t('Dishes you love, allergies, vegetarian guests…')}">${esc(b().prefs)}</textarea>
               </div>`
                   : ''
               }`;
@@ -369,7 +403,7 @@ function stationsSection() {
   if (stations.length === 0) return '';
   return `
             <div class="builder-step" id="pbStepAddons">
-              <h3 class="builder-step-title"><span>${stepNo()}</span> Live stations <small>optional</small></h3>
+              <h3 class="builder-step-title"><span>${stepNo()}</span> ${t('Live stations')} <small>${t('optional')}</small></h3>
               <div class="builder-rows">
                 ${stations
                   .map(st => {
@@ -383,12 +417,12 @@ function stationsSection() {
                   <div class="builder-row-controls">
                     ${
                       perPerson.length
-                        ? `<select id="${esc(selectId)}" class="form-control form-control-sm" data-on-change="builder:station" data-station="${esc(st.id)}" aria-label="${esc(st.name)}">
-                      <option value="">No</option>
+                        ? `<select id="${esc(selectId)}" class="form-control form-control-sm" data-on-change="builder:station" data-station="${esc(st.id)}" aria-label="${esc(localName(st))}">
+                      <option value="">${t('No')}</option>
                       ${perPerson
                         .map(
                           ({ o, idx }) =>
-                            `<option value="${idx}" ${String(b().stationOpt[st.id]) === String(idx) ? 'selected' : ''}>${esc(localName(o, 'label'))} — ${money(o.price)} / person</option>`
+                            `<option value="${idx}" ${String(b().stationOpt[st.id]) === String(idx) ? 'selected' : ''}>${esc(localName(o, 'label'))} — ${t('{price} / person', { price: money(o.price) })}</option>`
                         )
                         .join('')}
                     </select>`
@@ -398,9 +432,9 @@ function stationsSection() {
                       .map(
                         ({ o, idx }) => `
                     <label class="builder-qty">
-                      <span>${esc(localName(o, 'label'))} · ${money(o.price)} / kg</span>
-                      <input type="number" class="form-control form-control-sm" min="0" max="${MAX_QTY}" step="1" inputmode="numeric" value="${Number(b().kg[stationKey(st.id, idx)]) || ''}" placeholder="0" data-on-input="builder:kg" data-key="${esc(stationKey(st.id, idx))}" aria-label="${esc(`${st.name} — ${o.label}, kg`)}" />
-                      <span class="builder-qty-unit">kg</span>
+                      <span>${esc(localName(o, 'label'))} · ${t('{price} / kg', { price: money(o.price) })}</span>
+                      <input type="number" class="form-control form-control-sm" min="0" max="${MAX_QTY}" step="1" inputmode="numeric" value="${Number(b().kg[stationKey(st.id, idx)]) || ''}" placeholder="0" data-on-input="builder:kg" data-key="${esc(stationKey(st.id, idx))}" aria-label="${esc(t('{name}, kg', { name: `${localName(st)} — ${localName(o, 'label')}` }))}" />
+                      <span class="builder-qty-unit">${t('kg')}</span>
                     </label>`
                       )
                       .join('')}
@@ -418,7 +452,7 @@ function qtyList(list, bucket, action, meta) {
       item => `
                   <label class="builder-row builder-row-qty">
                     <span class="builder-row-name">${nameBlock(item)}<span class="price-row-meta">${esc(meta(item))}</span></span>
-                    <input type="number" class="form-control form-control-sm builder-qty-input" min="0" max="${MAX_QTY}" step="1" inputmode="numeric" value="${Number(b()[bucket][item.id]) || ''}" placeholder="0" data-on-input="${action}" data-id="${esc(item.id)}" aria-label="${esc(`${item.name}, quantity`)}" />
+                    <input type="number" class="form-control form-control-sm builder-qty-input" min="0" max="${MAX_QTY}" step="1" inputmode="numeric" value="${Number(b()[bucket][item.id]) || ''}" placeholder="0" data-on-input="${action}" data-id="${esc(item.id)}" aria-label="${esc(t('{name}, quantity', { name: localName(item) }))}" />
                   </label>`
     )
     .join('');
@@ -432,20 +466,20 @@ function traysAndBitesSection() {
   const biteCount = Object.values(b().bites).filter(q => q > 0).length;
   return `
             <div class="builder-step"${cateringList('liveStationMenu').length ? '' : ' id="pbStepAddons"'}>
-              <h3 class="builder-step-title"><span>${stepNo()}</span> Trays &amp; mini bites <small>optional</small></h3>
+              <h3 class="builder-step-title"><span>${stepNo()}</span> ${t('Trays &amp; mini bites')} <small>${t('optional')}</small></h3>
               ${
                 trays.length
                   ? `<details class="builder-details" ${trayCount ? 'open' : ''}>
-                <summary>Main course trays <small>each serves 30–40 people</small></summary>
-                <div class="builder-rows">${qtyList(trays, 'trays', 'builder:tray', t => `${money(t.price)} a tray`)}</div>
+                <summary>${t('Main course trays')} <small>${t('each serves 30–40 people')}</small></summary>
+                <div class="builder-rows">${qtyList(trays, 'trays', 'builder:tray', tray => t('{price} a tray', { price: money(tray.price) }))}</div>
               </details>`
                   : ''
               }
               ${
                 bites.length
                   ? `<details class="builder-details" ${biteCount ? 'open' : ''}>
-                <summary>Mini bites — La2mi La2mi</summary>
-                <div class="builder-rows">${qtyList(bites, 'bites', 'builder:bite', x => `${money(x.price)}${x.unit ? ` / ${x.unit}` : ''}`)}</div>
+                <summary>${t('Mini bites — La2mi La2mi')}</summary>
+                <div class="builder-rows">${qtyList(bites, 'bites', 'builder:bite', x => `${money(x.price)}${x.unit ? ` / ${t(x.unit)}` : ''}`)}</div>
               </details>`
                   : ''
               }
@@ -457,7 +491,7 @@ function extrasSection() {
   if (extras.length === 0) return '';
   return `
             <div class="builder-step">
-              <h3 class="builder-step-title"><span>${stepNo()}</span> Extras <small>priced on request</small></h3>
+              <h3 class="builder-step-title"><span>${stepNo()}</span> ${t('Extras')} <small>${t('priced on request')}</small></h3>
               <div class="builder-checks builder-checks-inline">
                 ${extras
                   .map(
@@ -486,12 +520,12 @@ function confirmationHtml() {
   return `
           <div class="builder-sent" role="status" tabindex="-1" id="builderSent">
             <span class="builder-sent-icon" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
-            <span class="eyebrow">Request #${esc(sent.id)}</span>
-            <h3 class="builder-sent-title">Thank you — your request is ready on WhatsApp</h3>
-            <p>Press send in WhatsApp if you have not yet. Our catering team will reply there to confirm the menu, the date and the final price.</p>
+            <span class="eyebrow">${t('Request #{id}', { id: esc(sent.id) })}</span>
+            <h3 class="builder-sent-title">${t('Thank you — your request is ready on WhatsApp')}</h3>
+            <p>${t('Press send in WhatsApp if you have not yet. Our catering team will reply there to confirm the menu, the date and the final price.')}</p>
             <div class="hero-actions">
-              <button type="button" class="btn btn-whatsapp" data-action="builder:resend"><i class="fa-brands fa-whatsapp"></i> Open WhatsApp again</button>
-              <button type="button" class="btn btn-outline" data-action="builder:new">Start a new request</button>
+              <button type="button" class="btn btn-whatsapp" data-action="builder:resend"><i class="fa-brands fa-whatsapp"></i> ${t('Open WhatsApp again')}</button>
+              <button type="button" class="btn btn-outline" data-action="builder:new">${t('Start a new request')}</button>
             </div>
           </div>`;
 }
@@ -502,27 +536,27 @@ function builderBody() {
   stepCounter = 0;
   return `
           <form class="builder" data-on-submit="builder:submit" novalidate>
-            <nav class="builder-progress-wrap" aria-label="Your progress">
+            <nav class="builder-progress-wrap" aria-label="${t('Your progress')}">
               <ol class="builder-progress" id="builderProgress">${progressHtml()}</ol>
             </nav>
             <div class="builder-main">
               <div class="builder-step" id="pbStepPackage">
-                <h3 class="builder-step-title"><span>${stepNo()}</span> Package &amp; guests</h3>
+                <h3 class="builder-step-title"><span>${stepNo()}</span> ${t('Package &amp; guests')}</h3>
                 <div class="form-grid">
                   <div class="form-group full">
-                    <label for="pbPackage">Package</label>
+                    <label for="pbPackage">${t('Package')}</label>
                     ${packageSelect()}
                   </div>
                   <div class="form-group">
-                    <label for="pbGuests">Number of guests *</label>
+                    <label for="pbGuests">${t('Number of guests')} *</label>
                     <input type="number" id="pbGuests" class="form-control" min="1" max="${MAX_GUESTS}" step="1" inputmode="numeric" value="${s.guests}" data-on-input="builder:guests" data-on-change="builder:guests-commit" />
                   </div>
-                  ${textField('pbDate', 'date', 'Event date', { type: 'date' })}
+                  ${textField('pbDate', 'date', t('Event date'), { type: 'date' })}
                 </div>
               </div>
 
               <div class="builder-step" id="pbStepChoices">
-                <h3 class="builder-step-title"><span>${stepNo()}</span> Your dishes</h3>
+                <h3 class="builder-step-title"><span>${stepNo()}</span> ${t('Your dishes')}</h3>
                 ${packageSection()}
               </div>
 
@@ -531,27 +565,27 @@ function builderBody() {
               ${extrasSection()}
 
               <div class="builder-step" id="pbStepDetails">
-                <h3 class="builder-step-title"><span>${stepNo()}</span> Your details</h3>
+                <h3 class="builder-step-title"><span>${stepNo()}</span> ${t('Your details')}</h3>
                 <div class="form-grid">
-                  ${textField('pbName', 'name', 'Your name', { required: true, placeholder: 'e.g. Nadine Karam' })}
-                  ${textField('pbPhone', 'phone', 'Phone / WhatsApp', { type: 'tel', required: true, placeholder: 'e.g. 03 123 456' })}
-                  ${textField('pbLocation', 'location', 'Location / venue', { full: true, placeholder: 'e.g. Aley, Beirut, Bhamdoun' })}
+                  ${textField('pbName', 'name', t('Your name'), { required: true, placeholder: t('e.g. Nadine Karam') })}
+                  ${textField('pbPhone', 'phone', t('Phone / WhatsApp'), { type: 'tel', required: true, placeholder: t('e.g. 03 123 456') })}
+                  ${textField('pbLocation', 'location', t('Location / venue'), { full: true, placeholder: t('e.g. Aley, Beirut, Bhamdoun') })}
                   <div class="form-group full">
-                    <label for="pbNotes">Notes</label>
-                    <textarea id="pbNotes" class="form-control" rows="2" data-on-input="builder:field" data-field="notes" placeholder="Timing, set-up, anything else we should know">${esc(s.notes)}</textarea>
+                    <label for="pbNotes">${t('Notes')}</label>
+                    <textarea id="pbNotes" class="form-control" rows="2" data-on-input="builder:field" data-field="notes" placeholder="${t('Timing, set-up, anything else we should know')}">${esc(s.notes)}</textarea>
                   </div>
                 </div>
               </div>
             </div>
 
-            <aside class="builder-summary" aria-label="Your estimate">
-              <span class="eyebrow">Your estimate</span>
+            <aside class="builder-summary" aria-label="${t('Your estimate')}">
+              <span class="eyebrow">${t('Your estimate')}</span>
               <div id="builderSummary">${summaryHtml()}</div>
               <div class="builder-errors" id="builderErrors" role="alert"></div>
               <button type="submit" class="btn btn-whatsapp btn-block">
-                <i class="fa-brands fa-whatsapp"></i> Send my request on WhatsApp
+                <i class="fa-brands fa-whatsapp"></i> ${t('Send my request on WhatsApp')}
               </button>
-              <p class="builder-assure"><i class="fa-solid fa-lock"></i> Nothing is booked or paid yet — we confirm everything with you first.</p>
+              <p class="builder-assure"><i class="fa-solid fa-lock"></i> ${t('Nothing is booked or paid yet — we confirm everything with you first.')}</p>
             </aside>
           </form>`;
 }
@@ -562,9 +596,9 @@ export function packageBuilderSection({ ivory = true } = {}) {
       <section class="section-pad${ivory ? ' section-ivory' : ''}" id="planEventSection">
         <div class="container">
           <header class="section-header">
-            <span class="eyebrow">Build your package</span>
-            <h2 class="section-title">Plan your event with us</h2>
-            <p class="section-desc">Choose a package and your dishes, add live stations, trays or mini bites, and send it to our catering team on WhatsApp. Your choices are saved on this device as you go.</p>
+            <span class="eyebrow">${t('Build your package')}</span>
+            <h2 class="section-title">${t('Plan your event with us')}</h2>
+            <p class="section-desc">${t('Choose a package and your dishes, add live stations, trays or mini bites, and send it to our catering team on WhatsApp. Your choices are saved on this device as you go.')}</p>
           </header>
           <div id="pkgBuilder">${builderBody()}</div>
         </div>
@@ -585,21 +619,25 @@ function rerenderBuilder() {
 function validate() {
   const s = b();
   const errors = [];
-  if (!(s.guests >= 1)) errors.push({ field: 'pbGuests', text: 'Enter the number of guests.' });
+  if (!(s.guests >= 1)) errors.push({ field: 'pbGuests', text: t('Enter the number of guests.') });
   const pkg = findPackage(s.pkgId);
   for (const c of packageChoices(pkg)) {
     if (c.required > 0 && picksFor(c.group.id).length !== c.required) {
       errors.push({
         field: `group:${c.group.id}`,
-        text: `Choose ${c.required} ${String(c.group.name).toLowerCase()} (${picksFor(c.group.id).length} chosen).`
+        text: t('Choose {n} {list} ({chosen} chosen).', {
+          n: c.required,
+          list: isAr() ? localName(c.group) : String(c.group.name).toLowerCase(),
+          chosen: picksFor(c.group.id).length
+        })
       });
     }
   }
   if (!pkg && estimateLines().length === 0 && s.extras.length === 0) {
-    errors.push({ field: 'pbPackage', text: 'Choose a package, or add a station, trays or mini bites.' });
+    errors.push({ field: 'pbPackage', text: t('Choose a package, or add a station, trays or mini bites.') });
   }
-  if (!s.name.trim()) errors.push({ field: 'pbName', text: 'Enter your name.' });
-  if (!phoneOk()) errors.push({ field: 'pbPhone', text: 'Enter a phone number we can reach on WhatsApp.' });
+  if (!s.name.trim()) errors.push({ field: 'pbName', text: t('Enter your name.') });
+  if (!phoneOk()) errors.push({ field: 'pbPhone', text: t('Enter a phone number we can reach on WhatsApp.') });
   return errors;
 }
 
@@ -607,7 +645,7 @@ function showErrors(errors, { scroll = true } = {}) {
   const box = document.getElementById('builderErrors');
   if (box) {
     box.innerHTML = errors.length
-      ? `<p>Please check:</p><ul>${errors.map(e => `<li>${esc(e.text)}</li>`).join('')}</ul>`
+      ? `<p>${t('Please check:')}</p><ul>${errors.map(e => `<li>${esc(e.text)}</li>`).join('')}</ul>`
       : '';
   }
   document.querySelectorAll('#pkgBuilder [aria-invalid]').forEach(el => {
@@ -691,8 +729,11 @@ function whatsappMessage(quoteId, pkg, lines, total) {
     `*Event date:* ${s.date || 'To confirm'}`,
     `*Location:* ${s.location.trim() || 'To confirm'}`,
     `*Guests:* ${s.guests}`,
-    `*Package:* ${pkg ? `${pkgLabel(pkg)} (${money(pkg.pricePerPerson)} per person)` : 'No package'}`
+    `*Package:* ${pkg ? `${pkgLabel(pkg)} (${moneyEn(pkg.pricePerPerson)} per person)` : 'No package'}`
   ];
+  // The message goes to the catering team, so it stays in English (like every Back Office record);
+  // a visitor using the Arabic site is flagged so the team replies in Arabic.
+  if (isAr()) out.splice(2, 0, `*Preferred language:* Arabic / العربية`);
   for (const c of packageChoices(pkg)) {
     const name = String(c.group.name);
     if (c.count === 0) out.push(`• Selection of ${name.toLowerCase()} — included`);
@@ -705,14 +746,14 @@ function whatsappMessage(quoteId, pkg, lines, total) {
   const extraLines = lines.filter(l => l.kind !== 'package');
   if (extraLines.length) {
     out.push(`-----------------------------------------`, `*Added:*`);
-    for (const l of extraLines) out.push(`• ${l.qty > 1 ? `${l.qty} × ` : ''}${l.label} = ${money(lineTotal(l))}`);
+    for (const l of extraLines) out.push(`• ${l.qty > 1 ? `${l.qty} × ` : ''}${l.label} = ${moneyEn(lineTotal(l))}`);
   }
   const extras = chosenExtras();
   if (extras.length) out.push(`*Extras (priced on request):* ${extras.map(e => e.name).join(', ')}`);
   if (s.notes.trim()) out.push(`*Notes:* ${s.notes.trim()}`);
   out.push(
     `-----------------------------------------`,
-    `*Estimated total:* ${money(total)}${extras.length ? ' + extras on request' : ''}`,
+    `*Estimated total:* ${moneyEn(total)}${extras.length ? ' + extras on request' : ''}`,
     `Please confirm availability and the final quotation. Thank you!`
   );
   return out.join('\n');
@@ -743,7 +784,7 @@ function submitBuilder() {
     eventType: pkg ? TYPE_LABELS[pkg.type] || 'Catering' : 'Catering — stations, trays & bites',
     eventDate: s.date || 'To confirm',
     guests: s.guests,
-    packageSelected: pkg ? `${pkgLabel(pkg)} (${money(pkg.pricePerPerson)}/person)` : 'No package',
+    packageSelected: pkg ? `${pkgLabel(pkg)} (${moneyEn(pkg.pricePerPerson)}/person)` : 'No package',
     notes,
     items: orderItems(pkg, lines),
     totalUsd: total,
@@ -751,7 +792,7 @@ function submitBuilder() {
     whatsappText: msg
   });
 
-  showToast(`Request #${quoteId} saved — opening WhatsApp…`);
+  showToast(t('Request #{id} saved — opening WhatsApp…', { id: quoteId }));
   openWhatsApp('catering', msg, true);
 
   // Show the confirmation and start the next request fresh, keeping the contact details.
@@ -790,7 +831,7 @@ function onPick(el) {
     if (picks.size >= required) {
       // Over-selection: undo the tick and say why.
       el.checked = false;
-      if (hint) hint.textContent = `You can choose ${required}. Untick one to change your choice.`;
+      if (hint) hint.textContent = t('You can choose {n}. Untick one to change your choice.', { n: required });
       return;
     }
     picks.add(el.value);
@@ -807,7 +848,7 @@ function onPick(el) {
   });
   const counter = fieldset?.querySelector('[data-counter]');
   if (counter) {
-    counter.textContent = `${picks.size} of ${required} chosen`;
+    counter.textContent = t('{n} of {total} chosen', { n: picks.size, total: required });
     counter.classList.toggle('done', full);
   }
   refreshErrors();
@@ -862,10 +903,10 @@ function renderBar() {
     bar.id = 'builderBar';
     bar.className = 'builder-bar';
     bar.setAttribute('role', 'region');
-    bar.setAttribute('aria-label', 'Catering request');
     document.body.appendChild(bar);
   }
   bar.removeAttribute('hidden');
+  bar.setAttribute('aria-label', t('Catering request'));
   const estimateMode = builderInView && !sent && document.getElementById('pkgBuilder');
   const mode = estimateMode ? 'estimate' : 'start';
   const total = estimateTotal(estimateLines());
@@ -873,13 +914,13 @@ function renderBar() {
     mode === 'estimate'
       ? `
       <div class="builder-bar-total">
-        <span class="builder-bar-label">Estimated total</span>
+        <span class="builder-bar-label">${t('Estimated total')}</span>
         <strong>${money(total)}</strong>
       </div>
-      <button type="button" class="btn btn-whatsapp" data-action="builder:send"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Send request</button>`
+      <button type="button" class="btn btn-whatsapp" data-action="builder:send"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> ${t('Send request')}</button>`
       : `
-      <button type="button" class="btn btn-primary builder-bar-main" data-action="builder:start">Build your package</button>
-      <button type="button" class="builder-bar-wa" data-action="wa:open" data-brand="catering" aria-label="WhatsApp our catering team"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></button>`;
+      <button type="button" class="btn btn-primary builder-bar-main" data-action="builder:start">${t('Build your package')}</button>
+      <button type="button" class="builder-bar-wa" data-action="wa:open" data-brand="catering" aria-label="${t('WhatsApp our catering team')}"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></button>`;
   // Only touch the DOM when something changed, so focus inside the bar is not lost.
   if (bar.dataset.html !== html) {
     bar.dataset.html = html;

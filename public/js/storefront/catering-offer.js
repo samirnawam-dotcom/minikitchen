@@ -3,24 +3,30 @@
 // Every value comes from the owner's site config, so all of it is escaped.
 
 import { esc } from '../shared/dom.js';
-import { state } from './state.js';
 import { cateringList, content } from './config.js';
+import { isAr, isolateLatin, ltr, servesText, t } from './i18n-strings.js';
 
+/** English labels of the package kinds (used in WhatsApp messages and Back Office records). */
 export const TYPE_LABELS = { buffet: 'Event buffet', birthday: 'Birthday Mini' };
+/** The package kind in the visitor's language. */
+export const typeLabel = type => t(TYPE_LABELS[type] || 'Package');
 
 export const packages = type => cateringList('eventPackages').filter(p => !type || p.type === type);
 export const findPackage = id => cateringList('eventPackages').find(p => p.id === id) || null;
 export const findGroup = id => cateringList('cateringChoiceGroups').find(g => g.id === id) || null;
 export const groupItems = group => (Array.isArray(group?.items) ? group.items.filter(i => i && i.name) : []);
 
-export const money = n => `$${(Number(n) || 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+/** "$20" for messages and records (always plain). */
+export const moneyEn = n => `$${(Number(n) || 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+/** "$20" for the page: kept in one left-to-right piece inside Arabic text. */
+export const money = n => ltr(moneyEn(n));
 export const price = n => Number(n) || 0;
 
 /** The name in the visitor's language (Arabic when the site is switched to Arabic and one is set). */
 export function localName(obj, key = 'name') {
   if (!obj) return '';
   const ar = obj[`${key}Ar`];
-  return state.lang === 'ar' && ar ? ar : obj[key] || ar || '';
+  return isAr() && ar ? isolateLatin(ar) : obj[key] || ar || '';
 }
 
 /** The name in the other language, shown as a quiet second line. */
@@ -28,7 +34,7 @@ export function otherName(obj, key = 'name') {
   if (!obj) return '';
   const ar = obj[`${key}Ar`];
   if (!ar || !obj[key]) return '';
-  return state.lang === 'ar' ? obj[key] : ar;
+  return isAr() ? obj[key] : ar;
 }
 
 /** Bilingual name: main line in the visitor's language, the other language underneath. */
@@ -45,12 +51,24 @@ export function dishDetails(item, cls = 'dish-details') {
 
 /** "4 appetizers", "Selection of desserts" (count 0) — in the visitor's language. */
 export function choiceLabel(choice) {
-  const group = findGroup(choice.group);
-  if (!group) return '';
-  const count = Number(choice.count) || 0;
-  if (state.lang === 'ar' && group.nameAr) return count > 0 ? `${count} ${group.nameAr}` : `تشكيلة ${group.nameAr}`;
-  const name = String(group.name || '').toLowerCase();
-  return count > 0 ? `${count} ${name}` : `Selection of ${name}`;
+  const parts = choiceParts(choice);
+  if (!parts) return '';
+  return parts.count ? `${parts.count} ${parts.text}` : parts.text;
+}
+
+/** "Selection of desserts" / "تشكيلة من الحلويات" for a list included as a whole. */
+export function selectionLabel(group) {
+  if (isAr() && group.nameAr) return `تشكيلة ${group.nameAr}`;
+  return `Selection of ${String(group.name || '').toLowerCase()}`;
+}
+
+/** A text from a package's "included" list: a live station's Arabic name, or the dictionary. */
+export function localIncluded(text) {
+  if (!isAr()) return text;
+  const station = cateringList('liveStationMenu').find(
+    st => String(st.name || '').toLowerCase() === String(text).toLowerCase()
+  );
+  return station?.nameAr || t(text);
 }
 
 /** The same as choiceLabel, split so the number can be set apart: { count: '4' | '', text }. */
@@ -58,9 +76,9 @@ function choiceParts(choice) {
   const group = findGroup(choice.group);
   if (!group) return null;
   const count = Number(choice.count) || 0;
-  const ar = state.lang === 'ar' && group.nameAr;
+  const ar = isAr() && group.nameAr;
   if (count > 0) return { count: String(count), text: ar ? group.nameAr : String(group.name || '').toLowerCase() };
-  return { count: '', text: ar ? `تشكيلة ${group.nameAr}` : `Selection of ${String(group.name || '').toLowerCase()}` };
+  return { count: '', text: selectionLabel(group) };
 }
 
 /**
@@ -82,22 +100,22 @@ const lowest = values => {
 export function fromPriceLabel(typeId) {
   if (typeId === 'buffet' || typeId === 'birthday') {
     const n = lowest(packages(typeId).map(p => p.pricePerPerson));
-    return n ? `From ${money(n)} / person` : '';
+    return n ? t('From {price} / person', { price: money(n) }) : '';
   }
   if (typeId === 'stations') {
     const n = lowest(
       cateringList('liveStationMenu').flatMap(s => (s.options || []).filter(o => o.unit !== 'kg').map(o => o.price))
     );
-    return n ? `From ${money(n)} / person` : '';
+    return n ? t('From {price} / person', { price: money(n) }) : '';
   }
   if (typeId === 'trays') {
-    const n = lowest(cateringList('mainCourseTrays').map(t => t.price));
-    return n ? `Trays from ${money(n)}` : '';
+    const n = lowest(cateringList('mainCourseTrays').map(tray => tray.price));
+    return n ? t('Trays from {price}', { price: money(n) }) : '';
   }
   return '';
 }
 
-const optionPrice = opt => `${money(opt.price)} / ${opt.unit === 'kg' ? 'kg' : 'person'}`;
+const optionPrice = opt => t(opt.unit === 'kg' ? '{price} / kg' : '{price} / person', { price: money(opt.price) });
 
 // ---------------------------------------------------------------------------
 // Cards and price lists
@@ -108,37 +126,39 @@ export function eventPackageCard(pkg, { photo = true } = {}) {
   const choices = (pkg.choices || []).map(choiceParts).filter(Boolean);
   const includes = (pkg.includes || []).filter(Boolean);
   const label = `${TYPE_LABELS[pkg.type] || 'Package'} · ${pkg.name}`;
-  const inquiry = `Hello Mini Kitchen Catering! I am interested in the ${label} package (${money(pkg.pricePerPerson)} per person). Could you share availability?`;
+  const inquiry = `Hello Mini Kitchen Catering! I am interested in the ${label} package (${moneyEn(pkg.pricePerPerson)} per person). Could you share availability?`;
   const recommended = isRecommended(pkg);
+  const kind = typeLabel(pkg.type);
+  const badge = pkg.badge ? t(pkg.badge) : '';
   return `
       <article class="package-card event-package${photo ? '' : ' event-package-plain'}${recommended ? ' is-recommended' : ''}">
-        ${recommended ? '<span class="package-ribbon"><i class="fa-solid fa-star" aria-hidden="true"></i> Recommended</span>' : ''}
+        ${recommended ? `<span class="package-ribbon"><i class="fa-solid fa-star" aria-hidden="true"></i> ${t('Recommended')}</span>` : ''}
         ${
           photo
             ? `<div class="package-card-media">
-          <img src="${esc(pkg.img)}" data-fallback="" alt="${esc(`${label} catering buffet`)}" loading="lazy" decoding="async" width="600" height="400" />
-          ${pkg.badge ? `<span class="package-badge">${esc(pkg.badge)}</span>` : ''}
+          <img src="${esc(pkg.img)}" data-fallback="" alt="${esc(t('{label} catering buffet', { label: `${kind} · ${localName(pkg)}` }))}" loading="lazy" decoding="async" width="600" height="400" />
+          ${badge ? `<span class="package-badge">${esc(badge)}</span>` : ''}
         </div>`
             : ''
         }
         <div class="package-card-body">
           <div class="package-card-head">
             <div>
-              <div class="package-card-cat">${esc(TYPE_LABELS[pkg.type] || 'Package')}${!photo && pkg.badge ? ` · ${esc(pkg.badge)}` : ''}</div>
+              <div class="package-card-cat">${esc(kind)}${!photo && badge ? ` · ${esc(badge)}` : ''}</div>
               <h3 class="package-card-title">${nameBlock(pkg)}</h3>
             </div>
-            <div class="package-card-price"><span class="package-price-value">${money(pkg.pricePerPerson)}</span><span class="package-price-unit">per person</span></div>
+            <div class="package-card-price"><span class="package-price-value">${money(pkg.pricePerPerson)}</span><span class="package-price-unit">${t('per person')}</span></div>
           </div>
-          ${pkg.note ? `<p class="package-card-sub">${esc(pkg.note)}</p>` : ''}
-          <div class="package-counts-label">You choose</div>
+          ${pkg.note ? `<p class="package-card-sub">${esc(t(pkg.note))}</p>` : ''}
+          <div class="package-counts-label">${t('You choose')}</div>
           <ul class="package-counts">
             ${choices.map(c => `<li><span class="package-count${c.count ? '' : ' is-all'}">${c.count ? esc(c.count) : '<i class="fa-solid fa-check" aria-hidden="true"></i>'}</span><span>${esc(c.text)}</span></li>`).join('')}
-            ${includes.map(i => `<li class="is-included"><span class="package-count is-all"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span><strong>${esc(i)}</strong> included</span></li>`).join('')}
+            ${includes.map(i => `<li class="is-included"><span class="package-count is-all"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span>${t('<strong>{name}</strong> included', { name: esc(localIncluded(i)) })}</span></li>`).join('')}
           </ul>
           <div class="package-card-footer">
-            <button type="button" class="btn btn-primary btn-sm" data-action="builder:start" data-pkg="${esc(pkg.id)}">Build this package</button>
+            <button type="button" class="btn btn-primary btn-sm" data-action="builder:start" data-pkg="${esc(pkg.id)}">${t('Build this package')}</button>
             <button type="button" class="btn btn-outline btn-sm" data-action="wa:open" data-brand="catering" data-msg="${esc(inquiry)}">
-              <i class="fa-brands fa-whatsapp"></i> Ask
+              <i class="fa-brands fa-whatsapp"></i> ${t('Ask')}
             </button>
           </div>
         </div>
@@ -148,7 +168,7 @@ export function eventPackageCard(pkg, { photo = true } = {}) {
 /** Live stations with their options and prices. */
 export function stationMenu() {
   const stations = cateringList('liveStationMenu');
-  if (stations.length === 0) return '<p class="empty-state">Live stations are coming soon.</p>';
+  if (stations.length === 0) return `<p class="empty-state">${t('Live stations are coming soon.')}</p>`;
   return `
           <ul class="price-list price-list-stations">
             ${stations
@@ -173,15 +193,15 @@ export function stationMenu() {
 /** Main course trays price list. */
 export function trayMenu() {
   const trays = cateringList('mainCourseTrays');
-  if (trays.length === 0) return '<p class="empty-state">Trays are coming soon.</p>';
+  if (trays.length === 0) return `<p class="empty-state">${t('Trays are coming soon.')}</p>`;
   return `
           <ul class="price-list price-list-two">
             ${trays
               .map(
-                t => `
+                tray => `
             <li class="price-row">
-              <div class="price-row-name">${nameBlock(t)}${t.serves ? `<span class="price-row-meta">Serves ${esc(t.serves)}</span>` : ''}</div>
-              <strong class="price-row-price">${money(t.price)}</strong>
+              <div class="price-row-name">${nameBlock(tray)}${tray.serves ? `<span class="price-row-meta">${esc(servesText(tray.serves))}</span>` : ''}</div>
+              <strong class="price-row-price">${money(tray.price)}</strong>
             </li>`
               )
               .join('')}
@@ -191,15 +211,15 @@ export function trayMenu() {
 /** Mini bites ("La2mi La2mi") price list. */
 export function bitesMenu() {
   const bites = cateringList('miniBites');
-  if (bites.length === 0) return '<p class="empty-state">Mini bites are coming soon.</p>';
+  if (bites.length === 0) return `<p class="empty-state">${t('Mini bites are coming soon.')}</p>`;
   return `
           <ul class="price-list price-list-two">
             ${bites
               .map(
                 b => `
             <li class="price-row">
-              <div class="price-row-name">${nameBlock(b)}${b.desc ? `<span class="price-row-meta">${esc(b.desc)}</span>` : ''}</div>
-              <strong class="price-row-price">${money(b.price)}${b.unit ? `<span class="price-row-unit"> / ${esc(b.unit)}</span>` : ''}</strong>
+              <div class="price-row-name">${nameBlock(b)}${b.desc ? `<span class="price-row-meta">${esc(t(b.desc))}</span>` : ''}</div>
+              <strong class="price-row-price">${money(b.price)}${b.unit ? `<span class="price-row-unit"> / ${esc(t(b.unit))}</span>` : ''}</strong>
             </li>`
               )
               .join('')}
@@ -225,7 +245,7 @@ function menuGroups(type) {
 
 /** "Classic 4 · Premium 6 · VIP 8" (or "Included" for a selection), so customers see what each package allows. */
 function countsLine(counts) {
-  if (counts.every(c => c.count === 0)) return 'Included in every package';
+  if (counts.every(c => c.count === 0)) return t('Included in every package');
   return counts
     .map(c => `${esc(c.name)} <strong>${c.count || '—'}</strong>`)
     .join('<span aria-hidden="true"> · </span>');
@@ -242,7 +262,7 @@ function menuCourse({ group, counts }) {
               ${
                 items.length
                   ? `<ul class="menu-course-items">${items.map(i => `<li>${nameBlock(i, 'menu-dish')}${dishDetails(i)}</li>`).join('')}</ul>`
-                  : '<p class="menu-course-empty">Our chef shares the current choices with you when you send your request.</p>'
+                  : `<p class="menu-course-empty">${t('Our chef shares the current choices with you when you send your request.')}</p>`
               }
             </section>`;
 }
@@ -253,12 +273,12 @@ function menuCourse({ group, counts }) {
  */
 export function cateringMenuBook() {
   const parts = [
-    { type: 'buffet', title: 'Event buffet menu' },
-    { type: 'birthday', title: 'Birthday Mini menu' }
+    { type: 'buffet', title: t('Event buffet menu') },
+    { type: 'birthday', title: t('Birthday Mini menu') }
   ]
     .map(part => ({ ...part, courses: menuGroups(part.type) }))
     .filter(part => part.courses.length);
-  if (parts.length === 0) return '<p class="empty-state">Our menu is coming soon.</p>';
+  if (parts.length === 0) return `<p class="empty-state">${t('Our menu is coming soon.')}</p>`;
   return parts
     .map(
       part => `
@@ -274,7 +294,7 @@ export function cateringMenuBook() {
 export function extrasNote() {
   const extras = cateringList('cateringExtras');
   if (extras.length === 0) return '';
-  return `<p class="extras-note"><strong>Extras on request:</strong> ${extras.map(e => esc(localName(e))).join(' · ')}</p>`;
+  return `<p class="extras-note"><strong>${t('Extras on request:')}</strong> ${extras.map(e => esc(localName(e))).join(' · ')}</p>`;
 }
 
 // ---------------------------------------------------------------------------
@@ -286,19 +306,21 @@ export function howItWorks({ compact = false } = {}) {
   const steps = [
     {
       icon: 'fa-list-check',
-      title: 'Choose a package',
-      text: 'Event buffets and Birthday Minis are priced per person — or skip the package and pick stations, trays or mini bites.'
+      title: t('Choose a package'),
+      text: t(
+        'Event buffets and Birthday Minis are priced per person — or skip the package and pick stations, trays or mini bites.'
+      )
     },
     {
       icon: 'fa-utensils',
-      title: 'Build your menu',
-      text: 'Pick your dishes, add live stations, trays and extras, and watch the estimate update as you go.'
+      title: t('Build your menu'),
+      text: t('Pick your dishes, add live stations, trays and extras, and watch the estimate update as you go.')
     },
     {
       icon: 'fa-whatsapp',
       brand: true,
-      title: 'Send it on WhatsApp',
-      text: 'Your request arrives with our catering team, who confirm the menu, date and final price with you.'
+      title: t('Send it on WhatsApp'),
+      text: t('Your request arrives with our catering team, who confirm the menu, date and final price with you.')
     }
   ];
   return `
@@ -308,7 +330,7 @@ export function howItWorks({ compact = false } = {}) {
                 (st, i) => `
             <li class="how-step">
               <span class="how-step-icon" aria-hidden="true"><i class="${st.brand ? 'fa-brands' : 'fa-solid'} ${st.icon}"></i></span>
-              <span class="how-step-num">Step ${i + 1}</span>
+              <span class="how-step-num">${t('Step {n}', { n: i + 1 })}</span>
               <h3 class="how-step-title">${st.title}</h3>
               <p class="how-step-text">${st.text}</p>
             </li>`
@@ -320,22 +342,28 @@ export function howItWorks({ compact = false } = {}) {
 /** Questions answered from site-config facts only: prices, trays, extras, booking, hours, area. */
 export function faqItems() {
   const { contacts = {}, location = {} } = content.config || {};
-  const catering = contacts.catering || {};
-  const trays = cateringList('mainCourseTrays');
-  const serves = trays.find(t => t.serves)?.serves || '';
-  const extras = cateringList('cateringExtras').map(e => localName(e));
-  const kgStations = cateringList('liveStationMenu').filter(st => (st.options || []).some(o => o.unit === 'kg'));
-  const items = [];
+  const facts = {
+    catering: contacts.catering || {},
+    location,
+    trays: cateringList('mainCourseTrays'),
+    extras: cateringList('cateringExtras').map(e => localName(e)),
+    kgStations: cateringList('liveStationMenu').filter(st => (st.options || []).some(o => o.unit === 'kg')),
+    buffetFrom: fromPriceLabel('buffet'),
+    birthdayFrom: fromPriceLabel('birthday')
+  };
+  facts.serves = facts.trays.find(tray => tray.serves)?.serves || '';
+  return isAr() ? arabicFaq(facts) : englishFaq(facts);
+}
 
-  const buffetFrom = fromPriceLabel('buffet');
-  const birthdayFrom = fromPriceLabel('birthday');
+function englishFaq({ catering, location, trays, serves, extras, kgStations, buffetFrom, birthdayFrom }) {
+  const items = [];
   items.push({
     q: 'How are your catering prices worked out?',
     a: `Event buffets and Birthday Minis are priced per person${buffetFrom || birthdayFrom ? ` (buffets ${buffetFrom.toLowerCase() || 'per person'}, Birthday Minis ${birthdayFrom.toLowerCase() || 'per person'})` : ''}, so your total is the package price times your number of guests. Live stations are added per person${
       kgStations.length
         ? ` (the ${kgStations
             .map(st =>
-              localName(st)
+              String(st.name || '')
                 .toLowerCase()
                 .replace(/^live\s+/, '')
                 .replace(/\s+station$/, '')
@@ -368,6 +396,49 @@ export function faqItems() {
     items.push({
       q: 'Where are you based?',
       a: `Our kitchen is in ${location.short}${location.hours ? ` and we are open ${location.hours.replace(/^Daily from/i, 'daily from')}` : ''}. Tell us your venue when you send your request and we confirm the details with you.`
+    });
+  }
+  return items;
+}
+
+/** The same answers written for Arabic readers (not word for word), from the same facts. */
+function arabicFaq({ catering, location, trays, serves, extras, kgStations, buffetFrom, birthdayFrom }) {
+  const items = [];
+  const fromParts = [buffetFrom && `البوفيهات ${buffetFrom}`, birthdayFrom && `باقات أعياد الميلاد ${birthdayFrom}`]
+    .filter(Boolean)
+    .join('، و');
+  const kgNames = kgStations.map(st => localName(st)).join(' و');
+  items.push({
+    q: 'كيف تُحتسب أسعار خدمات الضيافة لديكم؟',
+    a: `تُسعَّر بوفيهات المناسبات وباقات ميني لأعياد الميلاد للشخص الواحد${fromParts ? ` (${fromParts})` : ''}، فيكون المجموع سعر الباقة مضروبًا بعدد الضيوف. وتُضاف المحطات المباشرة بسعر للشخص الواحد${
+      kgStations.length ? `، باستثناء ${kgNames}، ${kgStations.length > 1 ? 'فتُسعَّران' : 'فتُسعَّر'} بالكيلو` : ''
+    }. تعرض أداة تصميم الباقة تقديرًا فوريًا للكلفة، ويؤكّد فريقنا السعر النهائي معكم.`
+  });
+  if (trays.length) {
+    const from = fromPriceLabel('trays');
+    items.push({
+      q: 'كم شخصًا تكفي صينية الطبق الرئيسي؟',
+      a: `${serves ? `${servesText(serves).replace(/^تكفي/, 'تكفي كل صينية')}.` : 'تُسعَّر كل صينية على حدة.'} ${from ? `${from}، ` : ''}ويمكن طلبها وحدها أو إضافتها إلى أي باقة.`
+    });
+  }
+  items.push({
+    q: 'هل يمكنني اختيار أطباق باقتي؟',
+    a: 'نعم. تحدّد كل باقة عدد الأطباق التي تختارونها من كل قائمة، كالمقبلات والسلطات والأطباق الرئيسية الساخنة. وإذا لم تكن إحدى القوائم منشورة على الموقع بعد، يراجع فريقنا الخيارات معكم عبر واتساب.'
+  });
+  if (extras.length) {
+    items.push({
+      q: 'هل توفّرون طاقم خدمة أو ركنًا للمشروبات؟',
+      a: `نعم، عند الطلب: ${extras.join('، ')}. اختاروا ما تحتاجونه من الخدمات الإضافية في أداة تصميم الباقة، ونحدّد سعرها ضمن عرض السعر.`
+    });
+  }
+  items.push({
+    q: 'كيف أحجز، ومتى يتأكّد موعد مناسبتي؟',
+    a: `صمّموا باقتكم واضغطوا «أرسلوا طلبي عبر واتساب»، فتصلنا رسالة تتضمّن كل اختياراتكم. لا يُحجز أي موعد ولا يُدفع أي مبلغ في هذه المرحلة: يردّ عليكم فريق الضيافة لتأكيد التوفّر والقائمة والسعر.${catering.phoneDisplay ? ` ويمكنكم أيضًا الاتصال بقسم الضيافة أو مراسلته عبر واتساب على الرقم ${catering.phoneDisplay}.` : ''}`
+  });
+  if (location.short) {
+    items.push({
+      q: 'أين يقع مطبخكم؟',
+      a: `يقع مطبخنا في ${t(location.short)}${location.hours ? `، ونستقبلكم ${t(location.hours)}` : ''}. أخبرونا بمكان مناسبتكم عند إرسال الطلب، ونؤكّد معكم التفاصيل.`
     });
   }
   return items;

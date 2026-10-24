@@ -20,6 +20,7 @@ import {
 } from '../catering-offer.js';
 import { packageBuilderSection } from '../package-builder.js';
 import { pageHero, sectionHeader } from './sections.js';
+import { t } from '../i18n-strings.js';
 
 const TABS = [
   { id: 'buffet', label: 'Event Buffets' },
@@ -31,7 +32,7 @@ const TABS = [
 ];
 
 const tagline = id => {
-  const type = cateringList('cateringTypes').find(t => t.id === id);
+  const type = cateringList('cateringTypes').find(entry => entry.id === id);
   return type ? localName(type, 'tagline') : '';
 };
 
@@ -46,81 +47,83 @@ const addCta = label => `
             <button type="button" class="btn btn-outline" data-action="builder:start">${label}</button>
           </div>`;
 
-const menuLink = `
+const menuLink = () => `
           <div class="center-link">
-            <button type="button" class="text-link" data-action="catering-menus:show-menu">See every dish you can choose <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+            <button type="button" class="text-link" data-action="catering-menus:show-menu">${t('See every dish you can choose')} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
           </div>`;
 
 function tabContent(tab) {
   if (tab === 'menu') {
     return `
-          ${intro('Our catering menu', 'Every dish you can choose from, before you build your package. The numbers show how many of each course every package includes.')}
+          ${intro(t('Our catering menu'), t('Every dish you can choose from, before you build your package. The numbers show how many of each course every package includes.'))}
           ${cateringMenuBook()}
-          ${addCta('Build your package')}`;
+          ${addCta(t('Build your package'))}`;
   }
   if (tab === 'birthday') {
     return `
-          ${intro('Birthday Mini — price per person', tagline('birthday'))}
+          ${intro(t('Birthday Mini — price per person'), tagline('birthday'))}
           <div class="packages-grid packages-grid-3">${packages('birthday')
             .map(p => eventPackageCard(p))
             .join('')}</div>
           ${extrasNote()}
-          ${menuLink}`;
+          ${menuLink()}`;
   }
   if (tab === 'stations') {
     return `
-          ${intro('Live stations', 'Add a live station to any package. Per-person stations are priced for every guest; shawarma and real fillet are priced per kg.')}
+          ${intro(t('Live stations'), t('Add a live station to any package. Per-person stations are priced for every guest; shawarma and real fillet are priced per kg.'))}
           <div class="container-narrow">${stationMenu()}</div>
-          ${addCta('Add a station to your request')}`;
+          ${addCta(t('Add a station to your request'))}`;
   }
   if (tab === 'trays') {
     return `
-          ${intro('Main course trays', 'Each tray serves 30–40 people. Prices in US dollars.')}
+          ${intro(t('Main course trays'), t('Each tray serves 30–40 people. Prices in US dollars.'))}
           ${trayMenu()}
-          ${addCta('Add trays to your request')}`;
+          ${addCta(t('Add trays to your request'))}`;
   }
   if (tab === 'bites') {
     return `
-          ${intro('Mini bites — La2mi La2mi', 'Small bites, big taste. Prices in US dollars.')}
+          ${intro(t('Mini bites — La2mi La2mi'), t('Small bites, big taste. Prices in US dollars.'))}
           ${bitesMenu()}
-          ${addCta('Add mini bites to your request')}`;
+          ${addCta(t('Add mini bites to your request'))}`;
   }
   return `
-          ${intro('Event buffets — price per person', tagline('buffet'))}
+          ${intro(t('Event buffets — price per person'), tagline('buffet'))}
           <div class="packages-grid packages-grid-3">${packages('buffet')
             .map(p => eventPackageCard(p))
             .join('')}</div>
           ${extrasNote()}
-          ${menuLink}`;
+          ${menuLink()}`;
 }
 
 function buildCateringMenusPage() {
-  const activeTab = TABS.some(t => t.id === state.cateringMenusTab) ? state.cateringMenusTab : 'buffet';
+  const activeTab = TABS.some(tab => tab.id === state.cateringMenusTab) ? state.cateringMenusTab : 'buffet';
   return `
       ${pageHero({
-        eyebrow: 'Mini Kitchen Catering · Packages',
-        title: 'Packages &amp; menus',
-        text: 'Event buffets and Birthday Minis priced per person, plus live stations, main course trays and mini bites.',
+        eyebrow: t('Mini Kitchen Catering · Packages'),
+        title: t('Packages &amp; menus'),
+        text: t(
+          'Event buffets and Birthday Minis priced per person, plus live stations, main course trays and mini bites.'
+        ),
         photo: 'https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=1400&q=85',
-        alt: 'A Mini Kitchen catering buffet',
+        alt: t('A Mini Kitchen catering buffet'),
         meta: [
-          '<i class="fa-solid fa-user-group"></i> Priced per person',
-          '<i class="fa-solid fa-sliders"></i> Choose your own dishes',
-          '<i class="fa-brands fa-whatsapp"></i> Confirmed with you on WhatsApp'
+          `<i class="fa-solid fa-user-group"></i> ${t('Priced per person')}`,
+          `<i class="fa-solid fa-sliders"></i> ${t('Choose your own dishes')}`,
+          `<i class="fa-brands fa-whatsapp"></i> ${t('Confirmed with you on WhatsApp')}`
         ],
         actions: `
-              <button class="btn btn-primary" data-action="builder:start">Build your package</button>
+              <button class="btn btn-primary" data-action="builder:start">${t('Build your package')}</button>
               <button class="btn btn-outline" data-action="wa:open" data-brand="catering" data-msg="Hello Mini Kitchen Catering! I am looking at your catering packages and would like some help choosing.">
-                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                <i class="fa-brands fa-whatsapp"></i> ${t('WhatsApp')}
               </button>`
       })}
 
       <section class="section-pad section-tight-top" id="cateringPackagesSection">
         <div class="container">
-          <div class="segmented" role="tablist" aria-label="Catering menus">
+          <div class="segmented" role="tablist" aria-label="${t('Catering menus')}">
             ${TABS.map(
-              t => `
-            <button type="button" role="tab" id="cmTab-${t.id}" aria-controls="cmPanel" aria-selected="${activeTab === t.id}" tabindex="${activeTab === t.id ? '0' : '-1'}" class="segmented-btn ${activeTab === t.id ? 'active' : ''}" data-action="catering-menus:tab" data-tab="${t.id}">${t.label}</button>`
+              tab => `
+            <button type="button" role="tab" id="cmTab-${tab.id}" aria-controls="cmPanel" aria-selected="${activeTab === tab.id}" tabindex="${activeTab === tab.id ? '0' : '-1'}" class="segmented-btn ${activeTab === tab.id ? 'active' : ''}" data-action="catering-menus:tab" data-tab="${tab.id}">${t(tab.label)}</button>`
             ).join('')}
           </div>
           <div role="tabpanel" id="cmPanel" aria-labelledby="cmTab-${activeTab}">${tabContent(activeTab)}</div>
@@ -129,7 +132,7 @@ function buildCateringMenusPage() {
 
       <section class="section-pad section-ivory">
         <div class="container">
-          ${sectionHeader({ eyebrow: 'How it works', title: 'Three steps to your event menu' })}
+          ${sectionHeader({ eyebrow: t('How it works'), title: t('Three steps to your event menu') })}
           ${howItWorks({ compact: true })}
         </div>
       </section>
@@ -138,7 +141,7 @@ function buildCateringMenusPage() {
 
       <section class="section-pad section-ivory" id="cateringFaq">
         <div class="container container-narrow">
-          ${sectionHeader({ eyebrow: 'Good to know', title: 'Questions we are often asked' })}
+          ${sectionHeader({ eyebrow: t('Good to know'), title: t('Questions we are often asked') })}
           ${faqList()}
         </div>
       </section>

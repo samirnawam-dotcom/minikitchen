@@ -5,6 +5,7 @@ import { registerActions } from '../shared/actions.js';
 import { state, PAGE_IDS, brandForPage } from './state.js';
 import { updatePageSeoMeta } from './seo.js';
 import { render } from './view.js';
+import { t } from './i18n-strings.js';
 
 // ---------------------------------------------------------------------------
 // Drawers (navigation drawer on the left, cart drawer on the right, shared backdrop)
@@ -49,15 +50,15 @@ export function renderHeaderActiveStates() {
   });
 
   const subEl = byId('headerBrandSub');
-  if (subEl) subEl.textContent = HEADER_SUBTITLES[state.currentPage] || 'Catering & Events';
+  if (subEl) subEl.textContent = t(HEADER_SUBTITLES[state.currentPage] || 'Catering & Events');
 
   const waHeaderBtn = byId('headerWaBtn');
   if (waHeaderBtn) {
     const brand = brandForPage(state.currentPage);
     waHeaderBtn.dataset.brand = brand;
     const label = waHeaderBtn.querySelector('.wa-text');
-    if (label) label.textContent = HEADER_WA_LABELS[brand];
-    waHeaderBtn.setAttribute('aria-label', `${HEADER_WA_LABELS[brand]} (WhatsApp)`);
+    if (label) label.textContent = t(HEADER_WA_LABELS[brand]);
+    waHeaderBtn.setAttribute('aria-label', `${t(HEADER_WA_LABELS[brand])} (${t('WhatsApp')})`);
   }
 }
 

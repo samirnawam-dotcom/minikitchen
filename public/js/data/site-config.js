@@ -136,22 +136,22 @@ const SITE_CONFIG = {
       nameAr: "بوفيهات المناسبات",
       text: "Weddings and occasions — choose your appetizers, pastries, salads and hot main courses.",
       tagline: "Catering for your special moments… memories that last. Every occasion, a unique taste.",
-      taglineAr: "بوفيهات مناسباتكم… لحظات لا تُنسى. لكل مناسبة طعمها الخاص.",
+      taglineAr: "ضيافة تليق بلحظاتكم المميّزة… وذكريات تدوم. لكل مناسبة مذاقها الخاص.",
       img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=85"
     },
     {
       id: "birthday",
       name: "Birthday Minis",
-      nameAr: "ميني بيرثداي",
+      nameAr: "باقات ميني لأعياد الميلاد",
       text: "Mini sandwiches, bites, salads, pastries and desserts for birthday parties.",
       tagline: "Celebrate your day with Mini Kitchen. Small Bites, Big Memories.",
-      taglineAr: "احتفل بيومك مع ميني كيتشن. نكهات صغيرة، ذكريات كبيرة.",
+      taglineAr: "احتفلوا بيومكم مع ميني كيتشن. لقيمات صغيرة… وذكريات كبيرة.",
       img: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1000&q=85"
     },
     {
       id: "stations",
       name: "Live Stations",
-      nameAr: "المحطات الحية",
+      nameAr: "المحطات المباشرة",
       text: "Pasta, salad, grill, burger, sajj, shawarma and real fillet — cooked in front of your guests.",
       tagline: "",
       taglineAr: "",
@@ -160,7 +160,7 @@ const SITE_CONFIG = {
     {
       id: "trays",
       name: "Trays & Mini Bites",
-      nameAr: "الأطباق الرئيسية والقضمات",
+      nameAr: "الصواني واللقيمات الصغيرة",
       text: "Main course trays for 30–40 people and La2mi La2mi mini bites.",
       tagline: "",
       taglineAr: "",
@@ -174,21 +174,21 @@ const SITE_CONFIG = {
       name: "Appetizers",
       nameAr: "مقبلات",
       items: [
-        { name: "Hummus", nameAr: "حمص" },
+        { name: "Hummus", nameAr: "حمّص" },
         { name: "Wara2 Enab (Grape Leaves)", nameAr: "ورق عنب" },
-        { name: "Moutabal", nameAr: "متبل" },
+        { name: "Moutabal", nameAr: "متبّل" },
         { name: "Raheb", nameAr: "راهب" },
-        { name: "Ma8mour", nameAr: "محمور" },
+        { name: "Ma8mour", nameAr: "مغمور" },
         { name: "Dolma", nameAr: "دولما" },
-        { name: "Samki Harra Fillet", nameAr: "سمكي حارة فيليه" },
-        { name: "Whole Fish with Hot Sauce", nameAr: "سمك حار (سمكة كاملة)" },
-        { name: "Tajen Fillet", nameAr: "طاجن فيليه" },
-        { name: "Whole Fish Tajen", nameAr: "طاجن (سمكة كاملة)" },
-        { name: "Hummus Pesto", nameAr: "حمص بيستو" },
-        { name: "Hummus Beiruti", nameAr: "حمص بيروتي" },
-        { name: "Hummus Shmandar (Beetroot)", nameAr: "حمص شمندر" },
-        { name: "Moutabal Pesto", nameAr: "متبل بيستو" },
-        { name: "Moutabal Shmandar (Beetroot)", nameAr: "متبل شمندر" },
+        { name: "Samki Harra Fillet", nameAr: "سمكة حارّة (فيليه)" },
+        { name: "Whole Fish with Hot Sauce", nameAr: "سمكة حارّة (سمكة كاملة)" },
+        { name: "Tajen Fillet", nameAr: "طاجن سمك (فيليه)" },
+        { name: "Whole Fish Tajen", nameAr: "طاجن سمك (سمكة كاملة)" },
+        { name: "Hummus Pesto", nameAr: "حمّص بالبيستو" },
+        { name: "Hummus Beiruti", nameAr: "حمّص بيروتي" },
+        { name: "Hummus Shmandar (Beetroot)", nameAr: "حمّص بالشمندر" },
+        { name: "Moutabal Pesto", nameAr: "متبّل بالبيستو" },
+        { name: "Moutabal Shmandar (Beetroot)", nameAr: "متبّل بالشمندر" },
         { name: "Rosto Mad2ou2", nameAr: "روستو مدقوق" }
       ]
     },
@@ -198,24 +198,24 @@ const SITE_CONFIG = {
       name: "Salads",
       nameAr: "سلطات",
       items: [
-        { name: "Fattoush", nameAr: "فتوش" },
-        { name: "Tabbouleh", nameAr: "تبوله" },
-        { name: "Chicken Caesar", nameAr: "شكن سيزر" },
-        { name: "Teriyaki Chicken", nameAr: "ترياكي تشكن" },
-        { name: "Eggplant Salad", nameAr: "سلطه باتنجان" },
-        { name: "Beetroot Salad", nameAr: "سلطه شمندر" },
-        { name: "Greek Salad", nameAr: "سلطه يونانيه" },
-        { name: "Green Salad", nameAr: "سلطه خضراء" },
-        { name: "Rocca Salad", nameAr: "روكا سلاد" },
-        { name: "Crab Salad", nameAr: "كراب سلاد" },
-        { name: "Quinoa Mix Salad", nameAr: "كينوا سلاد مكس" },
-        { name: "Quinoa Shrimp Salad", nameAr: "كينوا قريدس سلاد" },
-        { name: "Tuna Pasta Salad", nameAr: "تونا باستا سلاد" },
-        { name: "Seasonal Salad", nameAr: "سلطه موسميه" },
-        { name: "Chicken or Beef Noodles", nameAr: "نودلز دجاج او لحم" },
-        { name: "Tomato Mozzarella di Bufala", nameAr: "طماطم موتزاريلا بوفالا" },
-        { name: "Bresaola Salad", nameAr: "سلطة بريزاولا" },
-        { name: "Artichoke Heart Salad", nameAr: "سلطة قلب الأرضي شوكي" },
+        { name: "Fattoush", nameAr: "فتّوش" },
+        { name: "Tabbouleh", nameAr: "تبّولة" },
+        { name: "Chicken Caesar", nameAr: "سلطة سيزر بالدجاج" },
+        { name: "Teriyaki Chicken", nameAr: "سلطة دجاج ترياكي" },
+        { name: "Eggplant Salad", nameAr: "سلطة الباذنجان" },
+        { name: "Beetroot Salad", nameAr: "سلطة الشمندر" },
+        { name: "Greek Salad", nameAr: "سلطة يونانية" },
+        { name: "Green Salad", nameAr: "سلطة خضراء" },
+        { name: "Rocca Salad", nameAr: "سلطة الروكا" },
+        { name: "Crab Salad", nameAr: "سلطة الكراب" },
+        { name: "Quinoa Mix Salad", nameAr: "سلطة الكينوا المشكّلة" },
+        { name: "Quinoa Shrimp Salad", nameAr: "سلطة الكينوا بالقريدس" },
+        { name: "Tuna Pasta Salad", nameAr: "سلطة المعكرونة بالتونة" },
+        { name: "Seasonal Salad", nameAr: "سلطة موسمية" },
+        { name: "Chicken or Beef Noodles", nameAr: "نودلز بالدجاج أو باللحم" },
+        { name: "Tomato Mozzarella di Bufala", nameAr: "طماطم وموتزاريلا بوفالا" },
+        { name: "Bresaola Salad", nameAr: "سلطة البريزاولا" },
+        { name: "Artichoke Heart Salad", nameAr: "سلطة قلوب الأرضي شوكي" },
         { name: "Panache Salad", nameAr: "سلطة باناشيه" }
       ]
     },
@@ -224,8 +224,8 @@ const SITE_CONFIG = {
       name: "Quiche",
       nameAr: "كيش",
       items: [
-        { name: "Mini Quiche Chicken", nameAr: "ميني كيش دجاج" },
-        { name: "Mini Quiche Mushroom", nameAr: "ميني كيش فطر" }
+        { name: "Mini Quiche Chicken", nameAr: "ميني كيش بالدجاج" },
+        { name: "Mini Quiche Mushroom", nameAr: "ميني كيش بالفطر" }
       ]
     },
     {
@@ -233,26 +233,26 @@ const SITE_CONFIG = {
       name: "Hot main courses",
       nameAr: "أطباق رئيسية ساخنة",
       items: [
-        { name: "Chicken with Rice", nameAr: "رز ع دجاج" },
-        { name: "Meat with Rice", nameAr: "رز لحمة" },
-        { name: "Sayadieh", nameAr: "صياديه" },
-        { name: "Paella", nameAr: "بايلا" },
-        { name: "Beef Fillet with Potatoes & Vegetables", nameAr: "لحمة فيليه مع بطاطا وخضار" },
-        { name: "Beef Stroganoff", nameAr: "بيف ستروغونوف" },
-        { name: "Chicken Stroganoff", nameAr: "تشكن ستروغونوف" },
-        { name: "Shrimp Stroganoff", nameAr: "شرمب ستروغونوف" },
-        { name: "Moroccan Chicken", nameAr: "مغربيه دجاج" },
-        { name: "Freekeh with Meat", nameAr: "فريكه لحم" },
-        { name: "Freekeh with Chicken", nameAr: "فريكه دجاج" },
-        { name: "Chicken Cashew", nameAr: "تشكن كاجو" },
-        { name: "Kibbeh Labanieh & Shish Barak", nameAr: "كبه لبنيه وشيش برك" },
-        { name: "Mixed Stuffed Vegetables", nameAr: "محاشي مشكله" },
-        { name: "Shahbai Roast with Vegetables & Potatoes", nameAr: "روستو شهبايه مع خضره وبطاطا" },
-        { name: "Fettuccine Alfredo", nameAr: "معكرونه الفريدو" },
-        { name: "Penne Arrabbiata", nameAr: "معكرونه اربياتا" },
-        { name: "Chicken Kabsa", nameAr: "كبسه دجاج" },
-        { name: "Meat Kabsa", nameAr: "كبسه لحم" },
-        { name: "Grilled Chicken with Potatoes & Vegetables", nameAr: "غرلد تشكن مع بطاطا وخضار" }
+        { name: "Chicken with Rice", nameAr: "رز على دجاج" },
+        { name: "Meat with Rice", nameAr: "رز على لحمة" },
+        { name: "Sayadieh", nameAr: "صيّادية" },
+        { name: "Paella", nameAr: "باييلا" },
+        { name: "Beef Fillet with Potatoes & Vegetables", nameAr: "فيليه لحم مع البطاطا والخضار" },
+        { name: "Beef Stroganoff", nameAr: "ستروغانوف باللحم" },
+        { name: "Chicken Stroganoff", nameAr: "ستروغانوف بالدجاج" },
+        { name: "Shrimp Stroganoff", nameAr: "ستروغانوف بالقريدس" },
+        { name: "Moroccan Chicken", nameAr: "مغربية بالدجاج" },
+        { name: "Freekeh with Meat", nameAr: "فريكة باللحم" },
+        { name: "Freekeh with Chicken", nameAr: "فريكة بالدجاج" },
+        { name: "Chicken Cashew", nameAr: "دجاج بالكاجو" },
+        { name: "Kibbeh Labanieh & Shish Barak", nameAr: "كبّة لبنية وشيش برك" },
+        { name: "Mixed Stuffed Vegetables", nameAr: "محاشي مشكّلة" },
+        { name: "Shahbai Roast with Vegetables & Potatoes", nameAr: "روستو شهباي مع الخضار والبطاطا" },
+        { name: "Fettuccine Alfredo", nameAr: "معكرونة ألفريدو" },
+        { name: "Penne Arrabbiata", nameAr: "معكرونة أرابياتا" },
+        { name: "Chicken Kabsa", nameAr: "كبسة دجاج" },
+        { name: "Meat Kabsa", nameAr: "كبسة لحم" },
+        { name: "Grilled Chicken with Potatoes & Vegetables", nameAr: "دجاج مشوي مع البطاطا والخضار" }
       ]
     },
     {
@@ -260,63 +260,63 @@ const SITE_CONFIG = {
       name: "Desserts",
       nameAr: "حلويات",
       items: [
-        { name: "Profiterole", nameAr: "بروفيترول", desc: "Vanilla, green pistachio, chocolate, red blueberry, raspberry", descAr: "فانيلا، فستق أخضر، شوكولا، بلو بيري أحمر، راسبيري" },
-        { name: "Tarte", nameAr: "تارت", desc: "Chocolate, vanilla strawberry, mango, lemon, framboise cherry, passion fruit, all berries", descAr: "شوكولا، فانيلا فراولة، مانجو، ليمون، فرامبوز كرز، باشن فروت، جميع التوت" },
-        { name: "Mini Cake", nameAr: "ميني كيك", desc: "Chocolate vanilla, mango, strawberry lemon, Nutella Oreo, Lotus, caramel, cherry, passion fruit", descAr: "شوكولا فانيلا، مانجو، فراولة ليمون، نوتيلا أوريو، لوتس، كراميل، كرز، باشن فروت" },
-        { name: "Mille-Feuille", nameAr: "ميلفاي", desc: "Strawberry, vanilla chocolate, mango, lemon, framboise, passion fruit, all berries", descAr: "فراولة، فانيلا شوكولا، مانجو، ليمون، فرامبواز، باشن فروت، جميع التوت" },
+        { name: "Profiterole", nameAr: "بروفيترول", desc: "Vanilla, green pistachio, chocolate, red blueberry, raspberry", descAr: "فانيلا، فستق حلبي، شوكولا، توت أزرق وأحمر، فرامبواز" },
+        { name: "Tarte", nameAr: "تارت", desc: "Chocolate, vanilla strawberry, mango, lemon, framboise cherry, passion fruit, all berries", descAr: "شوكولا، فانيلا وفراولة، مانغو، ليمون، فرامبواز وكرز، باشن فروت، توت مشكّل" },
+        { name: "Mini Cake", nameAr: "ميني كيك", desc: "Chocolate vanilla, mango, strawberry lemon, Nutella Oreo, Lotus, caramel, cherry, passion fruit", descAr: "شوكولا وفانيلا، مانغو، فراولة وليمون، نوتيلا وأوريو، لوتس، كراميل، كرز، باشن فروت" },
+        { name: "Mille-Feuille", nameAr: "ميلفوي", desc: "Strawberry, vanilla chocolate, mango, lemon, framboise, passion fruit, all berries", descAr: "فراولة، فانيلا وشوكولا، مانغو، ليمون، فرامبواز، باشن فروت، توت مشكّل" },
         { name: "Mini Eclair", nameAr: "ميني إكلير", desc: "Chocolate, vanilla, strawberry", descAr: "شوكولا، فانيلا، فراولة" }
       ]
     },
     {
       id: "mini-sandwiches",
       name: "Mini sandwiches",
-      nameAr: "ميني سندويشات",
+      nameAr: "سندويشات صغيرة",
       items: [
         { name: "Mini Burger Beef", nameAr: "ميني برغر لحم" },
         { name: "Mini Burger Chicken", nameAr: "ميني برغر دجاج" },
-        { name: "Mini Sandwich Fajita", nameAr: "ميني سندوتش فاهيتا" },
-        { name: "Mini Sandwich Philadelphia", nameAr: "ميني سندوتش فيلادلفيا" },
-        { name: "Mini Sandwich Tuna Mix", nameAr: "ميني سندوتش تونا ميكس" },
-        { name: "Mini Sandwich Chicken Mix", nameAr: "ميني سندوتش دجاج ميكس" },
-        { name: "Mini Sandwich Rosto", nameAr: "ميني سندوتش روستو" },
-        { name: "Mini Sandwich Turkey & Cheese", nameAr: "ميني سندوتش ديك رومي وجبنة" },
-        { name: "Mini Sandwich Chicken Pesto", nameAr: "ميني سندوتش دجاج بيستو" },
-        { name: "Mini Sandwich Chicken Avocado", nameAr: "ميني سندوتش دجاج أفوكادو" },
-        { name: "Mini Sandwich Beef Teriyaki", nameAr: "ميني سندوتش لحم ترياكي" },
-        { name: "Mini Sandwich Feta Cucumber", nameAr: "ميني سندوتش فيتا خيار" },
-        { name: "Mini Sandwich Shrimp Mix", nameAr: "ميني سندوتش جمبري ميكس" },
-        { name: "Mini Sandwich Smoked Salmon", nameAr: "ميني سندوتش سلمون مدخن" },
-        { name: "Mini Sandwich Hot Dog", nameAr: "ميني سندوتش هوت دوغ" },
-        { name: "Mini Sandwich Crab", nameAr: "ميني سندوتش كراب" }
+        { name: "Mini Sandwich Fajita", nameAr: "ميني سندويش فاهيتا" },
+        { name: "Mini Sandwich Philadelphia", nameAr: "ميني سندويش فيلادلفيا" },
+        { name: "Mini Sandwich Tuna Mix", nameAr: "ميني سندويش خلطة التونة" },
+        { name: "Mini Sandwich Chicken Mix", nameAr: "ميني سندويش خلطة الدجاج" },
+        { name: "Mini Sandwich Rosto", nameAr: "ميني سندويش روستو" },
+        { name: "Mini Sandwich Turkey & Cheese", nameAr: "ميني سندويش ديك رومي وجبنة" },
+        { name: "Mini Sandwich Chicken Pesto", nameAr: "ميني سندويش دجاج بالبيستو" },
+        { name: "Mini Sandwich Chicken Avocado", nameAr: "ميني سندويش دجاج وأفوكادو" },
+        { name: "Mini Sandwich Beef Teriyaki", nameAr: "ميني سندويش لحم ترياكي" },
+        { name: "Mini Sandwich Feta Cucumber", nameAr: "ميني سندويش جبنة فيتا وخيار" },
+        { name: "Mini Sandwich Shrimp Mix", nameAr: "ميني سندويش خلطة القريدس" },
+        { name: "Mini Sandwich Smoked Salmon", nameAr: "ميني سندويش سلمون مدخّن" },
+        { name: "Mini Sandwich Hot Dog", nameAr: "ميني سندويش هوت دوغ" },
+        { name: "Mini Sandwich Crab", nameAr: "ميني سندويش كراب" }
       ]
     },
     {
       id: "mini-bites",
       name: "Mini bites",
-      nameAr: "ميني قضمات",
+      nameAr: "لقيمات صغيرة",
       items: [
         { name: "Shawarma Beef", nameAr: "ميني شاورما لحم" },
         { name: "Shawarma Chicken", nameAr: "ميني شاورما دجاج" },
-        { name: "Chicken Mix", nameAr: "ميني دجاج ميكس" },
-        { name: "Tuna Mix", nameAr: "ميني تونا ميكس" },
-        { name: "Sejok Mix", nameAr: "ميني سجق ميكس" },
-        { name: "Halloumi Cucumber", nameAr: "ميني حلومي خيار" },
-        { name: "Kaaki Labni", nameAr: "ميني كعكة لبنة" },
-        { name: "Kaaki Cheese", nameAr: "ميني كعكة جبنة" },
-        { name: "Kaaki Turkey & Cheese", nameAr: "ميني كعكة تركي وجبنة" }
+        { name: "Chicken Mix", nameAr: "ميني خلطة الدجاج" },
+        { name: "Tuna Mix", nameAr: "ميني خلطة التونة" },
+        { name: "Sejok Mix", nameAr: "ميني خلطة السجق" },
+        { name: "Halloumi Cucumber", nameAr: "ميني حلّوم وخيار" },
+        { name: "Kaaki Labni", nameAr: "ميني كعك باللبنة" },
+        { name: "Kaaki Cheese", nameAr: "ميني كعك بالجبنة" },
+        { name: "Kaaki Turkey & Cheese", nameAr: "ميني كعك بالديك الرومي والجبنة" }
       ]
     },
-    { id: "mini-salads", name: "Mini salads", nameAr: "ميني سلطات", items: [] },
-    { id: "mini-pastries", name: "Mini mo3ajanet (pastries)", nameAr: "ميني معجنات", items: [] },
+    { id: "mini-salads", name: "Mini salads", nameAr: "سلطات صغيرة", items: [] },
+    { id: "mini-pastries", name: "Mini mo3ajanet (pastries)", nameAr: "معجنات صغيرة", items: [] },
     {
       id: "mini-desserts",
       name: "Mini desserts",
-      nameAr: "ميني حلويات",
+      nameAr: "حلويات صغيرة",
       items: [
-        { name: "Profiterole", nameAr: "بروفيترول", desc: "Vanilla, green pistachio, chocolate, red blueberry, raspberry", descAr: "فانيلا، فستق أخضر، شوكولا، بلو بيري أحمر، راسبيري" },
-        { name: "Tarte", nameAr: "تارت", desc: "Chocolate, vanilla strawberry, mango, lemon, framboise cherry, passion fruit, all berries", descAr: "شوكولا، فانيلا فراولة، مانجو، ليمون، فرامبوز كرز، باشن فروت، جميع التوت" },
-        { name: "Mini Cake", nameAr: "ميني كيك", desc: "Chocolate vanilla, mango, strawberry lemon, Nutella Oreo, Lotus, caramel, cherry, passion fruit", descAr: "شوكولا فانيلا، مانجو، فراولة ليمون، نوتيلا أوريو، لوتس، كراميل، كرز، باشن فروت" },
-        { name: "Mille-Feuille", nameAr: "ميلفاي", desc: "Strawberry, vanilla chocolate, mango, lemon, framboise, passion fruit, all berries", descAr: "فراولة، فانيلا شوكولا، مانجو، ليمون، فرامبواز، باشن فروت، جميع التوت" },
+        { name: "Profiterole", nameAr: "بروفيترول", desc: "Vanilla, green pistachio, chocolate, red blueberry, raspberry", descAr: "فانيلا، فستق حلبي، شوكولا، توت أزرق وأحمر، فرامبواز" },
+        { name: "Tarte", nameAr: "تارت", desc: "Chocolate, vanilla strawberry, mango, lemon, framboise cherry, passion fruit, all berries", descAr: "شوكولا، فانيلا وفراولة، مانغو، ليمون، فرامبواز وكرز، باشن فروت، توت مشكّل" },
+        { name: "Mini Cake", nameAr: "ميني كيك", desc: "Chocolate vanilla, mango, strawberry lemon, Nutella Oreo, Lotus, caramel, cherry, passion fruit", descAr: "شوكولا وفانيلا، مانغو، فراولة وليمون، نوتيلا وأوريو، لوتس، كراميل، كرز، باشن فروت" },
+        { name: "Mille-Feuille", nameAr: "ميلفوي", desc: "Strawberry, vanilla chocolate, mango, lemon, framboise, passion fruit, all berries", descAr: "فراولة، فانيلا وشوكولا، مانغو، ليمون، فرامبواز، باشن فروت، توت مشكّل" },
         { name: "Mini Eclair", nameAr: "ميني إكلير", desc: "Chocolate, vanilla, strawberry", descAr: "شوكولا، فانيلا، فراولة" }
       ]
     }
@@ -345,7 +345,7 @@ const SITE_CONFIG = {
       id: "buffet-premium",
       type: "buffet",
       name: "Premium",
-      nameAr: "الباقة المميزة",
+      nameAr: "الباقة المميّزة",
       pricePerPerson: 25,
       badge: "",
       note: "",
@@ -364,7 +364,7 @@ const SITE_CONFIG = {
       id: "buffet-vip",
       type: "buffet",
       name: "VIP",
-      nameAr: "الباقة الفاخرة",
+      nameAr: "الباقة الفاخرة (VIP)",
       pricePerPerson: 30,
       badge: "",
       note: "",
@@ -401,7 +401,7 @@ const SITE_CONFIG = {
       id: "birthday-premium",
       type: "birthday",
       name: "Premium",
-      nameAr: "الباقة المميزة",
+      nameAr: "الباقة المميّزة",
       pricePerPerson: 25,
       badge: "",
       note: "",
@@ -419,7 +419,7 @@ const SITE_CONFIG = {
       id: "birthday-vip",
       type: "birthday",
       name: "VIP",
-      nameAr: "الباقة الفاخرة",
+      nameAr: "الباقة الفاخرة (VIP)",
       pricePerPerson: 28,
       badge: "",
       note: "",
@@ -439,49 +439,49 @@ const SITE_CONFIG = {
     {
       id: "station-pasta",
       name: "Live pasta station",
-      nameAr: "محطة الباستا الحية",
+      nameAr: "محطة الباستا المباشرة",
       options: [
-        { label: "Classic", labelAr: "كلاسيك", price: 3, unit: "person" },
-        { label: "VIP", labelAr: "VIP", price: 5, unit: "person" }
+        { label: "Classic", labelAr: "كلاسيكية", price: 3, unit: "person" },
+        { label: "VIP", labelAr: "فاخرة (VIP)", price: 5, unit: "person" }
       ]
     },
     {
       id: "station-salad",
       name: "Live salad station",
-      nameAr: "محطة السلطات الحية",
+      nameAr: "محطة السلطات المباشرة",
       options: [
-        { label: "Classic", labelAr: "كلاسيك", price: 3, unit: "person" },
-        { label: "VIP", labelAr: "VIP", price: 6, unit: "person" }
+        { label: "Classic", labelAr: "كلاسيكية", price: 3, unit: "person" },
+        { label: "VIP", labelAr: "فاخرة (VIP)", price: 6, unit: "person" }
       ]
     },
     {
       id: "station-mashewe",
       name: "Live mashewe (grill) station",
-      nameAr: "محطة المشاوي الحية",
+      nameAr: "محطة المشاوي المباشرة",
       options: [
-        { label: "Classic", labelAr: "كلاسيك", price: 8, unit: "person" },
-        { label: "VIP", labelAr: "VIP", price: 12, unit: "person" }
+        { label: "Classic", labelAr: "كلاسيكية", price: 8, unit: "person" },
+        { label: "VIP", labelAr: "فاخرة (VIP)", price: 12, unit: "person" }
       ]
     },
     {
       id: "station-burger",
       name: "Live burger & sandwiches station",
-      nameAr: "محطة البرغر والسندويشات الحية",
+      nameAr: "محطة البرغر والسندويشات المباشرة",
       options: [
-        { label: "Classic", labelAr: "كلاسيك", price: 4, unit: "person" },
-        { label: "VIP", labelAr: "VIP", price: 6, unit: "person" }
+        { label: "Classic", labelAr: "كلاسيكية", price: 4, unit: "person" },
+        { label: "VIP", labelAr: "فاخرة (VIP)", price: 6, unit: "person" }
       ]
     },
     {
       id: "station-sajj",
       name: "Live sajj station",
-      nameAr: "محطة الساج الحية",
-      options: [{ label: "Sajj", labelAr: "ساج", price: 2, unit: "person" }]
+      nameAr: "محطة الصاج المباشرة",
+      options: [{ label: "Sajj", labelAr: "صاج", price: 2, unit: "person" }]
     },
     {
       id: "station-shawarma",
       name: "Live shawarma station",
-      nameAr: "محطة الشاورما الحية",
+      nameAr: "محطة الشاورما المباشرة",
       options: [
         { label: "Chicken (1 kg)", labelAr: "دجاج (1 كغ)", price: 25, unit: "kg" },
         { label: "Beef (1 kg)", labelAr: "لحم (1 كغ)", price: 35, unit: "kg" }
@@ -490,50 +490,50 @@ const SITE_CONFIG = {
     {
       id: "station-real-fillet",
       name: "Live real fillet station",
-      nameAr: "محطة الريال فيليه الحية",
-      options: [{ label: "Real fillet (1 kg)", labelAr: "ريال فيليه (1 كغ)", price: 45, unit: "kg" }]
+      nameAr: "محطة فيليه اللحم المباشرة",
+      options: [{ label: "Real fillet (1 kg)", labelAr: "فيليه لحم (1 كغ)", price: 45, unit: "kg" }]
     }
   ],
 
   mainCourseTrays: [
-    { id: "tray-chicken-rice", name: "Chicken with Rice", nameAr: "رز ع دجاج", price: 150, serves: "30–40 people" },
-    { id: "tray-meat-rice", name: "Meat with Rice", nameAr: "رز لحمة", price: 180, serves: "30–40 people" },
-    { id: "tray-sayadieh", name: "Sayadieh", nameAr: "صياديه", price: 160, serves: "30–40 people" },
-    { id: "tray-paella", name: "Paella", nameAr: "بايلا", price: 210, serves: "30–40 people" },
-    { id: "tray-beef-fillet", name: "Beef Fillet with Potatoes & Vegetables (3 kg)", nameAr: "لحمة فيليه مع بطاطا وخضار (3 كغ)", price: 300, serves: "30–40 people" },
-    { id: "tray-beef-stroganoff", name: "Beef Stroganoff", nameAr: "بيف ستروغونوف", price: 180, serves: "30–40 people" },
-    { id: "tray-chicken-stroganoff", name: "Chicken Stroganoff", nameAr: "تشكن ستروغونوف", price: 150, serves: "30–40 people" },
-    { id: "tray-shrimp-stroganoff", name: "Shrimp Stroganoff", nameAr: "شرمب ستروغونوف", price: 200, serves: "30–40 people" },
-    { id: "tray-moroccan-chicken", name: "Moroccan Chicken", nameAr: "مغربيه دجاج", price: 180, serves: "30–40 people" },
-    { id: "tray-freekeh-meat", name: "Freekeh with Meat", nameAr: "فريكه لحم", price: 200, serves: "30–40 people" },
-    { id: "tray-freekeh-chicken", name: "Freekeh with Chicken", nameAr: "فريكه دجاج", price: 180, serves: "30–40 people" },
-    { id: "tray-chicken-cashew", name: "Chicken Cashew", nameAr: "تشكن كاجو", price: 150, serves: "30–40 people" },
-    { id: "tray-kibbeh-labanieh", name: "Kibbeh Labanieh & Shish Barak", nameAr: "كبه لبنيه وشيش برك", price: 150, serves: "30–40 people" },
-    { id: "tray-stuffed-vegetables", name: "Mixed Stuffed Vegetables", nameAr: "محاشي مشكله", price: 180, serves: "30–40 people" },
-    { id: "tray-shahbai-roast", name: "Shahbai Roast with Vegetables & Potatoes", nameAr: "روستو شهبايه مع خضره وبطاطا", price: 180, serves: "30–40 people" },
-    { id: "tray-fettuccine-alfredo", name: "Fettuccine Alfredo", nameAr: "معكرونه الفريدو", price: 120, serves: "30–40 people" },
-    { id: "tray-penne-arrabbiata", name: "Penne Arrabbiata", nameAr: "معكرونه اربياتا", price: 100, serves: "30–40 people" },
-    { id: "tray-chicken-kabsa", name: "Chicken Kabsa", nameAr: "كبسه دجاج", price: 150, serves: "30–40 people" },
-    { id: "tray-meat-kabsa", name: "Meat Kabsa", nameAr: "كبسه لحم", price: 180, serves: "30–40 people" },
-    { id: "tray-grilled-chicken", name: "Grilled Chicken with Potatoes & Vegetables", nameAr: "غرلد تشكن مع بطاطا وخضار", price: 150, serves: "30–40 people" }
+    { id: "tray-chicken-rice", name: "Chicken with Rice", nameAr: "رز على دجاج", price: 150, serves: "30–40 people" },
+    { id: "tray-meat-rice", name: "Meat with Rice", nameAr: "رز على لحمة", price: 180, serves: "30–40 people" },
+    { id: "tray-sayadieh", name: "Sayadieh", nameAr: "صيّادية", price: 160, serves: "30–40 people" },
+    { id: "tray-paella", name: "Paella", nameAr: "باييلا", price: 210, serves: "30–40 people" },
+    { id: "tray-beef-fillet", name: "Beef Fillet with Potatoes & Vegetables (3 kg)", nameAr: "فيليه لحم مع البطاطا والخضار (3 كغ)", price: 300, serves: "30–40 people" },
+    { id: "tray-beef-stroganoff", name: "Beef Stroganoff", nameAr: "ستروغانوف باللحم", price: 180, serves: "30–40 people" },
+    { id: "tray-chicken-stroganoff", name: "Chicken Stroganoff", nameAr: "ستروغانوف بالدجاج", price: 150, serves: "30–40 people" },
+    { id: "tray-shrimp-stroganoff", name: "Shrimp Stroganoff", nameAr: "ستروغانوف بالقريدس", price: 200, serves: "30–40 people" },
+    { id: "tray-moroccan-chicken", name: "Moroccan Chicken", nameAr: "مغربية بالدجاج", price: 180, serves: "30–40 people" },
+    { id: "tray-freekeh-meat", name: "Freekeh with Meat", nameAr: "فريكة باللحم", price: 200, serves: "30–40 people" },
+    { id: "tray-freekeh-chicken", name: "Freekeh with Chicken", nameAr: "فريكة بالدجاج", price: 180, serves: "30–40 people" },
+    { id: "tray-chicken-cashew", name: "Chicken Cashew", nameAr: "دجاج بالكاجو", price: 150, serves: "30–40 people" },
+    { id: "tray-kibbeh-labanieh", name: "Kibbeh Labanieh & Shish Barak", nameAr: "كبّة لبنية وشيش برك", price: 150, serves: "30–40 people" },
+    { id: "tray-stuffed-vegetables", name: "Mixed Stuffed Vegetables", nameAr: "محاشي مشكّلة", price: 180, serves: "30–40 people" },
+    { id: "tray-shahbai-roast", name: "Shahbai Roast with Vegetables & Potatoes", nameAr: "روستو شهباي مع الخضار والبطاطا", price: 180, serves: "30–40 people" },
+    { id: "tray-fettuccine-alfredo", name: "Fettuccine Alfredo", nameAr: "معكرونة ألفريدو", price: 120, serves: "30–40 people" },
+    { id: "tray-penne-arrabbiata", name: "Penne Arrabbiata", nameAr: "معكرونة أرابياتا", price: 100, serves: "30–40 people" },
+    { id: "tray-chicken-kabsa", name: "Chicken Kabsa", nameAr: "كبسة دجاج", price: 150, serves: "30–40 people" },
+    { id: "tray-meat-kabsa", name: "Meat Kabsa", nameAr: "كبسة لحم", price: 180, serves: "30–40 people" },
+    { id: "tray-grilled-chicken", name: "Grilled Chicken with Potatoes & Vegetables", nameAr: "دجاج مشوي مع البطاطا والخضار", price: 150, serves: "30–40 people" }
   ],
 
   miniBites: [
     { id: "bite-shawarma-beef", name: "Shawarma Beef", nameAr: "ميني شاورما لحم", desc: "Mini beef shawarma bites", price: 18, unit: "" },
     { id: "bite-shawarma-chicken", name: "Shawarma Chicken", nameAr: "ميني شاورما دجاج", desc: "Mini chicken shawarma bites", price: 18, unit: "" },
-    { id: "bite-chicken-mix", name: "Chicken Mix", nameAr: "ميني دجاج ميكس", desc: "", price: 18, unit: "" },
-    { id: "bite-tuna-mix", name: "Tuna Mix", nameAr: "ميني تونا ميكس", desc: "", price: 20, unit: "" },
-    { id: "bite-sejok-mix", name: "Sejok Mix", nameAr: "ميني سجق ميكس", desc: "", price: 18, unit: "" },
-    { id: "bite-halloumi-cucumber", name: "Halloumi Cucumber", nameAr: "ميني حلومي خيار", desc: "", price: 18, unit: "" },
-    { id: "bite-kaaki-labni", name: "Kaaki Labni", nameAr: "ميني كعكة لبنة", desc: "", price: 12, unit: "" },
-    { id: "bite-kaaki-cheese", name: "Kaaki Cheese", nameAr: "ميني كعكة جبنة", desc: "", price: 12, unit: "" },
-    { id: "bite-kaaki-turkey-cheese", name: "Kaaki Turkey & Cheese", nameAr: "ميني كعكة تركي وجبنة", desc: "", price: 13, unit: "" }
+    { id: "bite-chicken-mix", name: "Chicken Mix", nameAr: "ميني خلطة الدجاج", desc: "", price: 18, unit: "" },
+    { id: "bite-tuna-mix", name: "Tuna Mix", nameAr: "ميني خلطة التونة", desc: "", price: 20, unit: "" },
+    { id: "bite-sejok-mix", name: "Sejok Mix", nameAr: "ميني خلطة السجق", desc: "", price: 18, unit: "" },
+    { id: "bite-halloumi-cucumber", name: "Halloumi Cucumber", nameAr: "ميني حلّوم وخيار", desc: "", price: 18, unit: "" },
+    { id: "bite-kaaki-labni", name: "Kaaki Labni", nameAr: "ميني كعك باللبنة", desc: "", price: 12, unit: "" },
+    { id: "bite-kaaki-cheese", name: "Kaaki Cheese", nameAr: "ميني كعك بالجبنة", desc: "", price: 12, unit: "" },
+    { id: "bite-kaaki-turkey-cheese", name: "Kaaki Turkey & Cheese", nameAr: "ميني كعك بالديك الرومي والجبنة", desc: "", price: 13, unit: "" }
   ],
 
   cateringExtras: [
-    { id: "extra-bar", name: "Bar", nameAr: "بار" },
-    { id: "extra-plate-service", name: "Plate service", nameAr: "خدمة الصحون" },
-    { id: "extra-waiters", name: "Waiters", nameAr: "نُدُل" },
+    { id: "extra-bar", name: "Bar", nameAr: "ركن المشروبات (بار)" },
+    { id: "extra-plate-service", name: "Plate service", nameAr: "خدمة التقديم بالأطباق" },
+    { id: "extra-waiters", name: "Waiters", nameAr: "طاقم الخدمة (نُدُل)" },
     { id: "extra-chef", name: "Chef", nameAr: "شيف" }
   ],
 

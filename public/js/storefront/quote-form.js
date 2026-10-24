@@ -5,6 +5,7 @@ import { registerActions } from '../shared/actions.js';
 import { allocateOrderId, recordOrder } from './orders.js';
 import { openWhatsApp } from './whatsapp.js';
 import { showToast } from './toast.js';
+import { isAr, t } from './i18n-strings.js';
 
 const value = id => document.getElementById(id)?.value || '';
 const trimmed = id => value(id).trim();
@@ -23,6 +24,7 @@ function submitQuoteForm() {
   const msg = [
     `✨ *NEW CATERING QUOTATION REQUEST — MINI KITCHEN CATERING*`,
     `*Reference ID:* #${quoteId}`,
+    ...(isAr() ? [`*Preferred language:* Arabic / العربية`] : []),
     `-----------------------------------------`,
     `*Client Name:* ${name}`,
     `*Contact Phone:* ${phone}`,
@@ -61,7 +63,7 @@ function submitQuoteForm() {
     whatsappText: msg
   });
 
-  showToast(`Inquiry #${quoteId} recorded & opening WhatsApp...`);
+  showToast(t('Inquiry #{id} recorded & opening WhatsApp...', { id: quoteId }));
   openWhatsApp(brand, msg, true);
 }
 

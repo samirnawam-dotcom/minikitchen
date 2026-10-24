@@ -10,6 +10,7 @@ import { content } from './config.js';
 import { formatPrice } from './format.js';
 import { renderTableBanner } from './table-banner.js';
 import { render, renderMainView } from './view.js';
+import { minutesText, t } from './i18n-strings.js';
 
 const MODE_STATE = {
   delivery: { cat: 'deliveryCategory', search: 'deliverySearch', allowed: null },
@@ -19,10 +20,10 @@ const modeState = mode => MODE_STATE[mode] || MODE_STATE.resto;
 const WA_BRAND_BY_MODE = { resto: 'restaurant', delivery: 'delivery' };
 
 const BADGE_PILLS = {
-  Popular: '<span class="fd-badge popular">Popular</span>',
-  Spicy: '<span class="fd-badge spicy"><i class="fa-solid fa-pepper-hot"></i> Spicy</span>',
-  Vegetarian: '<span class="fd-badge vegetarian"><i class="fa-solid fa-leaf"></i> Veg</span>',
-  Sharing: '<span class="fd-badge sharing">Sharing</span>'
+  Popular: () => `<span class="fd-badge popular">${t('Popular')}</span>`,
+  Spicy: () => `<span class="fd-badge spicy"><i class="fa-solid fa-pepper-hot"></i> ${t('Spicy')}</span>`,
+  Vegetarian: () => `<span class="fd-badge vegetarian"><i class="fa-solid fa-leaf"></i> ${t('Veg')}</span>`,
+  Sharing: () => `<span class="fd-badge sharing">${t('Sharing')}</span>`
 };
 
 export function availableCategories(allowedCatIds) {
@@ -45,7 +46,8 @@ export function getFilteredMenuCategories(selectedCat, searchQuery, allowedCatId
           (item.desc && String(item.desc).toLowerCase().includes(q)) ||
           String(cat.name || '')
             .toLowerCase()
-            .includes(q);
+            .includes(q) ||
+          t(String(cat.name || '')).includes(q);
         if (!matchesQuery) return false;
         if (diet === 'all') return true;
         return (item.badges || []).map(b => String(b).toLowerCase()).includes(diet.toLowerCase());
@@ -58,7 +60,7 @@ export function getFilteredMenuCategories(selectedCat, searchQuery, allowedCatId
 function renderBadgePills(badges) {
   if (!badges || !badges.length) return '';
   return `<div class="fd-item-badges">
-      ${badges.map(b => BADGE_PILLS[b] || '').join('')}
+      ${badges.map(b => (BADGE_PILLS[b] ? BADGE_PILLS[b]() : '')).join('')}
     </div>`;
 }
 
@@ -68,11 +70,17 @@ const dishAction = (item, mode) =>
     ? 'data-action="dish:sold-out"'
     : `data-action="dish:open" data-id="${esc(item.id)}" data-mode="${mode}"`;
 
+/** Accessible name of a dish's add button: "Add: Halloumi Plate", "2 in basket, add another: …". */
+function addLabel(item, isSoldOut, inBagQty) {
+  const status = isSoldOut ? t('Sold out') : inBagQty > 0 ? t('{n} in basket, add another', { n: inBagQty }) : t('Add');
+  return `${status}: ${item.title}`;
+}
+
 function renderGridItem(item, mode, inBagQty) {
   const isSoldOut = Boolean(item.soldOut);
-  let label = '<i class="fa-solid fa-plus"></i> Add';
-  if (isSoldOut) label = 'Sold out';
-  else if (inBagQty > 0) label = `<i class="fa-solid fa-check"></i> ${inBagQty} in basket`;
+  let label = `<i class="fa-solid fa-plus"></i> ${t('Add')}`;
+  if (isSoldOut) label = t('Sold out');
+  else if (inBagQty > 0) label = `<i class="fa-solid fa-check"></i> ${t('{n} in basket', { n: inBagQty })}`;
   return `
                             <article class="dish-card${isSoldOut ? ' is-sold-out' : ''}" ${dishAction(item, mode)}>
                               <div class="dish-card-img-wrap">
@@ -81,10 +89,10 @@ function renderGridItem(item, mode, inBagQty) {
                               <div class="dish-card-body">
                                 ${renderBadgePills(item.badges)}
                                 <h4 class="dish-title">${esc(item.title)}</h4>
-                                <p class="dish-desc">${esc(item.desc || 'Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen.')}</p>
+                                <p class="dish-desc">${esc(item.desc || t('Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen.'))}</p>
                                 <div class="dish-actions">
                                   <span class="fd-item-price">${formatPrice(item.priceValue)}</span>
-                                  <button type="button" class="btn-add-order${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)} aria-label="${esc(`${isSoldOut ? 'Sold out' : inBagQty > 0 ? `${inBagQty} in basket, add another` : 'Add'}: ${item.title}`)}">${label}</button>
+                                  <button type="button" class="btn-add-order${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)} aria-label="${esc(addLabel(item, isSoldOut, inBagQty))}">${label}</button>
                                 </div>
                               </div>
                             </article>
@@ -95,23 +103,23 @@ function renderSplitItem(item, cat, mode, inBagQty) {
   const hasCustomMods = cat.modType && cat.modType !== 'none';
   const isSoldOut = Boolean(item.soldOut);
   let tag = '';
-  if (isSoldOut) tag = '<span class="fd-item-customize-tag is-sold-out">Sold out</span>';
+  if (isSoldOut) tag = `<span class="fd-item-customize-tag is-sold-out">${t('Sold out')}</span>`;
   else if (hasCustomMods)
-    tag = '<span class="fd-item-customize-tag"><i class="fa-solid fa-sliders"></i> Options</span>';
+    tag = `<span class="fd-item-customize-tag"><i class="fa-solid fa-sliders"></i> ${t('Options')}</span>`;
 
-  let addLabel = '<i class="fa-solid fa-plus"></i> Add';
-  if (isSoldOut) addLabel = 'Sold out';
-  else if (inBagQty > 0) addLabel = `<i class="fa-solid fa-check"></i> ${inBagQty}`;
+  let buttonLabel = `<i class="fa-solid fa-plus"></i> ${t('Add')}`;
+  if (isSoldOut) buttonLabel = t('Sold out');
+  else if (inBagQty > 0) buttonLabel = `<i class="fa-solid fa-check"></i> ${inBagQty}`;
 
   return `
                             <article class="fd-item-card${isSoldOut ? ' is-sold-out' : ''}" ${dishAction(item, mode)}>
                               <div class="fd-item-info">
                                 ${renderBadgePills(item.badges)}
                                 <h4 class="fd-item-title">${esc(item.title)}</h4>
-                                <p class="fd-item-desc">${esc(item.desc || 'Prepared fresh to order with signature Mini Kitchen ingredients.')}</p>
+                                <p class="fd-item-desc">${esc(item.desc || t('Prepared fresh to order with signature Mini Kitchen ingredients.'))}</p>
                                 <div class="fd-item-bottom">
                                   <span class="fd-item-price">${formatPrice(item.priceValue)}</span>
-                                  <span class="fd-item-meta-pill"><i class="fa-regular fa-clock"></i> ${esc(item.prepTime || '15–20 min')}</span>
+                                  <span class="fd-item-meta-pill"><i class="fa-regular fa-clock"></i> ${esc(minutesText(item.prepTime || '15–20 min'))}</span>
                                   ${tag}
                                 </div>
                               </div>
@@ -124,8 +132,8 @@ function renderSplitItem(item, cat, mode, inBagQty) {
                                   class="fd-item-media-img"
                                   loading="lazy"
                                 />
-                                <button type="button" class="fd-add-float-btn${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)} aria-label="${esc(`${isSoldOut ? 'Sold out' : inBagQty > 0 ? `${inBagQty} in basket, add another` : 'Add'}: ${item.title}`)}">
-                                  ${addLabel}
+                                <button type="button" class="fd-add-float-btn${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)} aria-label="${esc(addLabel(item, isSoldOut, inBagQty))}">
+                                  ${buttonLabel}
                                 </button>
                               </div>
                             </article>
@@ -135,7 +143,7 @@ function renderSplitItem(item, cat, mode, inBagQty) {
 function renderCategorySection(cat, { mode, activeCat, isOverviewMode, qtyByItemId }) {
   const visibleItems = isOverviewMode ? cat.items.slice(0, 6) : cat.items;
   const hiddenCount = cat.items.length - visibleItems.length;
-  const catName = esc(cat.name);
+  const catName = esc(t(cat.name));
   const askMsg = `Hello Mini Kitchen! I have a question about your *${cat.name}* menu section.`;
   const items =
     state.menuLayout === 'grid'
@@ -159,13 +167,13 @@ function renderCategorySection(cat, { mode, activeCat, isOverviewMode, qtyByItem
                       />
                       <div>
                         <h3 class="fd-category-banner-title">${catName}</h3>
-                        <div class="fd-category-banner-sub">${esc(cat.subtitle || cat.badge)} · ${cat.items.length} dishes</div>
+                        <div class="fd-category-banner-sub">${esc(t(cat.subtitle || cat.badge || ''))} · ${t('{n} dishes', { n: cat.items.length })}</div>
                       </div>
                     </div>
                     <div class="fd-category-actions">
                       ${
                         activeCat !== 'all'
-                          ? `<button type="button" class="text-link" data-action="menu:category" data-mode="${mode}" data-cat="all"><i class="fa-solid fa-arrow-left"></i> All categories</button>`
+                          ? `<button type="button" class="text-link" data-action="menu:category" data-mode="${mode}" data-cat="all"><i class="fa-solid fa-arrow-left"></i> ${t('All categories')}</button>`
                           : ''
                       }
                       <button
@@ -174,7 +182,7 @@ function renderCategorySection(cat, { mode, activeCat, isOverviewMode, qtyByItem
                         data-brand="${WA_BRAND_BY_MODE[mode] || 'delivery'}"
                         data-msg="${esc(askMsg)}"
                       >
-                        <i class="fa-brands fa-whatsapp"></i> Ask about this
+                        <i class="fa-brands fa-whatsapp"></i> ${t('Ask about this')}
                       </button>
                     </div>
                   </div>
@@ -185,7 +193,7 @@ function renderCategorySection(cat, { mode, activeCat, isOverviewMode, qtyByItem
                     hiddenCount > 0
                       ? `<div class="fd-cat-expand-footer">
                           <button type="button" class="fd-cat-expand-btn" data-action="menu:category" data-mode="${mode}" data-cat="${esc(cat.id)}">
-                            <span>See all ${cat.items.length} dishes</span>
+                            <span>${t('See all {n} dishes', { n: cat.items.length })}</span>
                             <i class="fa-solid fa-arrow-right"></i>
                           </button>
                         </div>`
@@ -199,9 +207,9 @@ function renderResults(mode, filteredCats, activeCat, activeSearch) {
   if (filteredCats.length === 0) {
     return `<div class="empty-state">
                   <i class="fa-solid fa-utensils"></i>
-                  <h3>No matching dishes</h3>
-                  <p>Try another search or filter, or ask us on WhatsApp.</p>
-                  <button class="btn btn-outline" data-action="menu:reset" data-mode="${mode}">Reset filters</button>
+                  <h3>${t('No matching dishes')}</h3>
+                  <p>${t('Try another search or filter, or ask us on WhatsApp.')}</p>
+                  <button class="btn btn-outline" data-action="menu:reset" data-mode="${mode}">${t('Reset filters')}</button>
                 </div>`;
   }
   // Map item quantities currently in the cart so cards show live badges
@@ -250,14 +258,14 @@ export function renderMenuExplorer(mode) {
         <div class="fd-cat-stories-wrap">
           <div class="fd-cat-stories-header">
             <div class="fd-cat-stories-title">
-              <span class="eyebrow">Categories · ${catsList.length}</span>
+              <span class="eyebrow">${t('Categories')} · ${catsList.length}</span>
               ${
                 activeCat !== 'all'
-                  ? `<button type="button" class="fd-clear-btn" data-action="menu:category" data-mode="${mode}" data-cat="all"><i class="fa-solid fa-xmark"></i> Show all</button>`
+                  ? `<button type="button" class="fd-clear-btn" data-action="menu:category" data-mode="${mode}" data-cat="all"><i class="fa-solid fa-xmark"></i> ${t('Show all')}</button>`
                   : ''
               }
             </div>
-            <div class="fd-cat-stories-hint">Tap a dish to choose options and add it</div>
+            <div class="fd-cat-stories-hint">${t('Tap a dish to choose options and add it')}</div>
           </div>
 
           <div class="fd-cat-stories-scroller">
@@ -266,9 +274,9 @@ export function renderMenuExplorer(mode) {
               data-action="menu:category" data-mode="${mode}" data-cat="all"
             >
               <div class="fd-story-thumb">
-                <img src="${logo}" data-fallback="" alt="All Categories" />
+                <img src="${logo}" data-fallback="" alt="${t('All Categories')}" />
               </div>
-              <div class="fd-story-name">All</div>
+              <div class="fd-story-name">${t('All')}</div>
               <div class="fd-story-count">${totalDishCount}</div>
             </div>
 
@@ -280,9 +288,9 @@ export function renderMenuExplorer(mode) {
                 data-action="menu:category" data-mode="${mode}" data-cat="${esc(c.id)}"
               >
                 <div class="fd-story-thumb">
-                  <img src="${esc(c.thumbImg || c.items[0]?.img || content.config.logos.main)}" data-fallback="" alt="${esc(c.name)}" loading="lazy" />
+                  <img src="${esc(c.thumbImg || c.items[0]?.img || content.config.logos.main)}" data-fallback="" alt="${esc(t(c.name))}" loading="lazy" />
                 </div>
-                <div class="fd-story-name">${esc(c.name)}</div>
+                <div class="fd-story-name">${esc(t(c.name))}</div>
                 <div class="fd-story-count">${c.items.length}</div>
               </div>
             `
@@ -299,7 +307,7 @@ export function renderMenuExplorer(mode) {
               <input
                 type="text"
                 class="fd-search-input"
-                placeholder="Search ${totalDishCount} dishes…"
+                placeholder="${t('Search {n} dishes…', { n: totalDishCount })}"
                 value="${esc(activeSearch)}"
                 data-on-input="menu:search"
                 data-mode="${mode}"
@@ -308,34 +316,34 @@ export function renderMenuExplorer(mode) {
 
             <div class="fd-toolbar-actions">
               <!-- Multi-Currency Toggle (USD / LBP) -->
-              <div class="fd-toggle-pill-group" title="Switch Menu Currency">
-                ${toggleBtn(state.currency === 'USD', 'menu:currency', 'USD', '$ USD')}
-                ${toggleBtn(state.currency === 'LBP', 'menu:currency', 'LBP', 'L.L. LBP')}
+              <div class="fd-toggle-pill-group" title="${t('Switch Menu Currency')}">
+                ${toggleBtn(state.currency === 'USD', 'menu:currency', 'USD', t('$ USD'))}
+                ${toggleBtn(state.currency === 'LBP', 'menu:currency', 'LBP', t('L.L. LBP'))}
               </div>
 
               <!-- View Mode Toggle (Split List vs Photo Grid) -->
-              <div class="fd-toggle-pill-group" title="Switch Menu Layout">
-                ${toggleBtn(state.menuLayout === 'split', 'menu:layout', 'split', '<i class="fa-solid fa-list"></i> List')}
-                ${toggleBtn(state.menuLayout === 'grid', 'menu:layout', 'grid', '<i class="fa-solid fa-grip"></i> Photos')}
+              <div class="fd-toggle-pill-group" title="${t('Switch Menu Layout')}">
+                ${toggleBtn(state.menuLayout === 'split', 'menu:layout', 'split', `<i class="fa-solid fa-list"></i> ${t('List')}`)}
+                ${toggleBtn(state.menuLayout === 'grid', 'menu:layout', 'grid', `<i class="fa-solid fa-grip"></i> ${t('Photos')}`)}
               </div>
 
               <button class="btn btn-primary btn-sm fd-bag-btn" data-action="cart:open">
                 <i class="fa-solid fa-bag-shopping"></i>
-                <span>Basket (${cartCount()}) · ${formatPrice(cartSubtotal())}</span>
+                <span>${t('Basket')} (${cartCount()}) · ${formatPrice(cartSubtotal())}</span>
               </button>
             </div>
           </div>
 
           <div class="fd-dietary-row">
             <div class="fd-dietary-pills">
-              ${dietChip('all', 'All dishes')}
-              ${dietChip('popular', 'Popular')}
-              ${dietChip('spicy', 'Spicy')}
-              ${dietChip('vegetarian', 'Vegetarian')}
-              ${dietChip('sharing', 'For sharing')}
+              ${dietChip('all', t('All dishes'))}
+              ${dietChip('popular', t('Popular'))}
+              ${dietChip('spicy', t('Spicy'))}
+              ${dietChip('vegetarian', t('Vegetarian'))}
+              ${dietChip('sharing', t('For sharing'))}
             </div>
             <div class="fd-rate-note">
-              ${state.currency === 'LBP' ? `Rate: 1 USD = ${content.lbpRate.toLocaleString('en-US')} L.L.` : 'Prices shown in USD ($)'}
+              ${state.currency === 'LBP' ? t('Rate: 1 USD = {rate} L.L.', { rate: content.lbpRate.toLocaleString('en-US') }) : t('Prices shown in USD ($)')}
             </div>
           </div>
         </div>

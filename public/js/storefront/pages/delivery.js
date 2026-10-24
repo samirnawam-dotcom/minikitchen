@@ -8,30 +8,34 @@ import { formatPrice } from '../format.js';
 import { renderMenuExplorer } from '../menu-view.js';
 import { registerPage } from '../view.js';
 import { pageHero } from './sections.js';
+import { isAr, t } from '../i18n-strings.js';
 
 function buildDeliveryPage() {
-  const areas = configList('deliveryAreas').slice(0, 5).map(esc).join(', ');
+  const areas = configList('deliveryAreas')
+    .slice(0, 5)
+    .map(area => esc(t(area)))
+    .join(isAr() ? '، ' : ', ');
 
   return `
       ${pageHero({
-        eyebrow: 'Mini Kitchen Delivery · Aley',
-        title: 'Order online, send on WhatsApp',
-        text: `Delivering to ${areas} and nearby, daily from 8:00 AM to 10:00 PM.`,
+        eyebrow: t('Mini Kitchen Delivery · Aley'),
+        title: t('Order online, send on WhatsApp'),
+        text: t('Delivering to {areas} and nearby, daily from 8:00 AM to 10:00 PM.', { areas }),
         photo: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1800&q=85',
-        alt: 'A spread of Mini Kitchen dishes ready for delivery',
+        alt: t('A spread of Mini Kitchen dishes ready for delivery'),
         fallback: content.config.logos.cover,
         actions: `
               <button class="btn btn-primary" data-action="cart:open">
-                <i class="fa-solid fa-bag-shopping"></i> Basket · ${cartCount()} · ${formatPrice(cartSubtotal())}
+                <i class="fa-solid fa-bag-shopping"></i> ${t('Basket')} · ${cartCount()} · ${formatPrice(cartSubtotal())}
               </button>
               <button class="btn btn-outline" data-action="tracker:open">
-                <i class="fa-solid fa-truck-fast"></i> Track an order
+                <i class="fa-solid fa-truck-fast"></i> ${t('Track an order')}
               </button>`
       })}
 
       <section class="section-pad section-ivory section-tight-top" id="deliveryMenuStart">
         <div class="container">
-          <h2 class="sr-only">Delivery menu</h2>
+          <h2 class="sr-only">${t('Delivery menu')}</h2>
           ${renderMenuExplorer('delivery')}
         </div>
       </section>

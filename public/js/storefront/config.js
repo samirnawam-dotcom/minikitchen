@@ -6,7 +6,7 @@ import SITE_CONFIG from '../data/site-config.js';
 import { MENU_CATEGORIES, MODIFIER_GROUPS } from '../data/menu.js';
 import { deepClone } from '../shared/dom.js';
 import { loadJson, saveJson, getItem, setItem, removeItem } from '../shared/storage.js';
-import { upgradeCateringMenu } from '../shared/catering-menu.js';
+import { upgradeCateringList } from '../shared/catering-menu.js';
 
 export const CONFIG_KEY = 'mk_custom_site_config_v3';
 export const MENU_KEY = 'mk_custom_menu_data_v3';
@@ -129,12 +129,11 @@ export function getPromoCodes() {
 /**
  * Catering offer lists (eventPackages, liveStationMenu, mainCourseTrays…). The owner's saved list
  * wins even when empty (e.g. no extras offered); only a missing key falls back to the defaults.
+ * A list saved before the current catering menu version is brought up to date first (see
+ * ../shared/catering-menu.js: empty dish lists filled, old default Arabic corrected).
  */
 export function cateringList(key) {
-  if (key === 'cateringChoiceGroups') return upgradeCateringMenu(content.config, SITE_CONFIG);
-  const saved = content.config[key];
-  if (Array.isArray(saved)) return saved;
-  return Array.isArray(SITE_CONFIG[key]) ? SITE_CONFIG[key] : [];
+  return upgradeCateringList(content.config, SITE_CONFIG, key);
 }
 
 export function getTestimonials() {
