@@ -284,95 +284,264 @@
 }
 
 /* ============================================================================
-   CATERING MENU (dishes by course, no prices)
+   CATERING MENU (dishes by course, no prices) — laid out like a printed bilingual menu card
    ============================================================================ */
-.menu-book + .menu-book {
-  margin-top: clamp(40px, 5vw, 64px);
+.menu-card {
+  max-width: 1040px;
+  margin: 0 auto;
 }
 
-.menu-book-title {
-  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+/* Buffet / Birthday Mini switch */
+.menu-switch {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+  margin: 0 auto 22px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--bg-card);
+}
+
+.menu-switch-btn {
+  padding: 9px 22px;
+  border: none;
+  border-radius: var(--radius-control);
+  background: none;
+  font-weight: 600;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.menu-switch-btn.active {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* Course links: stay under the header while the menu scrolls */
+.menu-index {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 5;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 2px;
+  margin-bottom: 8px;
+  background: var(--bg-page);
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: none;
+}
+
+.menu-index::-webkit-scrollbar {
+  display: none;
+}
+
+.menu-index-link {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--bg-card);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.menu-index-link:hover {
+  border-color: var(--brand-primary);
+}
+
+.menu-index-count {
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-size: var(--fs-xs);
   text-align: center;
-  margin-bottom: 24px;
 }
 
-/* Newspaper columns, so short courses sit under each other instead of stretching beside long ones */
-.menu-book-grid {
-  columns: 3 280px;
-  column-gap: 20px;
-}
-
-.menu-course {
-  break-inside: avoid;
-  margin-bottom: 20px;
+/* The sheet: one white card, courses separated by hairlines */
+.menu-sheet {
   background: var(--bg-card);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
-  padding: 22px 24px;
+  padding: clamp(8px, 2vw, 16px) clamp(20px, 4vw, 48px);
 }
 
-.menu-course-head {
-  padding-bottom: 12px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid var(--line);
+.menu-section {
+  padding: clamp(28px, 3.5vw, 40px) 0;
+  scroll-margin-top: calc(var(--header-h) + 72px);
 }
 
-.menu-course-title {
+.menu-section + .menu-section {
+  border-top: 1px solid var(--line);
+}
+
+.menu-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.menu-section-names {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.menu-section-title {
   font-family: var(--font-serif);
-  font-size: 1.2rem;
+  font-size: clamp(1.35rem, 2.2vw, 1.6rem);
   color: var(--ink);
+  outline: none;
 }
 
-.menu-course-title .bi-other {
-  display: block;
-  font-family: var(--font-sans);
-  font-size: var(--fs-xs);
-  font-weight: 500;
-  color: var(--text-muted);
-}
-
-.menu-course-counts {
-  margin-top: 6px;
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-}
-
-.menu-course-counts strong {
+.menu-section-other {
+  font-size: 1.05rem;
   color: var(--brand-ink);
 }
 
-.menu-course-items {
-  list-style: none;
-  display: grid;
-  gap: 10px;
-}
-
-.menu-course-items li {
+.menu-section-meta {
   display: flex;
-  flex-direction: column;
-  padding-inline-start: 16px;
-  position: relative;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.menu-course-items li::before {
-  content: '';
-  position: absolute;
-  inset-inline-start: 0;
-  top: 0.62em;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--brand-primary);
+.menu-choose {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
-.menu-dish {
-  color: var(--ink);
-  font-weight: 500;
+.menu-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.menu-course-items .bi-other {
+.menu-pill {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
   font-size: var(--fs-xs);
   color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.menu-pill strong {
+  color: var(--brand-ink);
+}
+
+.menu-pill-all {
+  background: var(--brand-soft);
+  border-color: transparent;
+  color: var(--brand-ink);
+}
+
+/* Dishes: name at the start, the other language at the end, dotted leader between */
+.menu-dishes {
+  list-style: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: clamp(32px, 5vw, 64px);
+}
+
+.menu-dishes-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.menu-dish-row {
+  padding: 11px 0;
+  border-bottom: 1px dashed var(--line);
+  min-width: 0;
+}
+
+.menu-dish-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.menu-dish-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* The other language sits at the far end of the line. It carries its own dir, so it is placed with
+   the page's direction (physical sides) rather than its own logical start/end. */
+.menu-dish-other {
+  flex: 0 1 auto;
+  max-width: 48%;
+  min-width: 0;
+  text-align: right;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+[dir='rtl'] .menu-dish-other {
+  text-align: left;
+}
+
+.menu-dish-row .dish-details {
+  margin-top: 4px;
+}
+
+.menu-more {
+  display: none;
+  margin-top: 16px;
+  padding: 8px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: none;
+  font-weight: 600;
+  font-size: var(--fs-small);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.menu-course-empty {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+@media (max-width: 760px) {
+  .menu-dishes-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .menu-section-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  /* Long courses show their first dishes until "Show all" is pressed */
+  .menu-section.is-long:not(.is-open) .menu-dish-row:nth-child(n + 9) {
+    display: none;
+  }
+  .menu-section.is-long .menu-more {
+    display: inline-flex;
+  }
 }
 
 /* Flavours / details under a dish (catering menu and package builder) */
@@ -382,12 +551,6 @@
   font-size: var(--fs-xs);
   line-height: 1.45;
   color: var(--text-muted);
-}
-
-.menu-course-empty {
-  font-size: var(--fs-small);
-  color: var(--text-muted);
-  font-style: italic;
 }
 
 /* ============================================================================

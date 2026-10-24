@@ -4,6 +4,7 @@
 
 import { esc } from '../shared/dom.js';
 import { cateringList, content } from './config.js';
+import { state } from './state.js';
 import { isAr, isolateLatin, ltr, servesText, t } from './i18n-strings.js';
 
 /** English labels of the package kinds (used in WhatsApp messages and Back Office records). */
@@ -243,51 +244,106 @@ function menuGroups(type) {
   return order.map(id => ({ group: findGroup(id), counts: counts.get(id) }));
 }
 
-/** "Classic 4 · Premium 6 · VIP 8" (or "Included" for a selection), so customers see what each package allows. */
-function countsLine(counts) {
-  if (counts.every(c => c.count === 0)) return t('Included in every package');
+/** One pill per package ("Classic 4"), or "Included" when every package includes a selection. */
+function countPills(counts) {
+  if (counts.every(c => c.count === 0))
+    return `<span class="menu-pill menu-pill-all">${t('Included in every package')}</span>`;
   return counts
-    .map(c => `${esc(c.name)} <strong>${c.count || '—'}</strong>`)
-    .join('<span aria-hidden="true"> · </span>');
+    .map(c => `<span class="menu-pill">${esc(c.name)} <strong>${c.count ? ltr(c.count) : '—'}</strong></span>`)
+    .join('');
 }
+
+/** "Choose 4–8" over a course, from the smallest to the largest count among the packages. */
+function chooseLine(counts) {
+  const n = counts.map(c => c.count).filter(Boolean);
+  if (!n.length) return '';
+  const lo = Math.min(...n);
+  const hi = Math.max(...n);
+  return lo === hi ? t('Choose {n}', { n: ltr(lo) }) : t('Choose {lo}–{hi}', { lo: ltr(lo), hi: ltr(hi) });
+}
+
+/**
+ * One dish as a menu-card row: the visitor's language at the start, the other language at the end
+ * (English left and Arabic right, like the printed flyers), with any flavours underneath.
+ */
+function menuDish(item) {
+  const other = otherName(item);
+  const otherLang = isAr() ? 'en' : 'ar';
+  return `
+                <li class="menu-dish-row">
+                  <div class="menu-dish-line">
+                    <span class="menu-dish-name">${esc(localName(item))}</span>
+                    ${other ? `<span class="menu-dish-other" lang="${otherLang}" dir="${otherLang === 'ar' ? 'rtl' : 'ltr'}">${esc(other)}</span>` : ''}
+                  </div>
+                  ${dishDetails(item)}
+                </li>`;
+}
+
+const COLLAPSE_AFTER = 8;
 
 function menuCourse({ group, counts }) {
   const items = groupItems(group);
+  const other = otherName(group);
+  const long = items.length > COLLAPSE_AFTER;
   return `
-            <section class="menu-course">
-              <header class="menu-course-head">
-                <h4 class="menu-course-title">${nameBlock(group)}</h4>
-                <p class="menu-course-counts">${countsLine(counts)}</p>
+            <section class="menu-section${long ? ' is-long' : ''}" id="menu-${esc(group.id)}" aria-labelledby="menu-${esc(group.id)}-title">
+              <header class="menu-section-head">
+                <div class="menu-section-names">
+                  <h4 class="menu-section-title" id="menu-${esc(group.id)}-title" tabindex="-1">${esc(localName(group))}</h4>
+                  ${other ? `<span class="menu-section-other" lang="${isAr() ? 'en' : 'ar'}">${esc(other)}</span>` : ''}
+                </div>
+                <div class="menu-section-meta">
+                  ${chooseLine(counts) ? `<span class="menu-choose">${chooseLine(counts)}</span>` : ''}
+                  <div class="menu-pills">${countPills(counts)}</div>
+                </div>
               </header>
               ${
                 items.length
-                  ? `<ul class="menu-course-items">${items.map(i => `<li>${nameBlock(i, 'menu-dish')}${dishDetails(i)}</li>`).join('')}</ul>`
+                  ? `<ul class="menu-dishes${items.length > 6 ? ' menu-dishes-2' : ''}">${items.map(menuDish).join('')}</ul>
+              ${long ? `<button type="button" class="menu-more" data-action="menu:more" aria-expanded="false" data-label="${esc(t('Show all {n} dishes', { n: items.length }))}">${t('Show all {n} dishes', { n: ltr(items.length) })}</button>` : ''}`
                   : `<p class="menu-course-empty">${t('Our chef shares the current choices with you when you send your request.')}</p>`
               }
             </section>`;
 }
 
+const MENU_KINDS = [
+  { type: 'buffet', label: 'Event buffets' },
+  { type: 'birthday', label: 'Birthday Minis' }
+];
+
 /**
- * The catering menu without prices: every dish customers can choose from, grouped by course,
- * for buffets and Birthday Minis, so they can look before building a package.
+ * The catering menu without prices, laid out like a printed bilingual menu card: a switch between
+ * buffet and Birthday Mini menus, a row of course links, then each course with its dishes.
  */
 export function cateringMenuBook() {
-  const parts = [
-    { type: 'buffet', title: t('Event buffet menu') },
-    { type: 'birthday', title: t('Birthday Mini menu') }
-  ]
-    .map(part => ({ ...part, courses: menuGroups(part.type) }))
-    .filter(part => part.courses.length);
-  if (parts.length === 0) return `<p class="empty-state">${t('Our menu is coming soon.')}</p>`;
-  return parts
-    .map(
-      part => `
-          <div class="menu-book">
-            <h3 class="menu-book-title">${part.title}</h3>
-            <div class="menu-book-grid">${part.courses.map(menuCourse).join('')}</div>
-          </div>`
-    )
-    .join('');
+  const kinds = MENU_KINDS.map(k => ({ ...k, courses: menuGroups(k.type) })).filter(k => k.courses.length);
+  if (kinds.length === 0) return `<p class="empty-state">${t('Our menu is coming soon.')}</p>`;
+  const current = kinds.find(k => k.type === state.menuBookType) || kinds[0];
+  return `
+          <div class="menu-card">
+            ${
+              kinds.length > 1
+                ? `<div class="menu-switch" role="group" aria-label="${esc(t('Which menu'))}">
+              ${kinds
+                .map(
+                  k =>
+                    `<button type="button" class="menu-switch-btn${k === current ? ' active' : ''}" data-action="menu:kind" data-kind="${k.type}" aria-pressed="${k === current}">${t(k.label)}</button>`
+                )
+                .join('')}
+            </div>`
+                : ''
+            }
+            <nav class="menu-index" aria-label="${esc(t('Courses'))}">
+              ${current.courses
+                .map(
+                  ({ group }) =>
+                    `<button type="button" class="menu-index-link" data-action="menu:jump" data-target="menu-${esc(group.id)}">${esc(localName(group))}<span class="menu-index-count">${ltr(groupItems(group).length || '–')}</span></button>`
+                )
+                .join('')}
+            </nav>
+            <div class="menu-sheet">${current.courses.map(menuCourse).join('')}
+            </div>
+          </div>`;
 }
 
 /** Extras offered on request (bar, plate service, waiters, chef). */
