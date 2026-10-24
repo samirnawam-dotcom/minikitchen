@@ -14,6 +14,7 @@ import { render } from './view.js';
 import { updateCartBadges } from './order-bar.js';
 import { openOrderTracker } from './order-tracker.js';
 import { initUi } from './ui.js';
+import './motion.js';
 
 // Feature modules that only register actions / pages
 import './whatsapp.js';

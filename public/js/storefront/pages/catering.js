@@ -27,13 +27,41 @@ const HERO_FALLBACK = 'https://images.unsplash.com/photo-1519225421980-715cb0215
 /** Tab on the packages page that each catering type opens. */
 const TYPE_TABS = { buffet: 'buffet', birthday: 'birthday', stations: 'stations', trays: 'trays' };
 
+/** Event photos for the hero slideshow and the showcase strip (owner's gallery first, then packages). */
+function showcasePhotos() {
+  return uniqueByImage(configList('cateringGallery'), cateringList('cateringTypes'), cateringList('eventPackages'));
+}
+
 function heroSection() {
-  // The first catering gallery photo is the hero, so the owner changes it from the Back Office.
-  const hero = configList('cateringGallery')[0] || {};
+  // The catering gallery photos lead the hero slideshow, so the owner changes them from the Back Office.
+  const photos = showcasePhotos().slice(0, 6);
+  if (photos.length === 0) photos.push({ img: HERO_FALLBACK, title: 'A Mini Kitchen event set-up' });
+  const slides = photos
+    .map(
+      (p, i) => `
+          <figure class="hero-slide${i === 0 ? ' is-active' : ''}" data-hero-slide="${i}"${i === 0 ? '' : ' aria-hidden="true"'}>
+            <img src="${esc(p.img)}" data-fallback="${esc(HERO_FALLBACK)}" alt="${esc(p.title || 'A Mini Kitchen event')}" width="1800" height="1200"${i === 0 ? ' fetchpriority="high"' : ' loading="lazy"'} />
+          </figure>`
+    )
+    .join('');
+  const controls =
+    photos.length > 1
+      ? `
+        <div class="hero-slider-ui container">
+          <div class="hero-dots" role="group" aria-label="Choose a photo">
+            ${photos
+              .map(
+                (p, i) =>
+                  `<button type="button" class="hero-dot${i === 0 ? ' is-active' : ''}" data-action="hero:go" data-slide="${i}" aria-label="${esc(`Photo ${i + 1} of ${photos.length}${p.title ? `: ${p.title}` : ''}`)}"${i === 0 ? ' aria-current="true"' : ''}><span class="hero-dot-bar"></span></button>`
+              )
+              .join('')}
+          </div>
+          <button type="button" class="hero-pause" data-action="hero:toggle" aria-label="Pause the slideshow" aria-pressed="false"><i class="fa-solid fa-pause" aria-hidden="true"></i></button>
+        </div>`
+      : '';
   return `
-      <section class="hero-section home-hero">
-        <div class="home-hero-media">
-          <img src="${esc(hero.img || HERO_FALLBACK)}" data-fallback="${esc(HERO_FALLBACK)}" alt="${esc(hero.title || 'A Mini Kitchen event set-up')}" fetchpriority="high" width="1800" height="1200" />
+      <section class="hero-section home-hero" data-hero-slider aria-roledescription="carousel" aria-label="Photos from our events">
+        <div class="home-hero-media">${slides}
         </div>
         <div class="container home-hero-copy">
           <span class="eyebrow">Mini Kitchen Catering · Aley, Lebanon</span>
@@ -43,7 +71,43 @@ function heroSection() {
             <button class="btn btn-primary" data-action="nav:go" data-page="catering" data-scroll="planEventSection">Build your package</button>
             <button class="btn btn-outline" data-action="nav:go" data-page="catering-menus">See packages &amp; prices</button>
           </div>
+        </div>${controls}
+        <span class="hero-scroll-cue" aria-hidden="true"></span>
+      </section>`;
+}
+
+/**
+ * Two rows of event photos gliding in opposite directions (pauses on hover or focus). Each row is
+ * drawn twice so the loop is seamless. Only the first pass of the first row reaches screen readers
+ * and the keyboard; everything else repeats the same photos.
+ */
+function showcaseSection() {
+  const photos = showcasePhotos();
+  if (photos.length < 4) return '';
+  // The second row starts halfway through the list, so the two rows never show the same photo side by side
+  const half = Math.ceil(photos.length / 2);
+  const rows = [photos, [...photos.slice(half), ...photos.slice(0, half)]];
+  const tile = (p, copy) => `
+              <button type="button" class="showcase-tile" data-action="lightbox:open" data-lightbox="${copy ? 'showcase-copy' : 'showcase'}" data-caption="${esc([p.title, p.caption].filter(Boolean).join(' — '))}"${copy ? ' tabindex="-1" aria-hidden="true"' : ` aria-label="${esc(`View photo: ${p.title || 'Mini Kitchen event'}`)}"`}>
+                <img src="${esc(p.img)}" data-fallback="" alt="${copy ? '' : esc(p.title || 'Mini Kitchen event')}" loading="lazy" decoding="async" width="520" height="360" />
+                ${p.title ? `<span class="showcase-caption">${esc(p.title)}</span>` : ''}
+              </button>`;
+  return `
+      <section class="showcase" aria-label="Moments from our events">
+        <div class="container">
+          ${sectionHeader({ eyebrow: 'Showcase', title: 'Moments from our events' })}
         </div>
+        ${rows
+          .map(
+            (row, r) => `
+        <div class="showcase-row${r % 2 ? ' showcase-row-reverse' : ''}">
+          <div class="showcase-track">
+            ${row.map(p => tile(p, r > 0)).join('')}
+            ${row.map(p => tile(p, true)).join('')}
+          </div>
+        </div>`
+          )
+          .join('')}
       </section>`;
 }
 
@@ -188,6 +252,7 @@ function buildCateringHomePage() {
   return `
       ${heroSection()}
       ${typesSection()}
+      ${showcaseSection()}
       ${howSection()}
       ${buffetSection()}
       ${birthdaySection()}
