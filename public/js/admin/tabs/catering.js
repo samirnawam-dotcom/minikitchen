@@ -56,9 +56,11 @@ const removeRowButton = () =>
 /** Markup of one row for each kind of repeatable list (also used by "Add row"). */
 const ROW_TEMPLATES = {
   dish: (r = {}) => `
-          <div class="bo-pk-row bo-pk-row-2">
+          <div class="bo-pk-row bo-pk-row-dish">
             ${colInput('name', r.name, { placeholder: 'English name' })}
             ${colInput('nameAr', r.nameAr, { placeholder: 'الاسم بالعربي', dir: 'rtl', label: 'Arabic name' })}
+            ${colInput('desc', r.desc, { placeholder: 'Flavours or details (optional)', label: 'Details (English)' })}
+            ${colInput('descAr', r.descAr, { placeholder: 'التفاصيل (اختياري)', dir: 'rtl', label: 'Details (Arabic)' })}
             ${removeRowButton()}
           </div>`,
   choice: (r = {}) => `
@@ -117,7 +119,7 @@ const ROW_TEMPLATES = {
 };
 
 const ROW_HEADERS = {
-  dish: ['English', 'Arabic'],
+  dish: ['English', 'Arabic', 'Details', 'Details (Arabic)'],
   choice: ['Dish list', 'How many'],
   option: ['Option', 'Arabic', 'Price $', 'Priced'],
   tray: ['English', 'Arabic', 'Price $', 'Serves'],
@@ -129,7 +131,7 @@ const ROW_HEADERS = {
 function rowsBlock(name, kind, rows, addLabel) {
   return `
         <div class="bo-pk-rows-wrap">
-          <div class="bo-pk-row bo-pk-row-head bo-pk-row-${kind === 'dish' || kind === 'extra' ? '2' : kind}">${ROW_HEADERS[kind].map(h => `<span>${h}</span>`).join('')}<span></span></div>
+          <div class="bo-pk-row bo-pk-row-head bo-pk-row-${kind === 'extra' ? '2' : kind}">${ROW_HEADERS[kind].map(h => `<span>${h}</span>`).join('')}<span></span></div>
           <div class="bo-pk-rows" data-rows="${name}" data-kind="${kind}">
             ${rows.map(r => ROW_TEMPLATES[kind](r)).join('')}
           </div>

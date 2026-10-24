@@ -446,6 +446,9 @@
 .bo-pk-row-choice {
   grid-template-columns: minmax(0, 1fr) 110px 38px;
 }
+.bo-pk-row-dish {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr) minmax(0, 1.4fr) minmax(0, 1.4fr) 38px;
+}
 .bo-pk-row-option {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 90px 110px 38px;
 }
@@ -490,6 +493,7 @@
 }
 
 @media (max-width: 720px) {
+  .bo-pk-row-dish,
   .bo-pk-row-option,
   .bo-pk-row-tray,
   .bo-pk-row-bite {

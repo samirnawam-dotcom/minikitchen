@@ -37,6 +37,12 @@ export function nameBlock(obj, cls = 'bi-name', key = 'name') {
   return `<span class="${cls}">${esc(localName(obj, key))}</span>${other ? `<span class="bi-other">${esc(other)}</span>` : ''}`;
 }
 
+/** A dish's details (flavours) in the visitor's language, as a quiet line under its name. */
+export function dishDetails(item, cls = 'dish-details') {
+  const text = localName(item, 'desc');
+  return text ? `<span class="${cls}">${esc(text)}</span>` : '';
+}
+
 /** "4 appetizers", "Selection of desserts" (count 0) — in the visitor's language. */
 export function choiceLabel(choice) {
   const group = findGroup(choice.group);
@@ -235,7 +241,7 @@ function menuCourse({ group, counts }) {
               </header>
               ${
                 items.length
-                  ? `<ul class="menu-course-items">${items.map(i => `<li>${nameBlock(i, 'menu-dish')}</li>`).join('')}</ul>`
+                  ? `<ul class="menu-course-items">${items.map(i => `<li>${nameBlock(i, 'menu-dish')}${dishDetails(i)}</li>`).join('')}</ul>`
                   : '<p class="menu-course-empty">Our chef shares the current choices with you when you send your request.</p>'
               }
             </section>`;

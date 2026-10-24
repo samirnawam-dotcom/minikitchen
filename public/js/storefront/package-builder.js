@@ -32,7 +32,8 @@ import {
   money,
   nameBlock,
   packages,
-  price
+  price,
+  dishDetails
 } from './catering-offer.js';
 
 const MAX_GUESTS = 2000;
@@ -329,7 +330,7 @@ function choiceGroupHtml({ group, items, count, required }) {
                         return `
                     <label class="builder-check${checked ? ' checked' : ''}">
                       <input type="checkbox" value="${esc(item.name)}" data-on-change="builder:pick" data-group="${esc(group.id)}" ${checked ? 'checked' : ''} ${!checked && full ? 'disabled' : ''} aria-describedby="pbHint-${esc(group.id)}" />
-                      <span>${nameBlock(item, 'bi-name')}</span>
+                      <span>${nameBlock(item, 'bi-name')}${dishDetails(item)}</span>
                     </label>`;
                       })
                       .join('')}
