@@ -375,6 +375,15 @@
   color: var(--text-muted);
 }
 
+/* Flavours / details under a dish (catering menu and package builder) */
+.dish-details {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
 .menu-course-empty {
   font-size: var(--fs-small);
   color: var(--text-muted);

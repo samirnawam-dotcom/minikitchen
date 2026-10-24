@@ -169,10 +169,65 @@ const SITE_CONFIG = {
   ],
 
   cateringChoiceGroups: [
-    { id: "appetizers", name: "Appetizers", nameAr: "مقبلات", items: [] },
+    {
+      id: "appetizers",
+      name: "Appetizers",
+      nameAr: "مقبلات",
+      items: [
+        { name: "Hummus", nameAr: "حمص" },
+        { name: "Wara2 Enab (Grape Leaves)", nameAr: "ورق عنب" },
+        { name: "Moutabal", nameAr: "متبل" },
+        { name: "Raheb", nameAr: "راهب" },
+        { name: "Ma8mour", nameAr: "محمور" },
+        { name: "Dolma", nameAr: "دولما" },
+        { name: "Samki Harra Fillet", nameAr: "سمكي حارة فيليه" },
+        { name: "Whole Fish with Hot Sauce", nameAr: "سمك حار (سمكة كاملة)" },
+        { name: "Tajen Fillet", nameAr: "طاجن فيليه" },
+        { name: "Whole Fish Tajen", nameAr: "طاجن (سمكة كاملة)" },
+        { name: "Hummus Pesto", nameAr: "حمص بيستو" },
+        { name: "Hummus Beiruti", nameAr: "حمص بيروتي" },
+        { name: "Hummus Shmandar (Beetroot)", nameAr: "حمص شمندر" },
+        { name: "Moutabal Pesto", nameAr: "متبل بيستو" },
+        { name: "Moutabal Shmandar (Beetroot)", nameAr: "متبل شمندر" },
+        { name: "Rosto Mad2ou2", nameAr: "روستو مدقوق" }
+      ]
+    },
     { id: "pastries", name: "Pastries", nameAr: "معجنات", items: [] },
-    { id: "salads", name: "Salads", nameAr: "سلطات", items: [] },
-    { id: "quiche", name: "Quiche", nameAr: "كيش", items: [] },
+    {
+      id: "salads",
+      name: "Salads",
+      nameAr: "سلطات",
+      items: [
+        { name: "Fattoush", nameAr: "فتوش" },
+        { name: "Tabbouleh", nameAr: "تبوله" },
+        { name: "Chicken Caesar", nameAr: "شكن سيزر" },
+        { name: "Teriyaki Chicken", nameAr: "ترياكي تشكن" },
+        { name: "Eggplant Salad", nameAr: "سلطه باتنجان" },
+        { name: "Beetroot Salad", nameAr: "سلطه شمندر" },
+        { name: "Greek Salad", nameAr: "سلطه يونانيه" },
+        { name: "Green Salad", nameAr: "سلطه خضراء" },
+        { name: "Rocca Salad", nameAr: "روكا سلاد" },
+        { name: "Crab Salad", nameAr: "كراب سلاد" },
+        { name: "Quinoa Mix Salad", nameAr: "كينوا سلاد مكس" },
+        { name: "Quinoa Shrimp Salad", nameAr: "كينوا قريدس سلاد" },
+        { name: "Tuna Pasta Salad", nameAr: "تونا باستا سلاد" },
+        { name: "Seasonal Salad", nameAr: "سلطه موسميه" },
+        { name: "Chicken or Beef Noodles", nameAr: "نودلز دجاج او لحم" },
+        { name: "Tomato Mozzarella di Bufala", nameAr: "طماطم موتزاريلا بوفالا" },
+        { name: "Bresaola Salad", nameAr: "سلطة بريزاولا" },
+        { name: "Artichoke Heart Salad", nameAr: "سلطة قلب الأرضي شوكي" },
+        { name: "Panache Salad", nameAr: "سلطة باناشيه" }
+      ]
+    },
+    {
+      id: "quiche",
+      name: "Quiche",
+      nameAr: "كيش",
+      items: [
+        { name: "Mini Quiche Chicken", nameAr: "ميني كيش دجاج" },
+        { name: "Mini Quiche Mushroom", nameAr: "ميني كيش فطر" }
+      ]
+    },
     {
       id: "hot-mains",
       name: "Hot main courses",
@@ -200,8 +255,41 @@ const SITE_CONFIG = {
         { name: "Grilled Chicken with Potatoes & Vegetables", nameAr: "غرلد تشكن مع بطاطا وخضار" }
       ]
     },
-    { id: "desserts", name: "Desserts", nameAr: "حلويات", items: [] },
-    { id: "mini-sandwiches", name: "Mini sandwiches", nameAr: "ميني سندويشات", items: [] },
+    {
+      id: "desserts",
+      name: "Desserts",
+      nameAr: "حلويات",
+      items: [
+        { name: "Profiterole", nameAr: "بروفيترول", desc: "Vanilla, green pistachio, chocolate, red blueberry, raspberry", descAr: "فانيلا، فستق أخضر، شوكولا، بلو بيري أحمر، راسبيري" },
+        { name: "Tarte", nameAr: "تارت", desc: "Chocolate, vanilla strawberry, mango, lemon, framboise cherry, passion fruit, all berries", descAr: "شوكولا، فانيلا فراولة، مانجو، ليمون، فرامبوز كرز، باشن فروت، جميع التوت" },
+        { name: "Mini Cake", nameAr: "ميني كيك", desc: "Chocolate vanilla, mango, strawberry lemon, Nutella Oreo, Lotus, caramel, cherry, passion fruit", descAr: "شوكولا فانيلا، مانجو، فراولة ليمون، نوتيلا أوريو، لوتس، كراميل، كرز، باشن فروت" },
+        { name: "Mille-Feuille", nameAr: "ميلفاي", desc: "Strawberry, vanilla chocolate, mango, lemon, framboise, passion fruit, all berries", descAr: "فراولة، فانيلا شوكولا، مانجو، ليمون، فرامبواز، باشن فروت، جميع التوت" },
+        { name: "Mini Eclair", nameAr: "ميني إكلير", desc: "Chocolate, vanilla, strawberry", descAr: "شوكولا، فانيلا، فراولة" }
+      ]
+    },
+    {
+      id: "mini-sandwiches",
+      name: "Mini sandwiches",
+      nameAr: "ميني سندويشات",
+      items: [
+        { name: "Mini Burger Beef", nameAr: "ميني برغر لحم" },
+        { name: "Mini Burger Chicken", nameAr: "ميني برغر دجاج" },
+        { name: "Mini Sandwich Fajita", nameAr: "ميني سندوتش فاهيتا" },
+        { name: "Mini Sandwich Philadelphia", nameAr: "ميني سندوتش فيلادلفيا" },
+        { name: "Mini Sandwich Tuna Mix", nameAr: "ميني سندوتش تونا ميكس" },
+        { name: "Mini Sandwich Chicken Mix", nameAr: "ميني سندوتش دجاج ميكس" },
+        { name: "Mini Sandwich Rosto", nameAr: "ميني سندوتش روستو" },
+        { name: "Mini Sandwich Turkey & Cheese", nameAr: "ميني سندوتش ديك رومي وجبنة" },
+        { name: "Mini Sandwich Chicken Pesto", nameAr: "ميني سندوتش دجاج بيستو" },
+        { name: "Mini Sandwich Chicken Avocado", nameAr: "ميني سندوتش دجاج أفوكادو" },
+        { name: "Mini Sandwich Beef Teriyaki", nameAr: "ميني سندوتش لحم ترياكي" },
+        { name: "Mini Sandwich Feta Cucumber", nameAr: "ميني سندوتش فيتا خيار" },
+        { name: "Mini Sandwich Shrimp Mix", nameAr: "ميني سندوتش جمبري ميكس" },
+        { name: "Mini Sandwich Smoked Salmon", nameAr: "ميني سندوتش سلمون مدخن" },
+        { name: "Mini Sandwich Hot Dog", nameAr: "ميني سندوتش هوت دوغ" },
+        { name: "Mini Sandwich Crab", nameAr: "ميني سندوتش كراب" }
+      ]
+    },
     {
       id: "mini-bites",
       name: "Mini bites",
@@ -220,7 +308,18 @@ const SITE_CONFIG = {
     },
     { id: "mini-salads", name: "Mini salads", nameAr: "ميني سلطات", items: [] },
     { id: "mini-pastries", name: "Mini mo3ajanet (pastries)", nameAr: "ميني معجنات", items: [] },
-    { id: "mini-desserts", name: "Mini desserts", nameAr: "ميني حلويات", items: [] }
+    {
+      id: "mini-desserts",
+      name: "Mini desserts",
+      nameAr: "ميني حلويات",
+      items: [
+        { name: "Profiterole", nameAr: "بروفيترول", desc: "Vanilla, green pistachio, chocolate, red blueberry, raspberry", descAr: "فانيلا، فستق أخضر، شوكولا، بلو بيري أحمر، راسبيري" },
+        { name: "Tarte", nameAr: "تارت", desc: "Chocolate, vanilla strawberry, mango, lemon, framboise cherry, passion fruit, all berries", descAr: "شوكولا، فانيلا فراولة، مانجو، ليمون، فرامبوز كرز، باشن فروت، جميع التوت" },
+        { name: "Mini Cake", nameAr: "ميني كيك", desc: "Chocolate vanilla, mango, strawberry lemon, Nutella Oreo, Lotus, caramel, cherry, passion fruit", descAr: "شوكولا فانيلا، مانجو، فراولة ليمون، نوتيلا أوريو، لوتس، كراميل، كرز، باشن فروت" },
+        { name: "Mille-Feuille", nameAr: "ميلفاي", desc: "Strawberry, vanilla chocolate, mango, lemon, framboise, passion fruit, all berries", descAr: "فراولة، فانيلا شوكولا، مانجو، ليمون، فرامبواز، باشن فروت، جميع التوت" },
+        { name: "Mini Eclair", nameAr: "ميني إكلير", desc: "Chocolate, vanilla, strawberry", descAr: "شوكولا، فانيلا، فراولة" }
+      ]
+    }
   ],
 
   eventPackages: [

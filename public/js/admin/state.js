@@ -5,6 +5,7 @@ import DEFAULT_SITE_CONFIG from '../data/site-config.js';
 import { MENU_CATEGORIES as DEFAULT_MENU_CATEGORIES } from '../data/menu.js';
 import { deepClone } from '../shared/dom.js';
 import { loadJson, saveJson, getItem, setItem, removeItem } from '../shared/storage.js';
+import { CATERING_MENU_VERSION, upgradeCateringMenu } from '../shared/catering-menu.js';
 
 export const DEFAULT_LBP_RATE = 89500;
 
@@ -56,7 +57,7 @@ export function defaultMenuCategories() {
 
 /** Server-backed data. Tabs mutate these objects in place and then call a save function in sync.js. */
 export const data = {
-  siteConfig: loadJson(KEYS.siteConfig) || defaultSiteConfig(),
+  siteConfig: upgradeSiteConfig(loadJson(KEYS.siteConfig) || defaultSiteConfig()),
   menuCategories: repairMenuPhotos(loadJson(KEYS.menu)) || defaultMenuCategories(),
   lbpRate: Number(getItem(KEYS.lbpRate)) || DEFAULT_LBP_RATE,
   orders: loadJson(KEYS.orders, [])
@@ -90,8 +91,18 @@ export const ui = {
 
 // ---- Server data setters (also refresh the local cache) -------------------------------------
 
+/** Fills dish lists saved empty before they were published (see shared/catering-menu.js). */
+function upgradeSiteConfig(config) {
+  if (!config || typeof config !== 'object') return config;
+  if (Array.isArray(config.cateringChoiceGroups)) {
+    config.cateringChoiceGroups = upgradeCateringMenu(config, DEFAULT_SITE_CONFIG);
+  }
+  config.cateringMenuVersion = CATERING_MENU_VERSION;
+  return config;
+}
+
 export function setSiteConfig(config) {
-  data.siteConfig = config;
+  data.siteConfig = upgradeSiteConfig(config);
   if (!data.siteConfig.seo && DEFAULT_SITE_CONFIG.seo) data.siteConfig.seo = deepClone(DEFAULT_SITE_CONFIG.seo);
   saveJson(KEYS.siteConfig, data.siteConfig);
 }
