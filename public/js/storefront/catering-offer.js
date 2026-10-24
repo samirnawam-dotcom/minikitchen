@@ -200,6 +200,70 @@ export function bitesMenu() {
           </ul>`;
 }
 
+/** Dish lists used by the packages of one kind, in package order, with each package's count. */
+function menuGroups(type) {
+  const order = [];
+  const counts = new Map();
+  for (const pkg of packages(type)) {
+    for (const choice of pkg.choices || []) {
+      if (!findGroup(choice.group)) continue;
+      if (!counts.has(choice.group)) {
+        order.push(choice.group);
+        counts.set(choice.group, []);
+      }
+      counts.get(choice.group).push({ name: localName(pkg), count: Number(choice.count) || 0 });
+    }
+  }
+  return order.map(id => ({ group: findGroup(id), counts: counts.get(id) }));
+}
+
+/** "Classic 4 · Premium 6 · VIP 8" (or "Included" for a selection), so customers see what each package allows. */
+function countsLine(counts) {
+  if (counts.every(c => c.count === 0)) return 'Included in every package';
+  return counts
+    .map(c => `${esc(c.name)} <strong>${c.count || '—'}</strong>`)
+    .join('<span aria-hidden="true"> · </span>');
+}
+
+function menuCourse({ group, counts }) {
+  const items = groupItems(group);
+  return `
+            <section class="menu-course">
+              <header class="menu-course-head">
+                <h4 class="menu-course-title">${nameBlock(group)}</h4>
+                <p class="menu-course-counts">${countsLine(counts)}</p>
+              </header>
+              ${
+                items.length
+                  ? `<ul class="menu-course-items">${items.map(i => `<li>${nameBlock(i, 'menu-dish')}</li>`).join('')}</ul>`
+                  : '<p class="menu-course-empty">Our chef shares the current choices with you when you send your request.</p>'
+              }
+            </section>`;
+}
+
+/**
+ * The catering menu without prices: every dish customers can choose from, grouped by course,
+ * for buffets and Birthday Minis, so they can look before building a package.
+ */
+export function cateringMenuBook() {
+  const parts = [
+    { type: 'buffet', title: 'Event buffet menu' },
+    { type: 'birthday', title: 'Birthday Mini menu' }
+  ]
+    .map(part => ({ ...part, courses: menuGroups(part.type) }))
+    .filter(part => part.courses.length);
+  if (parts.length === 0) return '<p class="empty-state">Our menu is coming soon.</p>';
+  return parts
+    .map(
+      part => `
+          <div class="menu-book">
+            <h3 class="menu-book-title">${part.title}</h3>
+            <div class="menu-book-grid">${part.courses.map(menuCourse).join('')}</div>
+          </div>`
+    )
+    .join('');
+}
+
 /** Extras offered on request (bar, plate service, waiters, chef). */
 export function extrasNote() {
   const extras = cateringList('cateringExtras');

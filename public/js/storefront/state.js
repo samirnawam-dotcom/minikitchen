@@ -31,7 +31,7 @@ function loadCart() {
 
 export const state = {
   currentPage: 'catering', // one of PAGE_IDS
-  cateringMenusTab: 'buffet', // 'buffet' | 'birthday' | 'stations' | 'trays' | 'bites'
+  cateringMenusTab: 'buffet', // 'buffet' | 'birthday' | 'menu' | 'stations' | 'trays' | 'bites'
   restoViewTab: 'menu', // 'menu' | 'atmosphere'
   deliveryCategory: 'all',
   deliverySearch: '',
