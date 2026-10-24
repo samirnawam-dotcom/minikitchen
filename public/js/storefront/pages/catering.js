@@ -11,6 +11,8 @@ import { registerPage } from '../view.js';
 import {
   eventPackageCard,
   extrasNote,
+  faqList,
+  howItWorks,
   fromPriceLabel,
   localName,
   nameBlock,
@@ -31,7 +33,7 @@ function heroSection() {
   return `
       <section class="hero-section home-hero">
         <div class="home-hero-media">
-          <img src="${esc(hero.img || HERO_FALLBACK)}" data-fallback="${esc(HERO_FALLBACK)}" alt="${esc(hero.title || 'A Mini Kitchen event set-up')}" />
+          <img src="${esc(hero.img || HERO_FALLBACK)}" data-fallback="${esc(HERO_FALLBACK)}" alt="${esc(hero.title || 'A Mini Kitchen event set-up')}" fetchpriority="high" width="1800" height="1200" />
         </div>
         <div class="container home-hero-copy">
           <span class="eyebrow">Mini Kitchen Catering · Aley, Lebanon</span>
@@ -59,7 +61,7 @@ function typesSection() {
                 return `
             <article class="type-card">
               <button type="button" class="type-card-media" data-action="catering:open-type" data-tab="${esc(TYPE_TABS[t.id] || 'buffet')}" aria-label="${esc(`See ${t.name}`)}">
-                <img src="${esc(t.img)}" data-fallback="" alt="" loading="lazy" />
+                <img src="${esc(t.img)}" data-fallback="" alt="" loading="lazy" width="500" height="625" />
               </button>
               <h3 class="type-card-title">${nameBlock(t)}</h3>
               ${from ? `<div class="type-card-price">${esc(from)}</div>` : ''}
@@ -134,6 +136,29 @@ function gallerySection() {
       </section>`;
 }
 
+function howSection() {
+  return `
+      <section class="section-pad section-how" id="howItWorks">
+        <div class="container">
+          ${sectionHeader({ eyebrow: 'How it works', title: 'From first idea to confirmed menu', text: 'No forms to print and no deposit online — your request goes straight to our catering team.' })}
+          ${howItWorks()}
+          <div class="center-link">
+            <button class="btn btn-primary" data-action="builder:start">Start building your package</button>
+          </div>
+        </div>
+      </section>`;
+}
+
+function faqSection() {
+  return `
+      <section class="section-pad section-ivory" id="cateringFaq">
+        <div class="container container-narrow">
+          ${sectionHeader({ eyebrow: 'Good to know', title: 'Questions we are often asked' })}
+          ${faqList()}
+        </div>
+      </section>`;
+}
+
 /** Restaurant and delivery are side businesses: one quiet band near the bottom of the page. */
 function alsoFromSection() {
   return `
@@ -160,12 +185,14 @@ function buildCateringHomePage() {
   return `
       ${heroSection()}
       ${typesSection()}
+      ${howSection()}
       ${buffetSection()}
       ${birthdaySection()}
       ${stationsSection()}
       ${gallerySection()}
       ${testimonialsSection()}
       ${packageBuilderSection({ ivory: false })}
+      ${faqSection()}
       ${alsoFromSection()}
     `;
 }

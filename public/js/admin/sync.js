@@ -44,7 +44,13 @@ function applyOrders(orders) {
   hasLoadedOrders = true;
   if (arrived.length > 0) {
     playChime();
-    showToast(`🔔 New Order ${arrived[0].id}: ${arrived[0].customerName || 'Customer'}`);
+    const first = arrived[0];
+    const what = first.type === 'catering_quote' ? 'New catering request' : 'New order';
+    showToast(
+      arrived.length > 1
+        ? `${arrived.length} new orders and requests have arrived.`
+        : `${what} from ${first.customerName || 'a customer'} (#${first.id}).`
+    );
   }
 }
 
@@ -59,7 +65,7 @@ export async function refreshFromServer({ silent = false, background = false } =
   try {
     state = await api.state();
   } catch (err) {
-    if (!background) showError(`Could not sync with the server: ${err.message}`);
+    if (!background) showError(`Could not load the latest data: ${err.message}`);
     updateNavBadges();
     if (!background) renderActiveTab();
     return false;
@@ -98,7 +104,7 @@ export async function refreshFromServer({ silent = false, background = false } =
       renderActiveTab();
     }
   }
-  if (!silent) showToast('Synced live data with SQLite database & website!');
+  if (!silent) showToast('Everything is up to date.');
   return true;
 }
 
@@ -115,7 +121,7 @@ export async function saveSiteConfig() {
     if (result.lbpRate) setLbpRate(result.lbpRate);
     return true;
   } catch (err) {
-    showError(`Website settings were not saved: ${err.message}`);
+    showError(`Not saved: ${err.message}`);
     return false;
   }
 }
@@ -127,7 +133,7 @@ export async function saveMenu() {
     await api.saveMenu(data.menuCategories, data.lbpRate);
     return true;
   } catch (err) {
-    showError(`Menu was not saved: ${err.message}`);
+    showError(`Menu not saved: ${err.message}`);
     return false;
   }
 }

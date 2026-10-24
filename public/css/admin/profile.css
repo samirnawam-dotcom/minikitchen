@@ -1,24 +1,22 @@
-/* Back Office — sidebar admin profile pill */
+/* Back Office — sidebar signed-in user pill */
 
-/* SIDEBAR ADMIN PROFILE PILL */
 .bo-admin-user-pill {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 4px;
+  padding: 9px 10px;
+  border-radius: var(--bo-radius);
+  background: #fff;
+  border: 1px solid var(--bo-border);
 }
 
 .bo-admin-avatar {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(197, 155, 39, 0.2);
+  background: var(--bo-gold-soft);
   border: 1px solid var(--bo-gold);
-  color: #f3d28e;
+  color: var(--bo-gold-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,37 +25,48 @@
 }
 
 .bo-admin-name {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--bo-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .bo-admin-role {
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.74rem;
+  color: var(--bo-muted);
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
+.bo-admin-role::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--bo-success);
+}
+
 .bo-logout-icon-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  border: 1px solid rgba(220, 38, 38, 0.35);
-  background: rgba(220, 38, 38, 0.14);
-  color: #fca5a5;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--bo-border-strong);
+  background: #fff;
+  color: var(--bo-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  flex-shrink: 0;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .bo-logout-icon-btn:hover {
-  background: #dc2626;
-  color: #ffffff;
+  color: var(--bo-danger);
+  border-color: var(--bo-danger);
 }

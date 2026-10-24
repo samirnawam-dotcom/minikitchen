@@ -40,7 +40,7 @@ function atmosphereTab() {
 }
 
 const tabButton = (tab, activeTab, label) => `
-            <button type="button" class="segmented-btn ${activeTab === tab ? 'active' : ''}" data-action="restaurant:tab" data-tab="${tab}">${label}</button>`;
+            <button type="button" role="tab" id="rtTab-${tab}" aria-controls="rtPanel" aria-selected="${activeTab === tab}" tabindex="${activeTab === tab ? '0' : '-1'}" class="segmented-btn ${activeTab === tab ? 'active' : ''}" data-action="restaurant:tab" data-tab="${tab}">${label}</button>`;
 
 function buildRestaurantPage() {
   const { contacts, location } = content.config;
@@ -69,12 +69,15 @@ function buildRestaurantPage() {
 
       <section class="section-pad section-ivory section-tight-top" id="restoDigitalMenuSection">
         <div class="container">
-          <div class="segmented" role="tablist">
+          <h2 class="sr-only">Restaurant menu, photos and opening hours</h2>
+          <div class="segmented" role="tablist" aria-label="Restaurant">
             ${tabButton('menu', activeTab, 'Menu')}
             ${tabButton('atmosphere', activeTab, 'Photos, hours &amp; map')}
           </div>
 
+          <div role="tabpanel" id="rtPanel" aria-labelledby="rtTab-${activeTab}">
           ${activeTab === 'menu' ? renderMenuExplorer('resto') : atmosphereTab()}
+          </div>
         </div>
       </section>
     `;

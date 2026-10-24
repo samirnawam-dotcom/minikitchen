@@ -10,27 +10,27 @@ import { isSoundEnabled } from '../ui/sound.js';
 import { itemQty } from '../orders/order-card.js';
 
 const COLUMNS = [
-  { status: 'new', label: 'New Orders', icon: 'fa-solid fa-bell', next: 'confirmed', action: 'Accept & Confirm' },
+  { status: 'new', label: 'New', icon: 'fa-solid fa-bell', next: 'confirmed', action: 'Accept' },
   {
     status: 'confirmed',
     label: 'Confirmed',
     icon: 'fa-solid fa-circle-check',
     next: 'preparing',
-    action: 'Start Preparing'
+    action: 'Start preparing'
   },
   {
     status: 'preparing',
-    label: 'Preparing in Kitchen',
+    label: 'Preparing',
     icon: 'fa-solid fa-fire-burner',
     next: 'out_for_delivery',
-    action: 'Ready / Out for Delivery'
+    action: 'Ready / sent out'
   },
   {
     status: 'out_for_delivery',
-    label: 'Out for Delivery / Ready',
+    label: 'Ready / out for delivery',
     icon: 'fa-solid fa-motorcycle',
     next: 'completed',
-    action: 'Mark Completed'
+    action: 'Done'
   }
 ];
 
@@ -95,7 +95,7 @@ function ticket(o, column, now) {
         <button type="button" class="bo-btn bo-btn-primary" data-action="orders:advance" data-id="${id}" data-status="${column.next}">
           ${column.action} <i class="fa-solid fa-arrow-right"></i>
         </button>
-        <button type="button" class="bo-btn bo-btn-outline" data-action="orders:print-ticket" data-id="${id}" title="Print Ticket" aria-label="Print ticket ${id}">
+        <button type="button" class="bo-btn bo-btn-outline" data-action="orders:print-ticket" data-id="${id}" title="Print ticket" aria-label="Print ticket ${id}">
           <i class="fa-solid fa-print"></i>
         </button>
       </div>
@@ -113,16 +113,16 @@ function render() {
     <div class="bo-panel">
       <div class="bo-panel-header">
         <div>
-          <div class="bo-panel-title"><i class="fa-solid fa-fire-burner" style="color:var(--bo-terracotta);"></i> Live Kitchen Board (${active.length} Active)</div>
-          <div style="font-size:0.8rem; color:var(--bo-muted);">Oldest orders first • Tickets turn amber after ${WARN_MINUTES} min and red after ${LATE_MINUTES} min • Refreshes automatically</div>
+          <h2 class="bo-panel-title">${active.length} order${active.length === 1 ? '' : 's'} in progress</h2>
+          <div class="bo-panel-sub">Oldest first. A ticket turns amber after ${WARN_MINUTES} minutes and red after ${LATE_MINUTES}. Updates by itself.</div>
         </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="bo-btn bo-btn-outline" data-action="sound:toggle" title="Toggle Kitchen Chime for New Orders">
-            <i class="fa-solid ${sound ? 'fa-bell' : 'fa-bell-slash'}" style="color:${sound ? '#16a34a' : 'var(--bo-muted)'};"></i>
-            ${sound ? 'Chime: ON' : 'Chime: Muted'}
+        <div class="bo-panel-actions">
+          <button type="button" class="bo-btn bo-btn-outline" data-action="sound:toggle" aria-pressed="${sound}">
+            <i class="fa-solid ${sound ? 'fa-bell' : 'fa-bell-slash'}" aria-hidden="true"></i>
+            ${sound ? 'Sound on' : 'Sound off'}
           </button>
-          <button class="bo-btn bo-btn-outline" data-action="nav:tab" data-tab="orders">
-            <i class="fa-solid fa-list"></i> All Orders
+          <button type="button" class="bo-btn bo-btn-outline" data-action="nav:tab" data-tab="orders">
+            <i class="fa-solid fa-list" aria-hidden="true"></i> All orders
           </button>
         </div>
       </div>
@@ -137,7 +137,7 @@ function render() {
                   <span class="bo-kds-count">${list.length}</span>
                 </header>
                 <div class="bo-kds-col-body">
-                  ${list.length ? list.map(o => ticket(o, column, now)).join('') : '<div class="bo-kds-empty">No orders</div>'}
+                  ${list.length ? list.map(o => ticket(o, column, now)).join('') : '<div class="bo-kds-empty">Nothing here right now</div>'}
                 </div>
               </section>`;
           }).join('')}
@@ -149,6 +149,6 @@ function render() {
 
 registerTab('kds', {
   title: 'Kitchen',
-  subtitle: '',
+  subtitle: 'Orders being prepared, in four steps. Tap the button to move a ticket on.',
   render
 });

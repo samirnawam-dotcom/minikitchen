@@ -31,6 +31,15 @@
   font-size: 1.05em;
 }
 
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary:hover,
+.btn-whatsapp:hover {
+  box-shadow: var(--shadow-soft);
+}
+
 .btn-primary {
   background: var(--ink);
   color: #fff;
@@ -384,52 +393,7 @@
   max-width: 58ch;
 }
 
-.page-hero.has-photo .page-hero-text {
-  margin-inline: 0;
-}
-
-.hero-meta {
-  justify-content: flex-start;
-}
-
-.page-hero.has-photo .eyebrow,
-.page-hero.has-photo .hero-meta i {
-  color: #f0d79a;
-}
-
-.page-hero.has-photo .page-hero-title {
-  color: #fff;
-}
-
-.page-hero.has-photo .page-hero-text,
-.page-hero.has-photo .hero-meta {
-  color: rgba(255, 255, 255, 0.88);
-}
-
-.page-hero.has-photo .btn-outline {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.7);
-}
-
-.page-hero.has-photo .btn-outline:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: #fff;
-}
-
-.page-hero-title {
-  font-size: clamp(2.1rem, 3.8vw, 3.2rem);
-  line-height: 1.12;
-  margin-top: 14px;
-}
-
-.page-hero-text {
-  font-size: 1.08rem;
-  color: var(--text-muted);
-  margin: 18px auto 0;
-  max-width: 58ch;
-}
-
-.page-hero.has-photo .page-hero-text {
+.page-hero .page-hero-text {
   margin-inline: 0;
 }
 
@@ -731,17 +695,31 @@ html.lightbox-lock body {
 }
 
 .package-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--bg-card);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
   overflow: hidden;
-  transition: border-color 0.25s ease;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.35s var(--ease),
+    transform 0.35s var(--ease);
 }
 
 .package-card:hover {
   border-color: var(--line-strong);
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-3px);
+}
+
+.package-card-media img {
+  transition: transform 1.2s var(--ease);
+}
+
+.package-card:hover .package-card-media img {
+  transform: scale(1.03);
 }
 
 .package-card-media {
@@ -822,42 +800,63 @@ html.lightbox-lock body {
 .reviews-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
-  gap: clamp(28px, 4vw, 56px);
+  gap: var(--space-5);
 }
 
 .review-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  padding-top: 26px;
-  border-top: 1px solid var(--line-strong);
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Large serif quotation mark, decorative */
+.review-mark {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 22px;
+  font-family: var(--font-serif);
+  font-size: 4.6rem;
+  line-height: 1;
+  color: var(--brand-soft);
+  pointer-events: none;
 }
 
 .review-stars {
+  display: flex;
+  gap: 3px;
   color: var(--brand-primary);
-  font-size: 0.72rem;
-  letter-spacing: 3px;
-  margin-bottom: 16px;
+  font-size: 0.78rem;
+  margin-bottom: var(--space-4);
 }
 
 .review-quote {
+  position: relative;
   flex: 1;
   font-family: var(--font-serif);
-  font-size: 1.12rem;
+  font-size: 1.1rem;
   font-style: italic;
   line-height: 1.6;
   color: var(--ink);
-  margin-bottom: 22px;
+  margin-bottom: var(--space-5);
 }
 
 .review-author {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
 }
 
 .review-author img {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
   border-radius: 50%;
   object-fit: cover;
   background: var(--bg-sunken);
@@ -874,6 +873,141 @@ html.lightbox-lock body {
   display: block;
   font-size: var(--fs-xs);
   color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* ============================================================================
+   HOW IT WORKS (catering) & FREQUENTLY ASKED QUESTIONS
+   ============================================================================ */
+.section-how {
+  border-top: 1px solid var(--line);
+}
+
+.how-steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+  counter-reset: how;
+}
+
+.how-step {
+  position: relative;
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+
+/* A hairline arrow between the steps on wide screens */
+.how-step + .how-step::before {
+  content: '';
+  position: absolute;
+  top: 52px;
+  inset-inline-start: calc(-1 * var(--space-5));
+  width: var(--space-5);
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.how-step-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-size: 1.05rem;
+}
+
+.how-step-num {
+  display: block;
+  margin-top: var(--space-4);
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.how-step-title {
+  font-size: 1.3rem;
+  margin: 6px 0 8px;
+}
+
+.how-step-text {
+  color: var(--text-muted);
+  font-size: 0.94rem;
+}
+
+.how-steps-compact .how-step {
+  padding: var(--space-5);
+}
+
+.how-steps-compact .how-step + .how-step::before {
+  top: 46px;
+}
+
+.faq-list {
+  border-top: 1px solid var(--line-strong);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 20px 2px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-serif);
+  font-size: 1.14rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary:hover {
+  color: var(--brand-ink);
+}
+
+.faq-icon {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  color: var(--ink);
+  transition:
+    transform 0.3s var(--ease),
+    background-color 0.2s ease;
+}
+
+.faq-item[open] .faq-icon {
+  transform: rotate(45deg);
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.faq-answer {
+  padding: 0 2px 22px;
+  color: var(--text);
+  font-size: 0.97rem;
 }
 
 /* ============================================================================
@@ -938,7 +1072,7 @@ html.lightbox-lock body {
 }
 
 .form-control::placeholder {
-  color: #8f877c;
+  color: var(--text-placeholder);
 }
 
 .form-control:focus {
@@ -1038,6 +1172,11 @@ textarea.form-control {
   width: 100%;
   aspect-ratio: 4 / 5;
   object-fit: cover;
+  transition: transform 1.2s var(--ease);
+}
+
+.team-card:hover .team-card-media img {
+  transform: scale(1.03);
 }
 
 .team-role {
@@ -1134,6 +1273,30 @@ textarea.form-control {
   border: 1px solid var(--line);
   border-top: 2px solid #c59b27;
   border-radius: var(--radius-card);
+  transition:
+    box-shadow 0.35s var(--ease),
+    transform 0.35s var(--ease);
+}
+
+.contact-card:hover {
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-2px);
+}
+
+/* Catering is the main business: its card leads */
+.contact-card-catering {
+  background: linear-gradient(180deg, var(--brand-soft), var(--bg-card) 55%);
+}
+
+.contact-card-link {
+  align-self: center;
+  margin: var(--space-4) 0 -6px;
+}
+
+.contact-card-phone i {
+  font-size: 0.85em;
+  color: var(--brand-ink);
+  margin-inline-end: 6px;
 }
 
 .contact-card-restaurant {
@@ -1189,4 +1352,57 @@ textarea.form-control {
 .contact-aside .hero-actions {
   margin-top: 0;
   gap: 8px;
+}
+
+/* ============================================================================
+   404 PAGE (public/404.html)
+   ============================================================================ */
+.nf-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.nf-card {
+  max-width: 560px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-dialog);
+  padding: 44px 32px;
+  box-shadow: var(--shadow-soft);
+}
+
+.nf-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  margin: 0 auto 18px;
+  background: var(--brand-soft);
+  border: 1px solid var(--line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-ink);
+  font-size: 1.6rem;
+}
+
+.nf-title {
+  font-size: 2.1rem;
+  margin: 10px 0 12px;
+}
+
+.nf-text {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 auto 28px;
+}
+
+.nf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
 }

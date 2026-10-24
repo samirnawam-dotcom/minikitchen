@@ -4,18 +4,25 @@
 import { registerActions } from '../../shared/actions.js';
 import { esc, byId } from '../../shared/dom.js';
 import { data, ui, ensureSeo } from '../state.js';
-import { registerTab, renderActiveTab } from '../router.js';
+import { registerTab, renderActiveTab, confirmDiscard } from '../router.js';
 import { saveSiteConfig } from '../sync.js';
 import { showToast } from '../ui/toast.js';
 
 const PAGE_LABELS = {
-  catering: '1. Catering Homepage (index.html)',
-  'catering-menus': '2. Catering Menus & Packages (catering-menus.html)',
-  restaurant: '3. Mini Kitchen Restaurant Aley (restaurant.html)',
-  delivery: '4. Mini Kitchen Delivery Menu (delivery.html)',
-  about: '5. About Us & Chefs (about.html)',
-  contact: '6. Contact Us & WhatsApp (contact.html)'
+  catering: 'Home page',
+  'catering-menus': 'Catering menus',
+  restaurant: 'Restaurant',
+  delivery: 'Delivery',
+  about: 'About us',
+  contact: 'Contact'
 };
+
+const LIMITS = { title: 60, description: 160 };
+
+function counter(id, text, limit) {
+  const n = String(text || '').length;
+  return `<span class="bo-help" id="${id}" style="display:block;">${n} / ${limit} characters${n > limit ? ' — Google may cut the end off' : ''}</span>`;
+}
 
 const FALLBACK_META = {
   title: 'Mini Kitchen Catering | Luxury Wedding & Event Catering in Aley, Mount Lebanon',
@@ -39,25 +46,25 @@ function render() {
     <div class="bo-panel">
       <div class="bo-panel-header">
         <div>
-          <div class="bo-panel-title"><i class="fa-solid fa-magnifying-glass-chart" style="color:var(--bo-gold);"></i> Local & Multi-Brand SEO Manager (Ain Al Remmaneh, Aley)</div>
-          <div style="font-size:0.8rem; color:var(--bo-muted);">Optimize how Mini Kitchen Catering, Restaurant, and Delivery rank on Google Search & appear when shared on WhatsApp</div>
+          <h2 class="bo-panel-title">How each page appears on Google</h2>
+          <div class="bo-panel-sub">Choose a page, then edit the title and short description people see in Google results and WhatsApp link previews.</div>
         </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <a href="/sitemap.xml" target="_blank" rel="noopener" class="bo-btn bo-btn-outline">
-            <i class="fa-solid fa-sitemap"></i> View sitemap.xml
+        <div class="bo-panel-actions">
+          <a href="/sitemap.xml" target="_blank" rel="noopener" class="bo-btn bo-btn-outline bo-btn-sm">
+            <i class="fa-solid fa-sitemap" aria-hidden="true"></i> Sitemap
           </a>
-          <a href="/robots.txt" target="_blank" rel="noopener" class="bo-btn bo-btn-outline">
-            <i class="fa-solid fa-robot"></i> View robots.txt
+          <a href="/robots.txt" target="_blank" rel="noopener" class="bo-btn bo-btn-outline bo-btn-sm">
+            <i class="fa-solid fa-robot" aria-hidden="true"></i> robots.txt
           </a>
         </div>
       </div>
 
       <div class="bo-panel-body">
-        <div class="bo-toolbar" style="margin-bottom:20px; justify-content:flex-start;">
+        <div class="bo-pill-tabs" role="group" aria-label="Page" style="margin-bottom:20px;">
           ${Object.entries(PAGE_LABELS)
             .map(
               ([key, label]) => `
-            <button type="button" class="bo-filter-pill ${pageKey === key ? 'active' : ''}" data-action="seo:page" data-page="${key}">
+            <button type="button" class="bo-filter-pill ${pageKey === key ? 'active' : ''}" data-action="seo:page" data-page="${key}" aria-pressed="${pageKey === key}">
               ${label}
             </button>`
             )
@@ -65,52 +72,54 @@ function render() {
         </div>
 
         <div style="margin-bottom:22px;">
-          <div style="font-size:0.74rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:var(--bo-muted); margin-bottom:8px;">
-            <i class="fa-brands fa-google" style="color:#4285F4;"></i> Live Google Search Result Snippet Preview
-          </div>
+          <div class="bo-section-label">Preview on Google</div>
           <div class="bo-seo-serp-card">
             <div class="bo-seo-serp-url">
               <img src="${esc(data.siteConfig.logos?.main)}" alt="" style="width:18px; height:18px; border-radius:50%; object-fit:cover;" />
-              <span><b>Mini Kitchen</b> — ${esc(previewUrl)}</span>
+              <span style="overflow-wrap:anywhere;"><b>Mini Kitchen</b> — ${esc(previewUrl)}</span>
             </div>
             <div class="bo-seo-serp-title" id="seoPreviewTitle">${esc(meta.title)}</div>
             <div class="bo-seo-serp-desc" id="seoPreviewDesc">${esc(meta.description)}</div>
           </div>
         </div>
 
-        <form data-on-submit="seo:save">
-          <div class="bo-form-grid">
-            <div class="bo-form-group">
-              <label for="seoSiteUrl">Canonical Domain URL</label>
-              <input type="text" id="seoSiteUrl" class="bo-input" value="${esc(seo.siteUrl || DEFAULT_SITE_URL)}" />
-            </div>
-            <div class="bo-form-group">
-              <label for="seoGeoPlace">Geo-Target Location (Schema.org & Local SEO)</label>
-              <input type="text" id="seoGeoPlace" class="bo-input" value="${esc(seo.geoPlacename || 'Ain Al Remmaneh, Aley, Mount Lebanon, Lebanon')}" />
-            </div>
+        <form data-on-submit="seo:save" data-dirty-scope style="border:0;">
+          <div class="bo-form-group">
+            <label for="seoPageTitle">Page title *</label>
+            <input type="text" id="seoPageTitle" class="bo-input" value="${esc(meta.title || '')}" data-on-input="seo:preview" data-preview="seoPreviewTitle" data-counter="seoTitleCount" data-limit="${LIMITS.title}" required />
+            ${counter('seoTitleCount', meta.title, LIMITS.title)}
           </div>
 
-          <div class="bo-form-group" style="margin-top:14px;">
-            <label for="seoPageTitle">Page SEO Title Tag (<code>&lt;title&gt;</code> & OpenGraph Title) *</label>
-            <input type="text" id="seoPageTitle" class="bo-input" value="${esc(meta.title || '')}" data-on-input="seo:preview" data-preview="seoPreviewTitle" required />
+          <div class="bo-form-group" style="margin-top:16px;">
+            <label for="seoPageDesc">Short description *</label>
+            <textarea id="seoPageDesc" class="bo-textarea" rows="3" data-on-input="seo:preview" data-preview="seoPreviewDesc" data-counter="seoDescCount" data-limit="${LIMITS.description}" required>${esc(meta.description || '')}</textarea>
+            ${counter('seoDescCount', meta.description, LIMITS.description)}
           </div>
 
-          <div class="bo-form-group" style="margin-top:14px;">
-            <label for="seoPageDesc">Meta Description (<code>meta[name="description"]</code> & WhatsApp Share Preview) *</label>
-            <textarea id="seoPageDesc" class="bo-textarea" rows="3" data-on-input="seo:preview" data-preview="seoPreviewDesc" required>${esc(meta.description || '')}</textarea>
-          </div>
-
-          <div class="bo-form-group" style="margin-top:14px;">
-            <label for="seoPageKeywords">Target SEO Keywords (Comma separated)</label>
+          <div class="bo-form-group" style="margin-top:16px;">
+            <label for="seoPageKeywords">Search words</label>
             <input type="text" id="seoPageKeywords" class="bo-input" value="${esc(meta.keywords || '')}" />
+            <div class="bo-help">Words people might search for, separated by commas.</div>
           </div>
 
-          <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-            <div style="font-size:0.8rem; color:var(--bo-muted);">
-              <i class="fa-solid fa-circle-check" style="color:var(--bo-wa);"></i> Includes <b>JSON-LD @graph Schema</b> for Catering, Restaurant, Delivery & Local FAQ
+          <details style="margin-top:18px;">
+            <summary style="cursor:pointer; font-weight:700; color:var(--bo-text);">Advanced: website address and location</summary>
+            <div class="bo-form-grid" style="margin-top:12px;">
+              <div class="bo-form-group">
+                <label for="seoSiteUrl">Website address</label>
+                <input type="text" id="seoSiteUrl" class="bo-input" value="${esc(seo.siteUrl || DEFAULT_SITE_URL)}" />
+              </div>
+              <div class="bo-form-group">
+                <label for="seoGeoPlace">Location for local search</label>
+                <input type="text" id="seoGeoPlace" class="bo-input" value="${esc(seo.geoPlacename || 'Ain Al Remmaneh, Aley, Mount Lebanon, Lebanon')}" />
+              </div>
             </div>
-            <button type="submit" class="bo-btn bo-btn-gold">
-              <i class="fa-solid fa-floppy-disk"></i> Save SEO Settings for ${PAGE_LABELS[pageKey]}
+          </details>
+
+          <div class="bo-form-footer">
+            <span class="bo-save-state">Unsaved changes</span>
+            <button type="submit" class="bo-btn bo-btn-gold" data-save-button style="margin-left:auto;">
+              <i class="fa-solid fa-check" aria-hidden="true"></i> Save “${PAGE_LABELS[pageKey]}”
             </button>
           </div>
         </form>
@@ -136,23 +145,29 @@ async function saveSeo() {
     return;
   }
   renderActiveTab();
-  showToast(`SEO metadata saved for "${pageKey}" page!`);
+  showToast(`Saved — Google will pick up the new “${PAGE_LABELS[pageKey]}” texts on its next visit.`);
 }
 
 registerActions({
-  'seo:page': el => {
+  'seo:page': async el => {
+    if (!(await confirmDiscard())) return;
     ui.seoPageKey = PAGE_LABELS[el.dataset.page] ? el.dataset.page : 'catering';
     renderActiveTab();
   },
   'seo:preview': el => {
     const target = byId(el.dataset.preview);
     if (target) target.textContent = el.value;
+    const count = byId(el.dataset.counter);
+    const limit = Number(el.dataset.limit);
+    if (count) {
+      count.textContent = `${el.value.length} / ${limit} characters${el.value.length > limit ? ' — Google may cut the end off' : ''}`;
+    }
   },
   'seo:save': () => saveSeo()
 });
 
 registerTab('seo', {
-  title: 'Google Search',
-  subtitle: '',
+  title: 'Google search',
+  subtitle: 'The title and description Google and WhatsApp show for each page.',
   render
 });

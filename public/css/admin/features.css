@@ -1,45 +1,18 @@
-/* Back Office — Kitchen Display (KDS) board, Reviews cards, the SEO page selector pills and the Packages
-   tab editors. Colours use the theme tokens, so dark.css only needs to override the few literal colours below. */
-
-/* SEO PAGE SELECTOR PILLS (previously unstyled) */
-.bo-filter-pill {
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--bo-border);
-  background: var(--bo-card);
-  color: var(--bo-muted);
-  font-family: var(--font-sans);
-  font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.bo-filter-pill:hover {
-  border-color: var(--bo-gold);
-  color: var(--bo-text);
-}
-
-.bo-filter-pill.active {
-  background: var(--bo-sidebar);
-  color: #fff;
-  border-color: var(--bo-sidebar);
-}
+/* Back Office — Kitchen Display (KDS) board, Reviews / Photos cards and the Packages tab editors. */
 
 /* KITCHEN DISPLAY BOARD */
 .bo-kds-board {
   display: grid;
-  grid-template-columns: repeat(4, minmax(210px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   align-items: start;
-  overflow-x: auto;
 }
 
 .bo-kds-col {
   background: var(--bo-bg);
   border: 1px solid var(--bo-border);
   border-top: 4px solid var(--bo-muted);
-  border-radius: 14px;
+  border-radius: var(--bo-radius);
   min-height: 220px;
   min-width: 0;
   display: flex;
@@ -80,7 +53,7 @@
   min-width: 26px;
   padding: 2px 8px;
   border-radius: 999px;
-  background: var(--bo-sidebar);
+  background: var(--bo-ink);
   color: #fff;
   text-align: center;
   font-size: 0.75rem;
@@ -136,13 +109,13 @@
   padding: 3px 8px;
   border-radius: 999px;
   background: rgba(22, 163, 74, 0.12);
-  color: #15803d;
+  color: #166534;
   white-space: nowrap;
 }
 
 .age-warn .bo-kds-age {
-  background: rgba(245, 158, 11, 0.16);
-  color: #b45309;
+  background: #fdf3e2;
+  color: #8a4b0f;
 }
 
 .age-late .bo-kds-age {
@@ -208,9 +181,9 @@
 
 .bo-kds-note {
   font-size: 0.78rem;
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  color: #92400e;
+  background: #fffaeb;
+  border: 1px solid #f3e1a8;
+  color: #6b4e0a;
   padding: 6px 9px;
   border-radius: 8px;
 }
@@ -240,18 +213,71 @@
 /* CLIENT REVIEWS */
 .bo-review-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
   gap: 18px;
 }
 
-.bo-review-card {
+.bo-review-card,
+.bo-content-card {
   background: var(--bo-card);
   border: 1px solid var(--bo-border);
-  border-radius: 16px;
+  border-radius: var(--bo-radius-lg);
   padding: 16px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.bo-content-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.bo-content-card img {
+  width: 100%;
+  height: 175px;
+  object-fit: cover;
+  background: var(--bo-sunken);
+}
+
+.bo-content-card-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.bo-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  gap: 18px;
+}
+
+.bo-card-actions {
+  display: flex;
   gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.bo-card-actions .bo-btn-primary {
+  flex: 1;
+}
+
+.bo-field-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+}
+
+.bo-field-row > .bo-input {
+  flex: 1;
+  min-width: 0;
 }
 
 .bo-review-head {
@@ -271,26 +297,25 @@
 }
 
 .bo-review-stars {
-  color: #f59e0b;
+  color: var(--bo-gold);
   font-size: 0.85rem;
   letter-spacing: 1px;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1100px) {
   .bo-kds-board {
-    grid-template-columns: repeat(4, minmax(240px, 260px));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-html[data-bo-theme='dark'] .bo-kds-note {
-  background: rgba(253, 230, 138, 0.1);
-  border-color: rgba(253, 230, 138, 0.3);
-  color: #fcd34d;
-}
+@media (max-width: 640px) {
+  .bo-kds-board {
+    grid-template-columns: minmax(0, 1fr);
+  }
 
-html[data-bo-theme='dark'] .bo-kds-count {
-  background: var(--bo-gold);
-  color: #14171c;
+  .bo-kds-col {
+    min-height: 0;
+  }
 }
 
 /* ============================================================================
@@ -313,11 +338,12 @@ html[data-bo-theme='dark'] .bo-kds-count {
 .bo-pk-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   padding: 18px;
   border: 1px solid var(--bo-border);
-  border-radius: 16px;
+  border-radius: var(--bo-radius-lg);
   background: var(--bo-card);
+  min-width: 0;
 }
 
 .bo-pk-card-head {
@@ -363,10 +389,13 @@ html[data-bo-theme='dark'] .bo-kds-count {
 
 .bo-pk-field > span:first-child,
 .bo-pk-section-label {
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--bo-text);
+}
+
+.bo-pk-field small,
+.bo-pk-section-label small {
   color: var(--bo-muted);
 }
 
@@ -405,35 +434,38 @@ html[data-bo-theme='dark'] .bo-kds-count {
 
 .bo-pk-row .bo-input,
 .bo-pk-row .bo-select {
+  min-height: 38px;
   padding: 7px 9px;
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   min-width: 0;
 }
 
 .bo-pk-row-2 {
-  grid-template-columns: 1fr 1fr 36px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 38px;
 }
 .bo-pk-row-choice {
-  grid-template-columns: 1fr 110px 36px;
+  grid-template-columns: minmax(0, 1fr) 110px 38px;
 }
 .bo-pk-row-option {
-  grid-template-columns: 1fr 1fr 90px 110px 36px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 90px 110px 38px;
 }
 .bo-pk-row-tray {
-  grid-template-columns: 2fr 2fr 90px 1fr 36px;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) 90px minmax(0, 1fr) 38px;
 }
 .bo-pk-row-bite {
-  grid-template-columns: 1.4fr 1.4fr 1.6fr 80px 1fr 36px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.4fr) minmax(0, 1.6fr) 80px minmax(0, 1fr) 38px;
 }
 
 .bo-pk-row-head span {
-  font-size: 0.68rem;
+  font-size: 0.74rem;
   font-weight: 700;
   color: var(--bo-muted);
 }
 
 .bo-pk-x {
-  padding: 6px 0;
+  width: 38px;
+  min-height: 38px;
+  padding: 0;
   justify-content: center;
 }
 
@@ -447,6 +479,10 @@ html[data-bo-theme='dark'] .bo-kds-count {
   display: flex;
   gap: 8px;
   margin-top: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid var(--bo-border);
 }
 
 .bo-pk-actions .bo-btn-primary {
@@ -457,7 +493,7 @@ html[data-bo-theme='dark'] .bo-kds-count {
   .bo-pk-row-option,
   .bo-pk-row-tray,
   .bo-pk-row-bite {
-    grid-template-columns: 1fr 1fr 36px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 38px;
   }
   .bo-pk-row-head:not(.bo-pk-row-2):not(.bo-pk-row-choice) {
     display: none;
@@ -465,31 +501,63 @@ html[data-bo-theme='dark'] .bo-kds-count {
 }
 
 .bo-quote-head {
-  margin: 10px 0 4px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--bo-muted);
+  margin: 12px 0 4px;
 }
 
 .bo-quote-line {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  padding: 5px 0;
+  padding: 7px 0;
   border-bottom: 1px dashed var(--bo-border);
-  font-size: 0.84rem;
+  font-size: 0.88rem;
+}
+
+.bo-quote-line:last-child {
+  border-bottom: 0;
+}
+
+.bo-quote-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr));
+  gap: 8px;
+}
+
+.bo-quote-fact {
+  background: #fff;
+  border: 1px solid var(--bo-border);
+  border-radius: var(--bo-radius-sm);
+  padding: 7px 10px;
+  min-width: 0;
+}
+
+.bo-quote-fact span {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--bo-muted);
+}
+
+.bo-quote-fact b {
+  color: var(--bo-text);
+  font-size: 0.9rem;
 }
 
 .bo-quote-picks {
-  margin: 2px 0 0;
+  margin: 4px 0 0;
   padding-inline-start: 18px;
-  font-size: 0.78rem;
-  color: var(--bo-gold-dark);
+  font-size: 0.84rem;
+  color: var(--bo-body);
+}
+
+.bo-quote-picks li::marker {
+  color: var(--bo-gold);
 }
 
 .bo-quote-note {
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   color: var(--bo-muted);
   font-style: italic;
 }

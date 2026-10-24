@@ -4,9 +4,9 @@
 import { registerActions } from '../../shared/actions.js';
 import { esc, byId } from '../../shared/dom.js';
 import { data, siteList } from '../state.js';
-import { registerTab, renderActiveTab } from '../router.js';
+import { registerTab, renderActiveTab, afterCardSaved, confirmDiscard } from '../router.js';
 import { saveSiteConfig } from '../sync.js';
-import { openModal, closeModal, modalFormButtons } from '../ui/modal.js';
+import { openModal, closeModal, modalFormButtons, confirmDialog } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
 import { uploadButton } from '../ui/upload.js';
 
@@ -17,7 +17,7 @@ const clampRating = value => Math.min(5, Math.max(1, Math.round(Number(value)) |
 
 function ratingSelect(id, current) {
   return `
-    <select class="bo-select" id="${id}" data-field="rating" aria-label="Star rating">
+    <select class="bo-select" id="${id}" data-field="rating">
       ${[5, 4, 3, 2, 1]
         .map(
           n =>
@@ -30,28 +30,33 @@ function ratingSelect(id, current) {
 function reviewCard(r, idx) {
   const stars = clampRating(r.rating);
   return `
-    <div class="bo-review-card" data-index="${idx}">
+    <div class="bo-review-card" data-index="${idx}" data-dirty-scope>
       <div class="bo-review-head">
         <img src="${esc(r.img || data.siteConfig.logos?.main || AVATAR_FALLBACK)}" data-fallback="${AVATAR_FALLBACK}"
-          alt="${esc(r.name || 'Client')}" class="bo-review-avatar" />
+          alt="" class="bo-review-avatar" />
         <div style="min-width:0;">
-          <div class="bo-review-stars" aria-label="${stars} out of 5 stars">${'<i class="fa-solid fa-star"></i>'.repeat(stars)}</div>
-          <div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--bo-muted);">Review #${idx + 1}</div>
+          <div style="font-weight:700; color:var(--bo-text);">${esc(r.name || 'Client')}</div>
+          <div class="bo-review-stars" role="img" aria-label="${stars} out of 5 stars">${'<i class="fa-solid fa-star" aria-hidden="true"></i>'.repeat(stars)}</div>
         </div>
       </div>
-      <input type="text" class="bo-input" data-field="name" value="${esc(r.name)}" style="font-weight:700;" placeholder="Client name" aria-label="Client name" />
-      <input type="text" class="bo-input" data-field="role" value="${esc(r.role)}" style="font-size:0.78rem;" placeholder="Event / occasion" aria-label="Event or occasion" />
-      <textarea class="bo-textarea" data-field="quote" rows="4" style="font-size:0.8rem;" placeholder="Review text" aria-label="Review text">${esc(r.quote)}</textarea>
-      ${ratingSelect(`review-rating-${idx}`, r.rating)}
-      <div style="display:flex; gap:6px; align-items:center;">
-        <input type="text" class="bo-input" id="review-img-${idx}" data-field="img" value="${esc(r.img)}" style="font-size:0.75rem; flex:1;" placeholder="Photo URL" aria-label="Photo URL" />
-        ${uploadButton(`review-img-${idx}`, { label: '', compact: true })}
-      </div>
-      <div style="display:flex; gap:8px; margin-top:auto; padding-top:6px;">
-        <button class="bo-btn bo-btn-primary" style="flex:1;" data-action="reviews:save" data-index="${idx}">Save</button>
-        <button class="bo-btn bo-btn-danger" data-action="reviews:delete" data-index="${idx}" title="Delete Review" aria-label="Delete review">
-          <i class="fa-solid fa-trash"></i>
+      <div><label class="bo-label" for="rv-name-${idx}">Client name</label>
+        <input type="text" class="bo-input" id="rv-name-${idx}" data-field="name" value="${esc(r.name)}" /></div>
+      <div><label class="bo-label" for="rv-role-${idx}">Event or occasion</label>
+        <input type="text" class="bo-input" id="rv-role-${idx}" data-field="role" value="${esc(r.role)}" /></div>
+      <div><label class="bo-label" for="rv-quote-${idx}">What they said</label>
+        <textarea class="bo-textarea" id="rv-quote-${idx}" data-field="quote" rows="4">${esc(r.quote)}</textarea></div>
+      <div><label class="bo-label" for="review-rating-${idx}">Stars</label>${ratingSelect(`review-rating-${idx}`, r.rating)}</div>
+      <div><label class="bo-label" for="review-img-${idx}">Photo <span class="bo-muted" style="font-weight:500;">(optional)</span></label>
+        <div class="bo-field-row">
+          <input type="text" class="bo-input" id="review-img-${idx}" data-field="img" value="${esc(r.img)}" placeholder="Paste a link or upload" />
+          ${uploadButton(`review-img-${idx}`, { label: '', compact: true })}
+        </div></div>
+      <div class="bo-card-actions">
+        <button type="button" class="bo-btn bo-btn-primary" data-action="reviews:save" data-index="${idx}" data-save-button>Save</button>
+        <button type="button" class="bo-btn bo-btn-danger bo-btn-icon" data-action="reviews:delete" data-index="${idx}" title="Delete review" aria-label="Delete review from ${esc(r.name || 'this client')}">
+          <i class="fa-solid fa-trash" aria-hidden="true"></i>
         </button>
+        <span class="bo-save-state" style="flex-basis:100%; justify-content:center;">Unsaved changes</span>
       </div>
     </div>
   `;
@@ -64,17 +69,17 @@ function render() {
     <div class="bo-panel">
       <div class="bo-panel-header">
         <div>
-          <div class="bo-panel-title"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Client Testimonials on the Website (${list.length}${list.length ? ` • ${average.toFixed(1)} ★ average` : ''})</div>
-          <div style="font-size:0.8rem; color:var(--bo-muted);">Shown in the "Verified Hospitality Reviews" section of the public website</div>
+          <h2 class="bo-panel-title">${list.length} review${list.length === 1 ? '' : 's'} on the website${list.length ? ` · ${average.toFixed(1)} ★ average` : ''}</h2>
+          <div class="bo-panel-sub">Shown in the reviews section of the public website. Each card saves on its own.</div>
         </div>
-        <button class="bo-btn bo-btn-gold" data-action="reviews:add-open">
-          <i class="fa-solid fa-plus"></i> + Add Review
+        <button type="button" class="bo-btn bo-btn-gold" data-action="reviews:add-open">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i> Add a review
         </button>
       </div>
       <div class="bo-panel-body">
         ${
           list.length === 0
-            ? `<div style="text-align:center; padding:40px; color:var(--bo-muted);">No reviews yet. Click "+ Add Review" to publish the first testimonial.</div>`
+            ? `<div class="bo-empty"><i class="fa-regular fa-star" aria-hidden="true"></i><div class="bo-empty-title">No reviews yet</div><p>Add what happy clients said about your food — it builds trust on the website.</p><button type="button" class="bo-btn bo-btn-gold" data-action="reviews:add-open">Add the first review</button></div>`
             : `<div class="bo-review-grid">${list.map(reviewCard).join('')}</div>`
         }
       </div>
@@ -103,17 +108,27 @@ async function saveReview(button) {
     showToast('A review needs a client name and review text.', { error: true });
     return;
   }
+  const before = { ...list[idx] };
   Object.assign(list[idx], values);
   if (await saveSiteConfig()) {
-    renderActiveTab();
-    showToast(`Saved review from ${values.name}`);
+    afterCardSaved(card);
+    showToast(`Saved the review from ${values.name}.`);
+  } else {
+    list[idx] = before;
   }
 }
 
 async function deleteReview(idx) {
   const list = reviews();
   if (!list[idx]) return;
-  if (!window.confirm(`Delete the review from ${list[idx].name || 'this client'}?`)) return;
+  const sure = await confirmDialog(
+    `The review from ${list[idx].name || 'this client'} will be removed from the website.`,
+    {
+      title: 'Delete this review?',
+      confirmLabel: 'Delete review'
+    }
+  );
+  if (!sure || !(await confirmDiscard())) return;
   const [removed] = list.splice(idx, 1);
   if (!(await saveSiteConfig())) {
     list.splice(idx, 0, removed);
@@ -125,35 +140,35 @@ async function deleteReview(idx) {
 
 function openAddReview() {
   openModal(
-    'Add New Client Review',
+    'Add a review',
     `
       <form data-on-submit="reviews:add-submit">
         <div class="bo-form-grid">
           <div class="bo-form-group">
-            <label for="nrName">Client Name *</label>
+            <label for="nrName">Client name *</label>
             <input type="text" id="nrName" class="bo-input" placeholder="e.g., Nadine & Karim H." required />
           </div>
           <div class="bo-form-group">
-            <label for="nrRole">Event / Occasion *</label>
+            <label for="nrRole">Event or occasion *</label>
             <input type="text" id="nrRole" class="bo-input" placeholder="e.g., Mountain Wedding • 220 Guests (Aley)" required />
           </div>
           <div class="bo-form-group">
-            <label for="nrRating">Star Rating *</label>
+            <label for="nrRating">Stars *</label>
             ${ratingSelect('nrRating', 5)}
           </div>
         </div>
         <div class="bo-form-group" style="margin-top:14px;">
-          <label for="nrImg">Photo (Paste URL or Upload from Device)</label>
+          <label for="nrImg">Photo (optional — paste a link or upload)</label>
           <div style="display:flex; gap:8px; align-items:center;">
             <input type="text" id="nrImg" class="bo-input" style="flex:1;" placeholder="https://..." />
             ${uploadButton('nrImg')}
           </div>
         </div>
         <div class="bo-form-group" style="margin-top:14px;">
-          <label for="nrQuote">Review Text *</label>
+          <label for="nrQuote">What they said *</label>
           <textarea id="nrQuote" class="bo-textarea" rows="4" required></textarea>
         </div>
-        ${modalFormButtons('Publish Review')}
+        ${modalFormButtons('Add to website')}
       </form>
     `
   );
@@ -176,7 +191,7 @@ async function submitAddReview() {
   }
   closeModal();
   renderActiveTab();
-  showToast(`Published review from ${review.name}!`);
+  showToast(`The review from ${review.name} is on the website.`);
 }
 
 registerActions({
@@ -188,6 +203,6 @@ registerActions({
 
 registerTab('reviews', {
   title: 'Reviews',
-  subtitle: '',
+  subtitle: 'Client reviews shown on the website.',
   render
 });

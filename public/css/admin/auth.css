@@ -1,17 +1,20 @@
-/* Back Office — sign-in overlay (#boAuthOverlay) */
+/* Back Office — sign-in screen (#boAuthOverlay): ivory page, white card, gold accent */
 
 .bo-auth-overlay {
   position: fixed;
   inset: 0;
   z-index: 5000;
-  background: radial-gradient(circle at 50% 35%, #1c222f 0%, #0b0d12 72%);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(197, 155, 39, 0.12) 0%, transparent 55%),
+    linear-gradient(180deg, var(--bo-ivory) 0%, var(--bo-bg) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overflow-y: auto;
   transition:
-    opacity 0.4s ease,
-    visibility 0.4s ease;
+    opacity 0.35s ease,
+    visibility 0.35s ease;
 }
 
 .bo-auth-overlay.authenticated {
@@ -20,102 +23,64 @@
   pointer-events: none;
 }
 
-.bo-auth-ambient {
-  position: absolute;
-  width: 520px;
-  height: 520px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(197, 155, 39, 0.16) 0%, transparent 70%);
-  filter: blur(32px);
-  pointer-events: none;
-}
-
 .bo-auth-card {
   position: relative;
-  z-index: 2;
   width: 100%;
-  max-width: 450px;
-  background: rgba(20, 24, 33, 0.94);
-  border: 1px solid rgba(197, 155, 39, 0.35);
-  border-radius: 24px;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid var(--bo-border);
+  border-top: 3px solid var(--bo-gold);
+  border-radius: 18px;
   padding: 36px 32px 28px;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.65);
-  color: #ffffff;
+  box-shadow: var(--bo-shadow-float);
+  color: var(--bo-body);
   text-align: center;
-  backdrop-filter: blur(16px);
-}
-
-.bo-auth-crest-wrap {
-  position: relative;
-  width: 88px;
-  height: 88px;
-  margin: 0 auto 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bo-auth-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 1.5px solid rgba(197, 155, 39, 0.25);
-  border-top-color: #e3bc54;
-  animation: boAuthSpin 3s linear infinite;
-}
-
-@keyframes boAuthSpin {
-  to {
-    transform: rotate(360deg);
-  }
+  margin: auto;
 }
 
 .bo-auth-logo {
-  width: 68px;
-  height: 68px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--bo-gold);
+  border: 1.5px solid var(--bo-gold);
+  padding: 3px;
+  background: #fff;
+  margin: 0 auto 14px;
+  display: block;
 }
 
-.bo-auth-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.7rem;
-  font-weight: 800;
+.bo-auth-eyebrow {
+  font-size: 0.74rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: #e3bc54;
-  background: rgba(197, 155, 39, 0.14);
-  border: 1px solid rgba(197, 155, 39, 0.35);
-  padding: 5px 13px;
-  border-radius: 999px;
-  margin-bottom: 10px;
+  letter-spacing: 0.2em;
+  color: var(--bo-gold-dark);
+  margin-bottom: 6px;
 }
 
 .bo-auth-title {
   font-family: var(--font-serif);
-  font-size: 1.7rem;
-  letter-spacing: 0.14em;
-  color: #ffffff;
-  margin-bottom: 4px;
+  font-size: 1.9rem;
+  color: var(--bo-text);
+  margin-bottom: 6px;
+  line-height: 1.2;
 }
 
 .bo-auth-sub {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.68);
-  margin-bottom: 22px;
+  font-size: 0.88rem;
+  color: var(--bo-muted);
+  margin-bottom: 24px;
 }
 
 .bo-auth-error {
-  background: rgba(220, 38, 38, 0.16);
-  border: 1px solid rgba(220, 38, 38, 0.45);
-  color: #fca5a5;
-  font-size: 0.8rem;
+  background: var(--bo-danger-soft);
+  border: 1px solid #f0c5bf;
+  color: var(--bo-danger);
+  font-size: 0.86rem;
   font-weight: 600;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: var(--bo-radius-sm);
   margin-bottom: 16px;
   text-align: left;
 }
@@ -130,9 +95,9 @@
 
 .bo-auth-field label {
   display: block;
-  font-size: 0.76rem;
+  font-size: 0.84rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--bo-text);
   margin-bottom: 6px;
 }
 
@@ -145,131 +110,112 @@
 .bo-auth-input-wrap > i {
   position: absolute;
   left: 14px;
-  color: var(--bo-gold);
-  font-size: 0.9rem;
+  color: var(--bo-muted);
+  font-size: 0.88rem;
   pointer-events: none;
 }
 
 .bo-auth-input-wrap input {
   width: 100%;
-  padding: 12px 42px 12px 40px;
-  border-radius: 12px;
-  border: 1.5px solid rgba(255, 255, 255, 0.16);
-  background: rgba(11, 13, 18, 0.78);
-  color: #ffffff;
-  font-size: 0.9rem;
+  min-height: 46px;
+  padding: 11px 46px 11px 40px;
+  border-radius: 10px;
+  border: 1px solid var(--bo-border-strong);
+  background: #fff;
+  color: var(--bo-text);
+  font-size: 0.95rem;
   font-family: var(--font-sans);
   outline: none;
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .bo-auth-input-wrap input:focus {
-  border-color: var(--bo-gold);
-  box-shadow: 0 0 0 3px rgba(197, 155, 39, 0.2);
+  border-color: var(--bo-gold-dark);
+  box-shadow: var(--bo-focus);
 }
 
 .bo-auth-eye-btn {
   position: absolute;
-  right: 10px;
+  right: 4px;
+  width: 40px;
+  height: 40px;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  color: var(--bo-muted);
   cursor: pointer;
-  padding: 6px;
   font-size: 0.9rem;
 }
 
 .bo-auth-eye-btn:hover {
-  color: #ffffff;
+  color: var(--bo-text);
 }
 
 .bo-auth-options-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 12px 0 18px;
+  margin: 4px 0 20px;
 }
 
 .bo-auth-remember {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.75);
+  gap: 8px;
+  font-size: 0.86rem;
+  color: var(--bo-body);
   cursor: pointer;
 }
 
-.bo-auth-quickfill-btn {
-  background: rgba(197, 155, 39, 0.15);
-  border: 1px solid rgba(197, 155, 39, 0.4);
-  color: #f3d28e;
-  border-radius: 999px;
-  padding: 5px 11px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.bo-auth-quickfill-btn:hover {
-  background: var(--bo-gold);
-  color: #14171c;
+.bo-auth-remember input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--bo-gold-dark);
 }
 
 .bo-auth-submit-btn {
   width: 100%;
-  padding: 13px 20px;
-  border-radius: 12px;
+  min-height: 48px;
+  padding: 12px 20px;
+  border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, #c59b27 0%, #dfb43c 100%);
-  color: #14171c;
-  font-size: 0.94rem;
-  font-weight: 800;
+  background: var(--bo-ink);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
-  box-shadow: 0 12px 28px rgba(197, 155, 39, 0.3);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: background 0.15s ease;
 }
 
 .bo-auth-submit-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 16px 34px rgba(197, 155, 39, 0.42);
+  background: #000;
 }
 
-.bo-auth-hint-box {
+.bo-auth-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.bo-auth-hint {
   margin-top: 18px;
-  padding: 11px 14px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px dashed rgba(197, 155, 39, 0.35);
-  font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.bo-auth-hint-box code {
-  background: rgba(197, 155, 39, 0.2);
-  color: #f3d28e;
-  padding: 2px 6px;
-  border-radius: 5px;
-  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--bo-muted);
 }
 
 .bo-auth-footer-links {
-  margin-top: 16px;
-  font-size: 0.78rem;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--bo-border);
+  font-size: 0.84rem;
 }
 
 .bo-auth-footer-links a {
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--bo-gold-dark);
+  font-weight: 600;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -277,5 +223,15 @@
 }
 
 .bo-auth-footer-links a:hover {
-  color: var(--bo-gold);
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .bo-auth-card {
+    padding: 28px 20px 22px;
+  }
+
+  .bo-auth-title {
+    font-size: 1.6rem;
+  }
 }

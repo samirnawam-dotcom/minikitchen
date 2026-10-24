@@ -8,7 +8,7 @@ import { ui, KEYS } from './state.js';
 import { renderActiveTab } from './router.js';
 import { refreshFromServer, updateNavBadges } from './sync.js';
 import { verifySession } from './auth.js';
-import { initWorkspaceTheme } from './ui/theme.js';
+import { removeItem } from '../shared/storage.js';
 import './ui/upload.js';
 import './orders/actions.js';
 import './orders/manual-order.js';
@@ -41,7 +41,8 @@ function retryFailedImages() {
 }
 
 async function start() {
-  initWorkspaceTheme();
+  // The Back Office is light only; forget the old dark-mode preference.
+  removeItem(KEYS.uiTheme);
   retryFailedImages();
   updateNavBadges();
   renderActiveTab();

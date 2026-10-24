@@ -25,7 +25,7 @@ async function uploadPhoto(input) {
       showError('Image must be under 6 MB.');
       return;
     }
-    showToast('Uploading photo to server...');
+    showToast('Uploading photo…');
     const result = await api.upload(file.name, await readAsDataUrl(file));
     const target = byId(input.dataset.target);
     if (target) {
@@ -34,7 +34,7 @@ async function uploadPhoto(input) {
     }
     const preview = input.dataset.preview && byId(input.dataset.preview);
     if (preview) preview.src = result.url;
-    showToast(`Photo uploaded (${result.sizeKb} KB) → ${result.url}`);
+    showToast(`Photo uploaded (${result.sizeKb} KB). Remember to press Save.`);
   } catch (err) {
     showError(err.message || 'Could not upload photo to server.');
   } finally {
@@ -43,18 +43,20 @@ async function uploadPhoto(input) {
 }
 
 /** Markup for the upload button that fills `targetId`. `label` is optional visible text. */
-export function uploadButton(targetId, { label = 'Upload Photo', compact = false } = {}) {
-  const style = compact
-    ? 'cursor:pointer; padding:7px 10px; font-size:0.74rem; white-space:nowrap; margin:0;'
-    : 'cursor:pointer; white-space:nowrap; margin:0;';
+export function uploadButton(targetId, { label = 'Upload', compact = false } = {}) {
+  // A real <button> (keyboard reachable) that opens the hidden file picker next to it.
   return `
-    <label class="bo-btn bo-btn-outline" style="${style}"${compact ? ' title="Upload Photo from Device"' : ''}>
-      <i class="fa-solid fa-cloud-arrow-up"></i>${label ? ` ${esc(label)}` : ''}
+    <span style="display:inline-flex; flex-shrink:0;">
+      <button type="button" class="bo-btn bo-btn-outline${compact ? ' bo-btn-icon' : ''}" data-action="upload:pick"
+        title="Upload a photo from this device" aria-label="Upload a photo from this device">
+        <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>${label && !compact ? ` ${esc(label)}` : ''}
+      </button>
       <input type="file" accept="image/*" hidden data-on-change="upload:photo" data-target="${esc(targetId)}" />
-    </label>
+    </span>
   `;
 }
 
 registerActions({
+  'upload:pick': el => el.parentElement?.querySelector('input[type="file"]')?.click(),
   'upload:photo': input => uploadPhoto(input)
 });

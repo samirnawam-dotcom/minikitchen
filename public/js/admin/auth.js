@@ -16,13 +16,19 @@ try {
   sessionStorage.removeItem('mk_bo_auth_token');
 } catch {}
 
-const SUBMIT_IDLE = '<i class="fa-solid fa-lock-open"></i> <span>Sign In to Back Office</span>';
-const SUBMIT_BUSY = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Verifying Credentials...</span>';
+const SUBMIT_IDLE = '<i class="fa-solid fa-lock-open" aria-hidden="true"></i> <span>Sign in</span>';
+const SUBMIT_BUSY = '<i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> <span>Signing in…</span>';
 
 export function setAuthenticated(isAuth, user) {
   ui.authenticated = Boolean(isAuth);
   if (user) ui.adminUser = { ...ui.adminUser, ...user };
-  byId('boAuthOverlay')?.classList.toggle('authenticated', ui.authenticated);
+  const overlay = byId('boAuthOverlay');
+  overlay?.classList.toggle('authenticated', ui.authenticated);
+  // Hide the workspace from assistive tech while the sign-in screen covers it (and vice versa).
+  overlay?.toggleAttribute('inert', ui.authenticated);
+  for (const el of document.querySelectorAll('.bo-sidebar, .bo-main, .bo-skip-link')) {
+    el.toggleAttribute('inert', !ui.authenticated);
+  }
   const nameEl = byId('boAdminDisplayName');
   if (nameEl) nameEl.textContent = ui.adminUser.displayName || ui.adminUser.username || 'Mini Kitchen Admin';
 }
@@ -57,7 +63,7 @@ export async function logout() {
   try {
     await api.logout();
   } catch {}
-  endSession('Back Office session locked.');
+  endSession('You are signed out.');
 }
 
 function showLoginError(message) {
@@ -86,10 +92,11 @@ async function submitLogin() {
     setAuthenticated(true, result.user);
     if (passInput) passInput.value = '';
     await refreshFromServer({ silent: true });
+    byId('boMainContainer')?.focus({ preventScroll: true });
     showToast(
       result.user?.mustChangePassword
-        ? 'Please set a new password in the Account tab.'
-        : `Welcome back, ${result.user?.displayName || 'Mini Kitchen Admin'}!`
+        ? 'Please set a new password in Account & backups.'
+        : `Welcome back, ${result.user?.displayName || 'Mini Kitchen Admin'}.`
     );
   } catch (err) {
     showLoginError(err.message || 'Invalid username or password.');
@@ -108,6 +115,9 @@ function togglePasswordVisibility() {
   const reveal = input.type === 'password';
   input.type = reveal ? 'text' : 'password';
   if (icon) icon.className = reveal ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+  const btn = byId('boLoginEyeBtn');
+  btn?.setAttribute('aria-pressed', String(reveal));
+  btn?.setAttribute('aria-label', reveal ? 'Hide password' : 'Show password');
 }
 
 // Any admin request answered with 401 means the cookie is gone: return to the sign-in screen.

@@ -171,6 +171,8 @@
     </script>
   </head>
   <body data-brand="{{brand}}" data-default-page="{{page}}">
+    <a class="skip-link" href="#appMainContent" data-action="ui:skip">Skip to content</a>
+
     <!-- Preloader (hidden by js/storefront/main.js after the first render) -->
     <div class="mk-preloader" id="mkPreloader" aria-label="Loading Mini Kitchen">
       <div class="mk-preloader-inner">
@@ -192,7 +194,13 @@
     <header class="site-header">
       <div class="container header-inner">
         <div class="header-left">
-          <button class="hamburger-btn" data-action="nav:open-drawer" aria-label="Open navigation menu">
+          <button
+            class="hamburger-btn"
+            data-action="nav:open-drawer"
+            aria-label="Open navigation menu"
+            aria-controls="navDrawer"
+            aria-expanded="false"
+          >
             <span class="hamburger-lines" aria-hidden="true">
               <span></span>
               <span></span>
@@ -270,7 +278,7 @@
     <div class="nav-drawer-backdrop" id="navDrawerBackdrop" data-action="drawers:close"></div>
 
     <!-- Side navigation drawer -->
-    <aside class="nav-drawer" id="navDrawer" aria-label="Site navigation">
+    <aside class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Site navigation">
       <div class="nav-drawer-header">
         <div class="brand-logo-wrap" data-action="nav:go" data-page="catering">
           <img
@@ -405,7 +413,7 @@
     </aside>
 
     <!-- Order basket drawer -->
-    <aside class="cart-drawer" id="cartDrawer" aria-label="Order basket">
+    <aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-label="Order basket">
       <div class="cart-drawer-header">
         <div>
           <div class="eyebrow">Your order</div>
@@ -428,18 +436,34 @@
       </div>
     </aside>
 
-    <main id="appMainContent"></main>
+    <main id="appMainContent" tabindex="-1"></main>
 
     <!-- Floating WhatsApp button -->
     <div class="floating-wa-container">
-      <button class="floating-wa-btn" data-action="wa:open" aria-label="WhatsApp us">
-        <i class="fa-brands fa-whatsapp"></i>
+      <button class="floating-wa-btn" data-action="wa:open">
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
         <span>WhatsApp</span>
       </button>
     </div>
 
     <footer class="site-footer">
       <div class="container">
+        <div class="footer-cta">
+          <div class="footer-cta-copy">
+            <span class="eyebrow">Planning an event?</span>
+            <p class="footer-cta-title">Build your catering package in a few minutes</p>
+            <p class="footer-cta-text">
+              Send it on WhatsApp and our catering team confirms the menu, date and price with you.
+            </p>
+          </div>
+          <div class="footer-cta-actions">
+            <button class="btn btn-primary" data-action="builder:start">Build your package</button>
+            <button class="btn btn-whatsapp" data-action="wa:open" data-brand="catering">
+              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp catering
+            </button>
+          </div>
+        </div>
+
         <div class="footer-grid">
           <div class="footer-col footer-brand">
             <div class="brand-logo-wrap" data-action="nav:go" data-page="catering">
@@ -448,6 +472,9 @@
                 data-fallback=""
                 alt="Mini Kitchen"
                 class="brand-logo-img"
+                loading="lazy"
+                width="156"
+                height="104"
               />
               <div class="brand-logo-text">
                 <span class="brand-logo-title">Mini Kitchen</span>
@@ -465,7 +492,7 @@
                 rel="noopener"
                 class="social-icon-btn"
                 title="Instagram @minikitchen.leb"
-                aria-label="Instagram"
+                aria-label="Instagram @minikitchen.leb (opens in a new tab)"
                 ><i class="fa-brands fa-instagram"></i
               ></a>
               <a
@@ -474,7 +501,7 @@
                 rel="noopener"
                 class="social-icon-btn"
                 title="TikTok"
-                aria-label="TikTok"
+                aria-label="TikTok (opens in a new tab)"
                 ><i class="fa-brands fa-tiktok"></i
               ></a>
               <a
@@ -483,7 +510,7 @@
                 rel="noopener"
                 class="social-icon-btn"
                 title="Facebook"
-                aria-label="Facebook"
+                aria-label="Facebook (opens in a new tab)"
                 ><i class="fa-brands fa-facebook-f"></i
               ></a>
               <a
@@ -492,19 +519,19 @@
                 data-brand="catering"
                 class="social-icon-btn"
                 title="WhatsApp"
-                aria-label="WhatsApp"
+                aria-label="WhatsApp catering"
                 ><i class="fa-brands fa-whatsapp"></i
               ></a>
             </div>
           </div>
 
-          <div class="footer-col">
-            <h4>Catering</h4>
+          <nav class="footer-col" aria-labelledby="footerCateringHead">
+            <h2 class="footer-heading" id="footerCateringHead">Catering</h2>
             <ul class="footer-links">
               <li><button class="footer-link-btn" data-action="nav:go" data-page="catering">Home</button></li>
               <li>
                 <button class="footer-link-btn" data-action="nav:go" data-page="catering-menus">
-                  Packages & Menus
+                  Packages &amp; Menus
                 </button>
               </li>
               <li>
@@ -520,25 +547,29 @@
               <li><button class="footer-link-btn" data-action="nav:go" data-page="about">About Us</button></li>
               <li><button class="footer-link-btn" data-action="nav:go" data-page="contact">Contact</button></li>
             </ul>
-            <h4 class="footer-subhead">Also from Mini Kitchen</h4>
-            <ul class="footer-links footer-links-secondary">
+          </nav>
+
+          <nav class="footer-col" aria-labelledby="footerAlsoHead">
+            <h2 class="footer-heading" id="footerAlsoHead">Also from Mini Kitchen</h2>
+            <ul class="footer-links">
               <li><button class="footer-link-btn" data-action="nav:go" data-page="restaurant">Restaurant</button></li>
               <li><button class="footer-link-btn" data-action="nav:go" data-page="delivery">Delivery</button></li>
+              <li><button class="footer-link-btn" data-action="tracker:open">Track an order</button></li>
             </ul>
-          </div>
+          </nav>
 
           <div class="footer-col">
-            <h4>Visit & Call</h4>
+            <h2 class="footer-heading">Visit &amp; Call</h2>
             <ul class="footer-links footer-contact">
-              <li><i class="fa-solid fa-location-dot"></i> Ain Al Remmaneh, Aley, Mount Lebanon</li>
-              <li><i class="fa-regular fa-clock"></i> Daily 8:00 AM – 10:00 PM</li>
+              <li><i class="fa-solid fa-location-dot"></i> <span>Ain Al Remmaneh, Aley, Mount Lebanon</span></li>
+              <li><i class="fa-regular fa-clock"></i> <span>Daily 8:00 AM – 10:00 PM</span></li>
               <li>
-                <i class="fa-solid fa-phone"></i> Catering
-                <a href="tel:+96171048154">+961 71 048 154</a>
+                <i class="fa-solid fa-phone"></i>
+                <span>Catering <a href="tel:+96171048154">+961 71 048 154</a></span>
               </li>
               <li>
-                <i class="fa-solid fa-phone"></i> Restaurant & delivery
-                <a href="tel:+9613682186">+961 3 682 186</a>
+                <i class="fa-solid fa-phone"></i>
+                <span>Restaurant &amp; delivery <a href="tel:+9613682186">+961 3 682 186</a></span>
               </li>
               <li>
                 <i class="fa-regular fa-envelope"></i>
@@ -549,8 +580,10 @@
         </div>
 
         <div class="footer-bottom">
-          <span>© 2026 Mini Kitchen · Catering, Restaurant & Delivery</span>
-          <span>Ain Al Remmaneh, Aley</span>
+          <span>© 2026 Mini Kitchen · Catering, Restaurant &amp; Delivery · Ain Al Remmaneh, Aley</span>
+          <button type="button" class="footer-top-btn" data-action="ui:top">
+            Back to top <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+          </button>
         </div>
       </div>
     </footer>

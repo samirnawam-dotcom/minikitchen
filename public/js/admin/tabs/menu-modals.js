@@ -42,33 +42,33 @@ function openEditDish(catId, itemId) {
   const { item } = findDish(catId, itemId);
   if (!item) return;
   openModal(
-    `Edit Dish Details & Photo — ${item.title}`,
+    `Edit “${item.title}”`,
     `
       <form data-on-submit="menu:edit-submit" data-cat-id="${esc(catId)}" data-item-id="${esc(itemId)}">
         <div class="bo-form-grid">
           <div class="bo-form-group">
-            <label for="edTitle">Dish Title *</label>
+            <label for="edTitle">Dish name *</label>
             <input type="text" id="edTitle" class="bo-input" value="${esc(item.title)}" required />
           </div>
           <div class="bo-form-group">
-            <label for="edPrice">Price (USD $) *</label>
+            <label for="edPrice">Price in US dollars *</label>
             <input type="number" step="0.25" id="edPrice" class="bo-input" value="${Number(item.priceValue) || 0}" required />
           </div>
           <div class="bo-form-group">
-            <label for="edPrep">Prep Time Label</label>
+            <label for="edPrep">Preparation time (shown on the menu)</label>
             <input type="text" id="edPrep" class="bo-input" value="${esc(item.prepTime || '15–20 min')}" />
           </div>
         </div>
-        ${photoField('edImg', 'Dish Photo (Paste URL or Upload from Device) *', item.img || '', { required: true })}
+        ${photoField('edImg', 'Photo * (paste a link or upload from your device)', item.img || '', { required: true })}
         <div class="bo-form-group" style="margin-top:14px;">
           <label for="edDesc">Description</label>
           <textarea id="edDesc" class="bo-textarea" rows="3">${esc(item.desc || '')}</textarea>
         </div>
         <div class="bo-form-group" style="margin-top:14px;">
-          <label>Dietary & Feature Badges</label>
-          ${badgeCheckboxes('edBadge', item.badges || [])}
+          <span class="bo-label" id="edBadgeLabel">Badges</span>
+          <div role="group" aria-labelledby="edBadgeLabel">${badgeCheckboxes('edBadge', item.badges || [])}</div>
         </div>
-        ${modalFormButtons('Save Dish Changes')}
+        ${modalFormButtons('Save changes')}
       </form>
     `
   );
@@ -94,46 +94,46 @@ async function submitEditDish(form) {
   }
   closeModal();
   renderActiveTab();
-  showToast(`Updated "${item.title}"`);
+  showToast(`Saved “${item.title}”.`);
 }
 
 // ---- Add dish ----------------------------------------------------------------------------------
 
 function openAddDish() {
   openModal(
-    'Add New Dish to FineDine Menu',
+    'Add a dish',
     `
       <form data-on-submit="menu:add-submit">
         <div class="bo-form-grid">
           <div class="bo-form-group">
-            <label for="newDishCat">Select Category *</label>
+            <label for="newDishCat">Category *</label>
             <select id="newDishCat" class="bo-select" required>
               ${data.menuCategories.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}
             </select>
           </div>
           <div class="bo-form-group">
-            <label for="newDishTitle">Dish Title *</label>
+            <label for="newDishTitle">Dish name *</label>
             <input type="text" id="newDishTitle" class="bo-input" placeholder="e.g., Truffle Wagyu Burger" required />
           </div>
           <div class="bo-form-group">
-            <label for="newDishPrice">Price (USD $) *</label>
+            <label for="newDishPrice">Price in US dollars *</label>
             <input type="number" step="0.25" id="newDishPrice" class="bo-input" placeholder="e.g., 12.50" required />
           </div>
         </div>
         ${photoField(
           'newDishImg',
-          'Dish Photo (Paste URL or Upload from Device)',
+          'Photo (paste a link or upload from your device)',
           'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80'
         )}
         <div class="bo-form-group" style="margin-top:14px;">
-          <label for="newDishDesc">Dish Description *</label>
-          <textarea id="newDishDesc" class="bo-textarea" rows="2" placeholder="Ingredients and preparation details..." required></textarea>
+          <label for="newDishDesc">Description *</label>
+          <textarea id="newDishDesc" class="bo-textarea" rows="2" placeholder="Ingredients and how it is prepared…" required></textarea>
         </div>
         <div class="bo-form-group" style="margin-top:14px;">
-          <label>Badges</label>
-          ${badgeCheckboxes('ndBadge', ['Popular'])}
+          <span class="bo-label" id="ndBadgeLabel">Badges</span>
+          <div role="group" aria-labelledby="ndBadgeLabel">${badgeCheckboxes('ndBadge', ['Popular'])}</div>
         </div>
-        ${modalFormButtons('Add Dish to Menu')}
+        ${modalFormButtons('Add dish')}
       </form>
     `
   );
@@ -168,23 +168,23 @@ async function submitAddDish() {
   }
   closeModal();
   renderActiveTab();
-  showToast(`Added "${dish.title}" to ${cat.name}!`);
+  showToast(`Added “${dish.title}” to ${cat.name}.`);
 }
 
 // ---- Add category ------------------------------------------------------------------------------
 
 function openAddCategory() {
   openModal(
-    'Create New FineDine Menu Category',
+    'New menu category',
     `
       <form data-on-submit="menu:category-submit">
         <div class="bo-form-grid">
           <div class="bo-form-group">
-            <label for="newCatName">Category Title *</label>
+            <label for="newCatName">Category name *</label>
             <input type="text" id="newCatName" class="bo-input" placeholder="e.g., Seasonal Specials" required />
           </div>
           <div class="bo-form-group">
-            <label for="newCatSub">Category Subtitle *</label>
+            <label for="newCatSub">Short description *</label>
             <input type="text" id="newCatSub" class="bo-input" placeholder="e.g., Chef limited-edition creations" required />
           </div>
         </div>
@@ -235,7 +235,7 @@ async function submitAddCategory() {
   closeModal();
   ui.menuCatFilter = id;
   renderActiveTab();
-  showToast(`Category "${name}" created!`);
+  showToast(`Category “${name}” created.`);
 }
 
 registerActions({

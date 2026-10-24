@@ -7,7 +7,7 @@ import { esc } from '../../shared/dom.js';
 import { content, getTestimonials } from '../config.js';
 
 const img = (src, alt, { fallback = '', lazy = true, cls = '' } = {}) =>
-  `<img src="${esc(src)}" data-fallback="${esc(fallback)}" alt="${esc(alt)}"${lazy ? ' loading="lazy"' : ''}${cls ? ` class="${cls}"` : ''} />`;
+  `<img src="${esc(src)}" data-fallback="${esc(fallback)}" alt="${esc(alt)}"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'} decoding="async"${cls ? ` class="${cls}"` : ''} />`;
 
 /**
  * Light page header: eyebrow, title, one line of text and buttons, with an optional photo beside it.
@@ -100,10 +100,11 @@ export function testimonialsSection({ tone = 'ivory' } = {}) {
                 const stars = Math.min(5, Math.max(1, Number(r.rating) || 5));
                 return `
               <figure class="review-card">
-                <div class="review-stars" aria-label="${stars} out of 5 stars">${'<i class="fa-solid fa-star"></i>'.repeat(stars)}</div>
-                <blockquote class="review-quote">“${esc(r.quote || r.caption || r.desc || '')}”</blockquote>
+                <span class="review-mark" aria-hidden="true">“</span>
+                <div class="review-stars" role="img" aria-label="${stars} out of 5 stars">${'<i class="fa-solid fa-star" aria-hidden="true"></i>'.repeat(stars)}</div>
+                <blockquote class="review-quote">${esc(r.quote || r.caption || r.desc || '')}</blockquote>
                 <figcaption class="review-author">
-                  <img src="${esc(r.img || content.config.logos.main)}" data-fallback="" alt="" loading="lazy" />
+                  <img src="${esc(r.img || content.config.logos.main)}" data-fallback="" alt="" loading="lazy" width="48" height="48" />
                   <span>
                     <span class="review-name">${esc(r.name || r.title || 'Valued Client')}</span>
                     <span class="review-role">${esc(r.role || r.category || r.tag || 'Mini Kitchen client')}</span>

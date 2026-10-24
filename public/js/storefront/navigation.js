@@ -57,6 +57,7 @@ export function renderHeaderActiveStates() {
     waHeaderBtn.dataset.brand = brand;
     const label = waHeaderBtn.querySelector('.wa-text');
     if (label) label.textContent = HEADER_WA_LABELS[brand];
+    waHeaderBtn.setAttribute('aria-label', `${HEADER_WA_LABELS[brand]} (WhatsApp)`);
   }
 }
 

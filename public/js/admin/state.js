@@ -70,6 +70,7 @@ export const ui = {
   orderTypeFilter: 'all', // all | delivery_order | catering_quote | table_reservation | whatsapp_inquiry
   orderStatusFilter: 'all', // all | new | confirmed | preparing | out_for_delivery | completed | cancelled
   orderSearch: '',
+  openOrders: new Set(), // order ids whose details are expanded in the Orders list
   menuCatFilter: 'all',
   menuStockFilter: 'all', // all | available | soldout
   menuSearch: '',
