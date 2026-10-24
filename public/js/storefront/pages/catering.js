@@ -92,6 +92,9 @@ function buffetSection() {
             ${list.map(p => eventPackageCard(p)).join('')}
           </div>
           ${extrasNote()}
+          <div class="center-link">
+            <button type="button" class="btn btn-outline" data-action="catering:open-type" data-tab="menu" data-scroll="cateringPackagesSection">See our full catering menu</button>
+          </div>
         </div>
       </section>`;
 }
@@ -203,6 +206,6 @@ registerActions({
   // A catering type card opens the matching tab on the packages page.
   'catering:open-type': el => {
     state.cateringMenusTab = el.dataset.tab || 'buffet';
-    navigateToPage('catering-menus');
+    navigateToPage('catering-menus', el.dataset.scroll);
   }
 });

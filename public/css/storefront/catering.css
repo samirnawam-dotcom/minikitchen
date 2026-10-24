@@ -284,6 +284,104 @@
 }
 
 /* ============================================================================
+   CATERING MENU (dishes by course, no prices)
+   ============================================================================ */
+.menu-book + .menu-book {
+  margin-top: clamp(40px, 5vw, 64px);
+}
+
+.menu-book-title {
+  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* Newspaper columns, so short courses sit under each other instead of stretching beside long ones */
+.menu-book-grid {
+  columns: 3 280px;
+  column-gap: 20px;
+}
+
+.menu-course {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 22px 24px;
+}
+
+.menu-course-head {
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.menu-course-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.menu-course-title .bi-other {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.menu-course-counts {
+  margin-top: 6px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.menu-course-counts strong {
+  color: var(--brand-ink);
+}
+
+.menu-course-items {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.menu-course-items li {
+  display: flex;
+  flex-direction: column;
+  padding-inline-start: 16px;
+  position: relative;
+}
+
+.menu-course-items li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-primary);
+}
+
+.menu-dish {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.menu-course-items .bi-other {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.menu-course-empty {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ============================================================================
    PRICE LISTS (live stations, trays, mini bites)
    ============================================================================ */
 .price-list {

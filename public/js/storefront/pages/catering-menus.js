@@ -1,5 +1,5 @@
 // Page 2 — Catering packages & menus: one tab per part of the offer (event buffets, Birthday Minis,
-// live stations, main course trays, mini bites) followed by the "Build your package" form.
+// the dish menu without prices, live stations, main course trays, mini bites) followed by the "Build your package" form.
 
 import { registerActions } from '../../shared/actions.js';
 import { esc } from '../../shared/dom.js';
@@ -8,6 +8,7 @@ import { cateringList } from '../config.js';
 import { registerPage, renderMainView } from '../view.js';
 import {
   bitesMenu,
+  cateringMenuBook,
   eventPackageCard,
   extrasNote,
   faqList,
@@ -23,6 +24,7 @@ import { pageHero, sectionHeader } from './sections.js';
 const TABS = [
   { id: 'buffet', label: 'Event Buffets' },
   { id: 'birthday', label: 'Birthday Minis' },
+  { id: 'menu', label: 'Our Menu' },
   { id: 'stations', label: 'Live Stations' },
   { id: 'trays', label: 'Main Course Trays' },
   { id: 'bites', label: 'Mini Bites' }
@@ -44,14 +46,26 @@ const addCta = label => `
             <button type="button" class="btn btn-outline" data-action="builder:start">${label}</button>
           </div>`;
 
+const menuLink = `
+          <div class="center-link">
+            <button type="button" class="text-link" data-action="catering-menus:show-menu">See every dish you can choose <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+          </div>`;
+
 function tabContent(tab) {
+  if (tab === 'menu') {
+    return `
+          ${intro('Our catering menu', 'Every dish you can choose from, before you build your package. The numbers show how many of each course every package includes.')}
+          ${cateringMenuBook()}
+          ${addCta('Build your package')}`;
+  }
   if (tab === 'birthday') {
     return `
           ${intro('Birthday Mini — price per person', tagline('birthday'))}
           <div class="packages-grid packages-grid-3">${packages('birthday')
             .map(p => eventPackageCard(p))
             .join('')}</div>
-          ${extrasNote()}`;
+          ${extrasNote()}
+          ${menuLink}`;
   }
   if (tab === 'stations') {
     return `
@@ -76,7 +90,8 @@ function tabContent(tab) {
           <div class="packages-grid packages-grid-3">${packages('buffet')
             .map(p => eventPackageCard(p))
             .join('')}</div>
-          ${extrasNote()}`;
+          ${extrasNote()}
+          ${menuLink}`;
 }
 
 function buildCateringMenusPage() {
@@ -136,5 +151,11 @@ registerActions({
   'catering-menus:tab': el => {
     state.cateringMenusTab = el.dataset.tab;
     renderMainView();
+  },
+  // "See every dish" under the package cards: open the menu tab and bring the tabs into view.
+  'catering-menus:show-menu': () => {
+    state.cateringMenusTab = 'menu';
+    renderMainView();
+    document.getElementById('cateringPackagesSection')?.scrollIntoView({ block: 'start' });
   }
 });
