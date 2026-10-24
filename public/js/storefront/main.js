@@ -13,6 +13,7 @@ import { updatePageSeoMeta } from './seo.js';
 import { render } from './view.js';
 import { updateCartBadges } from './order-bar.js';
 import { openOrderTracker } from './order-tracker.js';
+import { initUi } from './ui.js';
 
 // Feature modules that only register actions / pages
 import './whatsapp.js';
@@ -70,6 +71,7 @@ function init() {
 
   initRouting();
   listenForOtherTabs();
+  initUi();
 }
 
 try {

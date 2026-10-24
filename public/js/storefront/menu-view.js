@@ -84,7 +84,7 @@ function renderGridItem(item, mode, inBagQty) {
                                 <p class="dish-desc">${esc(item.desc || 'Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen.')}</p>
                                 <div class="dish-actions">
                                   <span class="fd-item-price">${formatPrice(item.priceValue)}</span>
-                                  <button class="btn-add-order${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)}>${label}</button>
+                                  <button type="button" class="btn-add-order${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)} aria-label="${esc(`${isSoldOut ? 'Sold out' : inBagQty > 0 ? `${inBagQty} in basket, add another` : 'Add'}: ${item.title}`)}">${label}</button>
                                 </div>
                               </div>
                             </article>
@@ -124,7 +124,7 @@ function renderSplitItem(item, cat, mode, inBagQty) {
                                   class="fd-item-media-img"
                                   loading="lazy"
                                 />
-                                <button type="button" class="fd-add-float-btn${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)}>
+                                <button type="button" class="fd-add-float-btn${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)} aria-label="${esc(`${isSoldOut ? 'Sold out' : inBagQty > 0 ? `${inBagQty} in basket, add another` : 'Add'}: ${item.title}`)}">
                                   ${addLabel}
                                 </button>
                               </div>

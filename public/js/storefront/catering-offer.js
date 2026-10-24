@@ -4,7 +4,7 @@
 
 import { esc } from '../shared/dom.js';
 import { state } from './state.js';
-import { cateringList } from './config.js';
+import { cateringList, content } from './config.js';
 
 export const TYPE_LABELS = { buffet: 'Event buffet', birthday: 'Birthday Mini' };
 
@@ -47,6 +47,25 @@ export function choiceLabel(choice) {
   return count > 0 ? `${count} ${name}` : `Selection of ${name}`;
 }
 
+/** The same as choiceLabel, split so the number can be set apart: { count: '4' | '', text }. */
+function choiceParts(choice) {
+  const group = findGroup(choice.group);
+  if (!group) return null;
+  const count = Number(choice.count) || 0;
+  const ar = state.lang === 'ar' && group.nameAr;
+  if (count > 0) return { count: String(count), text: ar ? group.nameAr : String(group.name || '').toLowerCase() };
+  return { count: '', text: ar ? `تشكيلة ${group.nameAr}` : `Selection of ${String(group.name || '').toLowerCase()}` };
+}
+
+/**
+ * The package we point undecided visitors to: one marked `recommended: true` in the owner's data,
+ * otherwise the Premium package of each kind (the middle of the three).
+ */
+export function isRecommended(pkg) {
+  if (typeof pkg.recommended === 'boolean') return pkg.recommended;
+  return /-premium$/.test(String(pkg.id || ''));
+}
+
 /** Lowest price in a list of numbers (for "from $20 / person"). */
 const lowest = values => {
   const nums = values.map(Number).filter(n => n > 0);
@@ -80,28 +99,35 @@ const optionPrice = opt => `${money(opt.price)} / ${opt.unit === 'kg' ? 'kg' : '
 
 /** Package card: photo, name, price per person, what the customer chooses, "Build this package". */
 export function eventPackageCard(pkg, { photo = true } = {}) {
-  const choices = (pkg.choices || []).map(choiceLabel).filter(Boolean);
+  const choices = (pkg.choices || []).map(choiceParts).filter(Boolean);
   const includes = (pkg.includes || []).filter(Boolean);
   const label = `${TYPE_LABELS[pkg.type] || 'Package'} · ${pkg.name}`;
   const inquiry = `Hello Mini Kitchen Catering! I am interested in the ${label} package (${money(pkg.pricePerPerson)} per person). Could you share availability?`;
+  const recommended = isRecommended(pkg);
   return `
-      <article class="package-card event-package${photo ? '' : ' event-package-plain'}">
+      <article class="package-card event-package${photo ? '' : ' event-package-plain'}${recommended ? ' is-recommended' : ''}">
+        ${recommended ? '<span class="package-ribbon"><i class="fa-solid fa-star" aria-hidden="true"></i> Recommended</span>' : ''}
         ${
           photo
             ? `<div class="package-card-media">
-          <img src="${esc(pkg.img)}" data-fallback="" alt="${esc(label)}" loading="lazy" />
+          <img src="${esc(pkg.img)}" data-fallback="" alt="${esc(`${label} catering buffet`)}" loading="lazy" decoding="async" width="600" height="400" />
           ${pkg.badge ? `<span class="package-badge">${esc(pkg.badge)}</span>` : ''}
         </div>`
             : ''
         }
         <div class="package-card-body">
-          <div class="package-card-cat">${esc(TYPE_LABELS[pkg.type] || 'Package')}${!photo && pkg.badge ? ` · ${esc(pkg.badge)}` : ''}</div>
-          <h3 class="package-card-title">${nameBlock(pkg)}</h3>
-          <div class="package-card-price"><span>${money(pkg.pricePerPerson)}</span> per person</div>
+          <div class="package-card-head">
+            <div>
+              <div class="package-card-cat">${esc(TYPE_LABELS[pkg.type] || 'Package')}${!photo && pkg.badge ? ` · ${esc(pkg.badge)}` : ''}</div>
+              <h3 class="package-card-title">${nameBlock(pkg)}</h3>
+            </div>
+            <div class="package-card-price"><span class="package-price-value">${money(pkg.pricePerPerson)}</span><span class="package-price-unit">per person</span></div>
+          </div>
           ${pkg.note ? `<p class="package-card-sub">${esc(pkg.note)}</p>` : ''}
-          <ul class="check-list package-counts">
-            ${choices.map(c => `<li>${esc(c)}</li>`).join('')}
-            ${includes.map(i => `<li><strong>${esc(i)}</strong> included</li>`).join('')}
+          <div class="package-counts-label">You choose</div>
+          <ul class="package-counts">
+            ${choices.map(c => `<li><span class="package-count${c.count ? '' : ' is-all'}">${c.count ? esc(c.count) : '<i class="fa-solid fa-check" aria-hidden="true"></i>'}</span><span>${esc(c.text)}</span></li>`).join('')}
+            ${includes.map(i => `<li class="is-included"><span class="package-count is-all"><i class="fa-solid fa-plus" aria-hidden="true"></i></span><span><strong>${esc(i)}</strong> included</span></li>`).join('')}
           </ul>
           <div class="package-card-footer">
             <button type="button" class="btn btn-primary btn-sm" data-action="builder:start" data-pkg="${esc(pkg.id)}">Build this package</button>
@@ -179,4 +205,115 @@ export function extrasNote() {
   const extras = cateringList('cateringExtras');
   if (extras.length === 0) return '';
   return `<p class="extras-note"><strong>Extras on request:</strong> ${extras.map(e => esc(localName(e))).join(' · ')}</p>`;
+}
+
+// ---------------------------------------------------------------------------
+// How it works and frequently asked questions (built only from the owner's real data)
+// ---------------------------------------------------------------------------
+
+/** Three honest steps from package to confirmation. */
+export function howItWorks({ compact = false } = {}) {
+  const steps = [
+    {
+      icon: 'fa-list-check',
+      title: 'Choose a package',
+      text: 'Event buffets and Birthday Minis are priced per person — or skip the package and pick stations, trays or mini bites.'
+    },
+    {
+      icon: 'fa-utensils',
+      title: 'Build your menu',
+      text: 'Pick your dishes, add live stations, trays and extras, and watch the estimate update as you go.'
+    },
+    {
+      icon: 'fa-whatsapp',
+      brand: true,
+      title: 'Send it on WhatsApp',
+      text: 'Your request arrives with our catering team, who confirm the menu, date and final price with you.'
+    }
+  ];
+  return `
+          <ol class="how-steps${compact ? ' how-steps-compact' : ''}">
+            ${steps
+              .map(
+                (st, i) => `
+            <li class="how-step">
+              <span class="how-step-icon" aria-hidden="true"><i class="${st.brand ? 'fa-brands' : 'fa-solid'} ${st.icon}"></i></span>
+              <span class="how-step-num">Step ${i + 1}</span>
+              <h3 class="how-step-title">${st.title}</h3>
+              <p class="how-step-text">${st.text}</p>
+            </li>`
+              )
+              .join('')}
+          </ol>`;
+}
+
+/** Questions answered from site-config facts only: prices, trays, extras, booking, hours, area. */
+export function faqItems() {
+  const { contacts = {}, location = {} } = content.config || {};
+  const catering = contacts.catering || {};
+  const trays = cateringList('mainCourseTrays');
+  const serves = trays.find(t => t.serves)?.serves || '';
+  const extras = cateringList('cateringExtras').map(e => localName(e));
+  const kgStations = cateringList('liveStationMenu').filter(st => (st.options || []).some(o => o.unit === 'kg'));
+  const items = [];
+
+  const buffetFrom = fromPriceLabel('buffet');
+  const birthdayFrom = fromPriceLabel('birthday');
+  items.push({
+    q: 'How are your catering prices worked out?',
+    a: `Event buffets and Birthday Minis are priced per person${buffetFrom || birthdayFrom ? ` (buffets ${buffetFrom.toLowerCase() || 'per person'}, Birthday Minis ${birthdayFrom.toLowerCase() || 'per person'})` : ''}, so your total is the package price times your number of guests. Live stations are added per person${
+      kgStations.length
+        ? ` (the ${kgStations
+            .map(st =>
+              localName(st)
+                .toLowerCase()
+                .replace(/^live\s+/, '')
+                .replace(/\s+station$/, '')
+            )
+            .join(' and ')} station${kgStations.length > 1 ? 's are' : ' is'} priced per kg)`
+        : ''
+    }. The builder shows a running estimate; our team confirms the final price.`
+  });
+  if (trays.length) {
+    items.push({
+      q: 'How many people does a main course tray serve?',
+      a: `${serves ? `Each main course tray serves ${serves}.` : 'Each tray is priced individually.'} Trays ${fromPriceLabel('trays').replace(/^Trays /, '')} and can be added on their own or next to a package.`
+    });
+  }
+  items.push({
+    q: 'Can I choose the dishes in my package?',
+    a: 'Yes. Each package lists how many dishes you choose from each group — for example appetizers, salads or hot main courses. Where a list is not online yet, our team goes through the options with you on WhatsApp.'
+  });
+  if (extras.length) {
+    items.push({
+      q: 'Do you provide service staff or a bar?',
+      a: `Yes, on request: ${extras.join(', ').toLowerCase()}. Tick the extras you need in the builder and we price them with your quotation.`
+    });
+  }
+  items.push({
+    q: 'How do I book, and when is my date confirmed?',
+    a: `Build your package and press “Send my request on WhatsApp” — the message lists every choice. Nothing is booked or paid at that point: our catering team replies to confirm availability, the menu and the price.${catering.phoneDisplay ? ` You can also call or WhatsApp catering on ${catering.phoneDisplay}.` : ''}`
+  });
+  if (location.short) {
+    items.push({
+      q: 'Where are you based?',
+      a: `Our kitchen is in ${location.short}${location.hours ? ` and we are open ${location.hours.replace(/^Daily from/i, 'daily from')}` : ''}. Tell us your venue when you send your request and we confirm the details with you.`
+    });
+  }
+  return items;
+}
+
+export function faqList() {
+  return `
+          <div class="faq-list">
+            ${faqItems()
+              .map(
+                (f, i) => `
+            <details class="faq-item"${i === 0 ? ' open' : ''}>
+              <summary><span>${esc(f.q)}</span><i class="fa-solid fa-plus faq-icon" aria-hidden="true"></i></summary>
+              <div class="faq-answer"><p>${esc(f.a)}</p></div>
+            </details>`
+              )
+              .join('')}
+          </div>`;
 }

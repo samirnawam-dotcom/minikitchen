@@ -11,7 +11,8 @@
 import { registerActions } from '../../shared/actions.js';
 import { esc } from '../../shared/dom.js';
 import { ui, siteList } from '../state.js';
-import { registerTab, renderActiveTab } from '../router.js';
+import { registerTab, renderActiveTab, markDirty, confirmDiscard, afterCardSaved } from '../router.js';
+import { confirmDialog } from '../ui/modal.js';
 import { saveSiteConfig } from '../sync.js';
 import { showToast, showError } from '../ui/toast.js';
 import { uploadButton } from '../ui/upload.js';
@@ -50,7 +51,7 @@ const colSelect = (name, value, options, label) =>
     .join('')}</select>`;
 
 const removeRowButton = () =>
-  `<button type="button" class="bo-btn bo-btn-outline bo-pk-x" data-action="pk:row-remove" aria-label="Remove row" title="Remove"><i class="fa-solid fa-xmark"></i></button>`;
+  `<button type="button" class="bo-btn bo-btn-outline bo-pk-x" data-action="pk:row-remove" aria-label="Remove this row" title="Remove this row"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>`;
 
 /** Markup of one row for each kind of repeatable list (also used by "Add row"). */
 const ROW_TEMPLATES = {
@@ -138,8 +139,9 @@ function rowsBlock(name, kind, rows, addLabel) {
 
 const cardActions = (saveLabel, { deletable = true } = {}) => `
         <div class="bo-pk-actions">
-          <button type="button" class="bo-btn bo-btn-primary" data-action="pk:save">${saveLabel}</button>
-          ${deletable ? `<button type="button" class="bo-btn bo-btn-danger" data-action="pk:delete" aria-label="Delete"><i class="fa-solid fa-trash"></i> Delete</button>` : ''}
+          <button type="button" class="bo-btn bo-btn-primary" data-action="pk:save" data-save-button><i class="fa-solid fa-check" aria-hidden="true"></i> ${saveLabel}</button>
+          <span class="bo-save-state">Unsaved changes</span>
+          ${deletable ? `<button type="button" class="bo-btn bo-btn-danger" data-action="pk:delete"><i class="fa-solid fa-trash" aria-hidden="true"></i> Delete</button>` : ''}
         </div>`;
 
 // ---------------------------------------------------------------------------
@@ -149,9 +151,9 @@ const cardActions = (saveLabel, { deletable = true } = {}) => `
 function packageCard(p, idx) {
   const imgId = `pkImg${idx}`;
   return `
-      <div class="bo-pk-card" data-list="eventPackages" data-index="${idx}">
+      <div class="bo-pk-card" data-dirty-scope data-list="eventPackages" data-index="${idx}">
         <div class="bo-pk-card-head">
-          <img src="${esc(p.img)}" alt="" class="bo-pk-thumb" />
+          <img src="${esc(p.img)}" alt="" class="bo-pk-thumb" data-fallback="" />
           <div>
             <div class="bo-pk-kicker">${esc(TYPE_NAMES[p.type] || 'Package')}</div>
             <div class="bo-pk-title">${esc(p.name)} · $${esc(p.pricePerPerson)} per person</div>
@@ -161,7 +163,7 @@ function packageCard(p, idx) {
           ${field('Name (English)', 'name', p.name)}
           ${field('Name (Arabic)', 'nameAr', p.nameAr, { dir: 'rtl' })}
           <label class="bo-pk-field">
-            <span>Kind</span>
+            <span>Type of package</span>
             <select class="bo-select" data-field="type">
               <option value="buffet" ${p.type === 'buffet' ? 'selected' : ''}>Event buffet (weddings &amp; occasions)</option>
               <option value="birthday" ${p.type === 'birthday' ? 'selected' : ''}>Birthday Mini</option>
@@ -178,7 +180,7 @@ function packageCard(p, idx) {
           <textarea class="bo-textarea" rows="2" data-field="includes" data-type="lines">${esc((p.includes || []).join('\n'))}</textarea>
         </label>
         <label class="bo-pk-field">
-          <span>Photo</span>
+          <span>Photo <small>(paste a link or upload from your device)</small></span>
           <span class="bo-pk-photo">
             <input type="text" id="${imgId}" class="bo-input" data-field="img" value="${esc(p.img)}" placeholder="Photo link or upload" />
             ${uploadButton(imgId, { compact: true, label: '' })}
@@ -191,7 +193,7 @@ function packageCard(p, idx) {
 function groupCard(g, idx) {
   const used = list('eventPackages').filter(p => (p.choices || []).some(c => c.group === g.id));
   return `
-      <div class="bo-pk-card" data-list="cateringChoiceGroups" data-index="${idx}">
+      <div class="bo-pk-card" data-dirty-scope data-list="cateringChoiceGroups" data-index="${idx}">
         <div class="bo-pk-grid">
           ${field('List name (English)', 'name', g.name, { placeholder: 'e.g. Appetizers' })}
           ${field('List name (Arabic)', 'nameAr', g.nameAr, { dir: 'rtl' })}
@@ -205,7 +207,7 @@ function groupCard(g, idx) {
 
 function stationCard(st, idx) {
   return `
-      <div class="bo-pk-card" data-list="liveStationMenu" data-index="${idx}">
+      <div class="bo-pk-card" data-dirty-scope data-list="liveStationMenu" data-index="${idx}">
         <div class="bo-pk-grid">
           ${field('Station name (English)', 'name', st.name)}
           ${field('Station name (Arabic)', 'nameAr', st.nameAr, { dir: 'rtl' })}
@@ -219,21 +221,29 @@ function stationCard(st, idx) {
 /** Trays, mini bites and extras: one table for the whole list. */
 function wholeListCard(key, kind, addLabel, hint) {
   return `
-      <div class="bo-pk-card bo-pk-card-wide" data-list="${key}" data-whole="1">
+      <div class="bo-pk-card bo-pk-card-wide" data-dirty-scope data-list="${key}" data-whole="1">
         ${hint ? `<p class="bo-pk-hint">${hint}</p>` : ''}
         ${rowsBlock('rows', kind, list(key), addLabel)}
         ${cardActions('Save list', { deletable: false })}
       </div>`;
 }
 
+function cardsOrEmpty(key, cardFn, emptyText) {
+  const items = list(key);
+  if (items.length === 0) {
+    return `<div class="bo-empty"><i class="fa-solid fa-box-open" aria-hidden="true"></i><div class="bo-empty-title">Nothing here yet</div><p>${emptyText}</p></div>`;
+  }
+  return `<div class="bo-pk-cards">${items.map(cardFn).join('')}</div>`;
+}
+
 function subtabBody(sub) {
   if (sub === 'groups') {
     return `<p class="bo-pk-intro">The dishes customers pick from inside a package. Lists without dishes show “our team will confirm the options”.</p>
-      <div class="bo-pk-cards">${list('cateringChoiceGroups').map(groupCard).join('')}</div>`;
+      ${cardsOrEmpty('cateringChoiceGroups', groupCard, 'Press “Add a dish list” to create one (for example Appetizers).')}`;
   }
   if (sub === 'stations') {
     return `<p class="bo-pk-intro">Live stations customers can add to any package. Per-person prices are multiplied by the number of guests; per-kg prices by the kilos they ask for.</p>
-      <div class="bo-pk-cards">${list('liveStationMenu').map(stationCard).join('')}</div>`;
+      ${cardsOrEmpty('liveStationMenu', stationCard, 'Press “Add a live station” to offer one on the website.')}`;
   }
   if (sub === 'trays')
     return wholeListCard(
@@ -258,8 +268,8 @@ function subtabBody(sub) {
       'Services offered on request — they have no price on the website.'
     );
   }
-  return `<p class="bo-pk-intro">Event buffets and Birthday Mini packages, priced per person. Customers choose the number of dishes you set here from the <b>Dish lists</b>.</p>
-      <div class="bo-pk-cards">${list('eventPackages').map(packageCard).join('')}</div>`;
+  return `<p class="bo-pk-intro">Event buffets and Birthday Mini packages, priced per person. Customers choose the number of dishes you set here from the <b>Dish lists</b>. Each card saves on its own — press its Save button after editing.</p>
+      ${cardsOrEmpty('eventPackages', packageCard, 'Press “Add a package” to put your first catering package on the website.')}`;
 }
 
 const ADD_BUTTONS = {
@@ -273,15 +283,15 @@ function render() {
   return `
     <div class="bo-panel">
       <div class="bo-panel-header">
-        <div class="bo-pill-tabs">
+        <div class="bo-pill-tabs" role="group" aria-label="Section">
           ${SUBTABS.map(
             t => `
-          <button class="bo-pill-tab ${sub === t.id ? 'active' : ''}" data-action="catering:subtab" data-subtab="${t.id}">
-            <i class="fa-solid ${t.icon}"></i> ${t.label} (${list(t.key).length})
+          <button type="button" class="bo-pill-tab ${sub === t.id ? 'active' : ''}" data-action="catering:subtab" data-subtab="${t.id}" aria-pressed="${sub === t.id}">
+            <i class="fa-solid ${t.icon}" aria-hidden="true"></i> ${t.label} <span class="bo-pill-count">${list(t.key).length}</span>
           </button>`
           ).join('')}
         </div>
-        ${ADD_BUTTONS[sub] ? `<button class="bo-btn bo-btn-gold" data-action="pk:add" data-subtab="${sub}"><i class="fa-solid fa-plus"></i> ${ADD_BUTTONS[sub]}</button>` : ''}
+        ${ADD_BUTTONS[sub] ? `<button type="button" class="bo-btn bo-btn-gold" data-action="pk:add" data-subtab="${sub}"><i class="fa-solid fa-plus" aria-hidden="true"></i> ${ADD_BUTTONS[sub]}</button>` : ''}
       </div>
       <div class="bo-panel-body">
         ${subtabBody(sub)}
@@ -341,8 +351,8 @@ async function saveCard(button) {
       items.splice(0, items.length, ...before);
       return;
     }
-    renderActiveTab();
-    showToast(`Saved ${rows.length} rows.`);
+    afterCardSaved(card);
+    showToast(`Saved — ${rows.length} row${rows.length === 1 ? '' : 's'} now on the website.`);
     return;
   }
 
@@ -359,8 +369,8 @@ async function saveCard(button) {
     Object.assign(item, before);
     return;
   }
-  renderActiveTab();
-  showToast(`Saved "${item.name}".`);
+  afterCardSaved(card);
+  showToast(`Saved “${item.name}” — the website is updated.`);
 }
 
 async function deleteCard(button) {
@@ -370,12 +380,13 @@ async function deleteCard(button) {
   const idx = Number(card?.dataset.index);
   const item = items[idx];
   if (!item) return;
-  let question = `Delete "${item.name}"?`;
+  let question = `“${item.name}” will be removed from the website. This cannot be undone.`;
   if (key === 'cateringChoiceGroups') {
     const used = list('eventPackages').filter(p => (p.choices || []).some(c => c.group === item.id));
-    if (used.length) question += `\nIt is used by ${used.length} package(s); they will no longer show it.`;
+    if (used.length) question += `\n\nIt is used by ${used.length} package(s); they will no longer show it.`;
   }
-  if (!window.confirm(question)) return;
+  if (!(await confirmDialog(question, { title: 'Delete from the website?', confirmLabel: 'Delete' }))) return;
+  if (!(await confirmDiscard())) return;
   items.splice(idx, 1);
   if (!(await saveSiteConfig())) {
     items.splice(idx, 0, item);
@@ -419,7 +430,7 @@ const NEW_ITEMS = {
 /** Adds a new item at the end and saves it, so it can be edited like the others. */
 async function addItem(sub) {
   const make = NEW_ITEMS[sub];
-  if (!make) return;
+  if (!make || !(await confirmDiscard())) return;
   const { key, item } = make();
   const items = list(key);
   items.push(item);
@@ -435,7 +446,8 @@ async function addItem(sub) {
 }
 
 registerActions({
-  'catering:subtab': el => {
+  'catering:subtab': async el => {
+    if (!(await confirmDiscard())) return;
     ui.cateringSubTab = el.dataset.subtab;
     renderActiveTab();
   },
@@ -446,14 +458,18 @@ registerActions({
   'pk:row-add': el => {
     const rows = el.closest('.bo-pk-rows-wrap')?.querySelector('.bo-pk-rows[data-rows]');
     if (!rows) return;
+    // An empty row is not a change yet (empty rows are dropped on save); typing in it marks the card.
     rows.insertAdjacentHTML('beforeend', ROW_TEMPLATES[rows.dataset.kind]());
     rows.lastElementChild?.querySelector('input:not([type="hidden"]), select')?.focus();
   },
-  'pk:row-remove': el => el.closest('.bo-pk-row')?.remove()
+  'pk:row-remove': el => {
+    markDirty(el);
+    el.closest('.bo-pk-row')?.remove();
+  }
 });
 
 registerTab('catering', {
-  title: 'Packages',
-  subtitle: '',
+  title: 'Catering packages',
+  subtitle: 'Everything customers can choose in the website’s package builder.',
   render
 });

@@ -17,68 +17,18 @@
     <link rel="stylesheet" href="/css/storefront/base.css" />
     <link rel="stylesheet" href="/css/storefront/components.css" />
   </head>
-  <body
-    style="
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fcfbf8;
-      color: #3a3630;
-      padding: 24px;
-      text-align: center;
-    "
-  >
-    <main
-      style="
-        max-width: 560px;
-        background: #ffffff;
-        border: 1px solid #e8e2d7;
-        border-radius: 16px;
-        padding: 44px 32px;
-        box-shadow: none;
-      "
-    >
-      <div
-        style="
-          width: 68px;
-          height: 68px;
-          border-radius: 50%;
-          margin: 0 auto 18px;
-          background: #f7efd9;
-          border: 1px solid #d6ccbb;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #8a6914;
-          font-size: 1.6rem;
-        "
-      >
-        <i class="fa-solid fa-compass"></i>
-      </div>
-      <div
-        style="
-          font-size: 0.75rem;
-          font-weight: 700;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: #8a6914;
-          margin-bottom: 8px;
-        "
-      >
-        Error 404 • Page Not Found
-      </div>
-      <h1 style="font-family: 'Playfair Display', serif; font-size: 2.1rem; margin-bottom: 12px; color: #1d1b18">
-        This Table Could Not Be Found
-      </h1>
-      <p style="color: #69625a; font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px">
-        The link you followed may have moved or no longer exists. Explore our three Mini Kitchen experiences in Ain Al
-        Remmaneh, Aley below:
+  <body class="nf-body">
+    <main class="nf-card">
+      <div class="nf-icon" aria-hidden="true"><i class="fa-solid fa-compass"></i></div>
+      <div class="eyebrow">Error 404 · Page not found</div>
+      <h1 class="nf-title">This table could not be found</h1>
+      <p class="nf-text">
+        The link you followed may have moved or no longer exists. Explore Mini Kitchen in Ain Al Remmaneh, Aley:
       </p>
-      <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center">
-        <a href="/index.html" class="btn btn-primary" style="text-decoration: none"> Catering &amp; Weddings </a>
-        <a href="/restaurant.html" class="btn btn-outline" style="text-decoration: none"> Restaurant </a>
-        <a href="/delivery.html" class="btn btn-whatsapp" style="text-decoration: none"> Delivery </a>
+      <div class="nf-actions">
+        <a href="/index.html" class="btn btn-primary">Catering &amp; weddings</a>
+        <a href="/restaurant.html" class="btn btn-outline">Restaurant</a>
+        <a href="/delivery.html" class="btn btn-outline">Delivery</a>
       </div>
     </main>
   </body>

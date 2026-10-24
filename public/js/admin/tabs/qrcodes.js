@@ -27,8 +27,8 @@ function menuQrList() {
       mode: 'catering',
       badge: 'QR Menu #1 • Weddings & Events',
       title: 'Mini Kitchen Catering & Packages Menu',
-      desc: 'Direct QR link to Wedding Packages, Corporate Buffets & FineDine Catering Trays (`?qr=1#catering-menus`).',
-      color: '#c59b27',
+      desc: 'Opens the catering menus and packages. Use it on event tables and flyers.',
+      color: '#8a6914',
       phone: contacts.catering.phoneDisplay,
       url: `${origin}/catering-menus.html?qr=1#catering-menus`,
       print: { badge: 'QR Menu #1 • Weddings & Events', title: 'Mini Kitchen Catering & Packages Menu' }
@@ -37,8 +37,8 @@ function menuQrList() {
       mode: 'resto',
       badge: 'QR Menu #2 • Aley Terrace Table Scan',
       title: 'Mini Kitchen Restaurant — Dine-In Table QR',
-      desc: 'Direct QR link for restaurant tables in Ain Al Remmaneh, Aley (`?qr=1#restaurant`). Opens directly in Full-Screen Table Mode.',
-      color: '#2d6a4f',
+      desc: 'Opens the restaurant menu straight away. Use it on restaurant tables.',
+      color: '#2b5e47',
       phone: contacts.restaurant.phoneDisplay,
       url: `${origin}/restaurant.html?qr=1#restaurant`,
       print: { badge: 'QR Menu #2 • Aley Terrace Dine-In', title: 'Mini Kitchen Restaurant — Table Menu' }
@@ -47,8 +47,8 @@ function menuQrList() {
       mode: 'delivery',
       badge: 'QR Menu #3 • Fast WhatsApp Delivery',
       title: 'Mini Kitchen Delivery — Instant Order QR',
-      desc: 'Direct QR link for delivery flyers, magnets & packaging (`?qr=1#delivery`). Customers scan, fill bag & send to WhatsApp.',
-      color: '#d94e28',
+      desc: 'Opens the delivery menu; customers order over WhatsApp. Use it on flyers, magnets and bags.',
+      color: '#a2461f',
       phone: contacts.delivery.phoneDisplay,
       url: `${origin}/delivery.html?qr=1#delivery`,
       print: { badge: 'QR Menu #3 • Fast WhatsApp Delivery', title: 'Mini Kitchen Delivery — WhatsApp Menu' }
@@ -60,22 +60,22 @@ const tableUrl = n => `${siteOrigin()}/restaurant.html?qr=1&table=${n}#restauran
 
 function menuQrCard(q) {
   return `
-    <div style="border:1px solid var(--bo-border); border-top: 5px solid ${q.color}; border-radius:18px; padding:24px; text-align:center; background:#fff; display:flex; flex-direction:column; align-items:center;">
-      <span style="background:${q.color}18; color:${q.color}; font-size:0.72rem; font-weight:800; padding:4px 12px; border-radius:999px; text-transform:uppercase; margin-bottom:10px;">
+    <div style="border:1px solid var(--bo-border); border-top: 3px solid ${q.color}; border-radius:16px; padding:22px 18px; min-width:0; text-align:center; background:#fff; display:flex; flex-direction:column; align-items:center;">
+      <span style="background:${q.color}18; color:${q.color}; font-size:0.74rem; font-weight:700; padding:4px 12px; border-radius:999px; margin-bottom:10px;">
         ${esc(q.badge)}
       </span>
-      <h3 style="font-family:var(--font-serif); font-size:1.25rem; margin-bottom:6px;">${esc(q.title)}</h3>
-      <p style="font-size:0.82rem; color:var(--bo-muted); margin-bottom:16px;">${esc(q.desc)}</p>
-      <div style="padding:14px; border:2px dashed ${q.color}; border-radius:18px; margin-bottom:14px; background:#fff;">
-        <img src="${esc(qrImage(q.url, 240, '&color=14171c&bgcolor=ffffff'))}" alt="${esc(q.title)}" style="width:190px; height:190px; display:block;" />
+      <h3 style="font-family:var(--font-serif); font-size:1.2rem; color:var(--bo-text); margin-bottom:6px;">${esc(q.title)}</h3>
+      <p style="font-size:0.86rem; color:var(--bo-muted); margin-bottom:16px;">${esc(q.desc)}</p>
+      <div style="padding:14px; border:1px solid var(--bo-border); border-radius:14px; margin-bottom:14px; background:#fff;">
+        <img src="${esc(qrImage(q.url, 240, '&color=14171c&bgcolor=ffffff'))}" alt="${esc(q.title)}" style="width:190px; height:190px; max-width:100%; display:block;" />
       </div>
-      <input type="text" class="bo-input" value="${esc(q.url)}" readonly style="font-size:0.75rem; text-align:center; margin-bottom:12px; background:#f9fafb;" aria-label="Menu link" />
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; width:100%;">
-        <button class="bo-btn bo-btn-primary" style="background:${q.color};" data-action="qr:print-standee" data-mode="${q.mode}">
-          <i class="fa-solid fa-print"></i> Print Table Tent
+      <input type="text" class="bo-input" value="${esc(q.url)}" readonly style="font-size:0.8rem; text-align:center; margin-bottom:12px;" aria-label="Menu link" />
+      <div style="display:flex; flex-wrap:wrap; gap:8px; width:100%;">
+        <button type="button" class="bo-btn bo-btn-primary" style="flex:1 1 140px;" data-action="qr:print-standee" data-mode="${q.mode}">
+          <i class="fa-solid fa-print" aria-hidden="true"></i> Print table stand
         </button>
-        <a href="${esc(q.url)}" target="_blank" rel="noopener" class="bo-btn bo-btn-outline">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Test QR View
+        <a href="${esc(q.url)}" target="_blank" rel="noopener" class="bo-btn bo-btn-outline" style="flex:1 1 140px;">
+          <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Test the link
         </a>
       </div>
     </div>
@@ -85,28 +85,28 @@ function menuQrCard(q) {
 function tableQrPanel() {
   const count = clampTables(ui.tableQrCount);
   const tables = Array.from({ length: count }, (_, i) => i + 1);
-  const small = 'flex:1; padding:5px 6px; font-size:0.7rem;';
+  const small = 'flex:1; min-height:34px; padding:4px 6px; font-size:0.78rem;';
   return `
     <div class="bo-panel">
       <div class="bo-panel-header">
         <div>
-          <div class="bo-panel-title"><i class="fa-solid fa-chair" style="color:var(--bo-pine);"></i> Table-Numbered Dine-In QR Codes (Aley Terrace)</div>
-          <div style="font-size:0.8rem; color:var(--bo-muted);">Each table QR opens the Restaurant menu with <code>?qr=1&amp;table=N</code> — guests see "Table #N", pay no delivery fee, and their order arrives in the CRM tagged with the table number</div>
+          <h2 class="bo-panel-title"><i class="fa-solid fa-chair" aria-hidden="true"></i> One QR code per table</h2>
+          <div class="bo-panel-sub">Guests who scan see “Table #N”, pay no delivery fee, and their order arrives here with the table number.</div>
         </div>
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-          <span style="font-size:0.78rem; font-weight:700; color:var(--bo-muted);">Number of Tables:</span>
-          <input type="number" min="1" max="60" class="bo-input" style="width:80px; padding:6px 10px; font-weight:800;" value="${count}" data-on-change="qr:table-count" aria-label="Number of tables" />
+          <label for="qrTableCount" style="font-size:0.84rem; font-weight:700; color:var(--bo-text);">Number of tables</label>
+          <input type="number" min="1" max="60" class="bo-input" id="qrTableCount" style="width:84px;" value="${count}" data-on-change="qr:table-count" />
           <button type="button" class="bo-btn bo-btn-gold" data-action="qr:print-tables" data-count="${count}">
-            <i class="fa-solid fa-print"></i> Print All ${count} Table Cards
+            <i class="fa-solid fa-print" aria-hidden="true"></i> Print all ${count} cards
           </button>
         </div>
       </div>
       <div class="bo-panel-body">
-        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap:14px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(min(140px, 40vw), 1fr)); gap:14px;">
           ${tables
             .map(
               n => `
-            <div style="border:1px solid var(--bo-border); border-top:4px solid #2d6a4f; border-radius:14px; padding:12px; text-align:center; background:var(--bo-surface, #fff);">
+            <div style="border:1px solid var(--bo-border); border-top:3px solid #3d7a5e; border-radius:14px; padding:12px; text-align:center; background:var(--bo-surface, #fff);">
               <div style="font-weight:800; font-size:0.95rem; margin-bottom:6px;">Table #${n}</div>
               <img src="${esc(qrImage(tableUrl(n), 160))}" alt="Table ${n} QR" style="width:110px; height:110px;" loading="lazy" />
               <div style="display:flex; gap:6px; margin-top:8px;">
@@ -131,12 +131,12 @@ function render() {
     <div class="bo-panel">
       <div class="bo-panel-header">
         <div>
-          <div class="bo-panel-title"><i class="fa-solid fa-qrcode" style="color:var(--bo-gold);"></i> 3-Menu FineDine QR Code Generator & Standee Printer</div>
-          <div style="font-size:0.8rem; color:var(--bo-muted);">Each menu has a dedicated QR code with <code>?qr=1</code> that hides website hero banners so mobile scanners land straight inside the menu</div>
+          <h2 class="bo-panel-title"><i class="fa-solid fa-qrcode" aria-hidden="true"></i> Menu QR codes</h2>
+          <div class="bo-panel-sub">Each code opens one menu directly, without the website’s welcome banners. Print a table stand or test the link first.</div>
         </div>
       </div>
       <div class="bo-panel-body">
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:22px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap:22px;">
           ${menuQrList().map(menuQrCard).join('')}
         </div>
       </div>
@@ -225,7 +225,7 @@ registerActions({
 });
 
 registerTab('qrcodes', {
-  title: 'QR Codes',
-  subtitle: '',
+  title: 'QR codes',
+  subtitle: 'Printable QR codes that open your menus on a guest’s phone.',
   render
 });

@@ -4,11 +4,17 @@
 // catering_quote for the Back Office and opens WhatsApp with every selection listed.
 //
 // Choices, quantities and typed text live in state.builder, so re-rendering (package change,
-// language switch) keeps them. Checkbox and quantity changes update the page in place so focus
-// stays where the visitor is.
+// language switch) keeps them, and a draft is kept in localStorage so a visitor who leaves and comes
+// back finds their request as they left it. Checkbox and quantity changes update the page in place
+// so focus stays where the visitor is.
+//
+// Around the form: a progress strip (package → dishes → add-ons → details), inline error messages
+// next to each field, a confirmation panel after sending, and on phones a bottom bar that offers
+// "Build your package" + WhatsApp, then the running total + Send once the form is on screen.
 
 import { registerActions } from '../shared/actions.js';
 import { esc } from '../shared/dom.js';
+import { loadJson, saveJson } from '../shared/storage.js';
 import { state } from './state.js';
 import { cateringList } from './config.js';
 import { lbp } from './format.js';
@@ -16,6 +22,7 @@ import { allocateOrderId, recordOrder } from './orders.js';
 import { openWhatsApp } from './whatsapp.js';
 import { navigateToPage } from './navigation.js';
 import { showToast } from './toast.js';
+import { onAfterRender } from './view.js';
 import {
   TYPE_LABELS,
   findGroup,
@@ -30,12 +37,69 @@ import {
 
 const MAX_GUESTS = 2000;
 const MAX_QTY = 999;
+const DRAFT_KEY = 'mk_catering_builder_draft_v1';
+const CATERING_PAGES = ['catering', 'catering-menus'];
 const b = () => state.builder;
 
 const clampInt = (value, min, max) => Math.min(max, Math.max(min, Math.floor(Number(value) || 0)));
 const pkgLabel = pkg => `${TYPE_LABELS[pkg.type] || 'Package'} · ${pkg.name}`;
-const picksFor = groupId => b().picks[groupId] || [];
+/** Picked dish names that still exist in the owner's list (a draft may be older than the menu). */
+const picksFor = groupId => {
+  const picks = b().picks[groupId] || [];
+  const names = new Set(groupItems(findGroup(groupId)).map(i => i.name));
+  return names.size ? picks.filter(n => names.has(n)) : picks;
+};
 const stationKey = (stationId, idx) => `${stationId}:${idx}`;
+const phoneOk = () => b().phone.replace(/\D/g, '').length >= 7;
+
+/** The request that was just sent ({ id, msg }); the form shows a confirmation until "New request". */
+let sent = null;
+
+// ---------------------------------------------------------------------------
+// Draft (localStorage, never throws: see ../shared/storage.js)
+// ---------------------------------------------------------------------------
+const TEXT_FIELDS = ['pkgId', 'prefs', 'date', 'location', 'name', 'phone', 'notes'];
+
+function cleanCounts(obj, max) {
+  const out = {};
+  if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+    for (const [k, v] of Object.entries(obj)) {
+      const n = clampInt(v, 0, max);
+      if (n > 0) out[String(k).slice(0, 120)] = n;
+    }
+  }
+  return out;
+}
+
+function restoreDraft() {
+  const d = loadJson(DRAFT_KEY, null);
+  if (!d || typeof d !== 'object') return;
+  const s = b();
+  for (const f of TEXT_FIELDS) if (typeof d[f] === 'string') s[f] = d[f].slice(0, 2000);
+  if (d.guests !== undefined) s.guests = clampInt(d.guests, 1, MAX_GUESTS);
+  if (d.picks && typeof d.picks === 'object') {
+    s.picks = {};
+    for (const [g, list] of Object.entries(d.picks)) {
+      if (Array.isArray(list)) s.picks[g] = list.filter(x => typeof x === 'string').slice(0, 50);
+    }
+  }
+  if (d.stationOpt && typeof d.stationOpt === 'object') {
+    s.stationOpt = {};
+    for (const [k, v] of Object.entries(d.stationOpt)) if (/^\d+$/.test(String(v))) s.stationOpt[k] = String(v);
+  }
+  s.kg = cleanCounts(d.kg, MAX_QTY);
+  s.trays = cleanCounts(d.trays, MAX_QTY);
+  s.bites = cleanCounts(d.bites, MAX_QTY);
+  if (Array.isArray(d.extras)) s.extras = d.extras.filter(x => typeof x === 'string').slice(0, 20);
+}
+
+let draftTimer = 0;
+function saveDraft() {
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(() => saveJson(DRAFT_KEY, b()), 250);
+}
+
+restoreDraft();
 
 /** Choice groups of the chosen package with what the visitor has to pick. */
 function packageChoices(pkg) {
@@ -141,11 +205,78 @@ function refreshSummary() {
   const el = document.getElementById('builderSummary');
   if (el) el.innerHTML = summaryHtml();
   refreshErrors();
+  refreshProgress();
+  renderBar();
+  saveDraft();
 }
 
 /** Once the visitor has tried to send, keep the error list in step with what they fix. */
 function refreshErrors() {
   if (document.getElementById('builderErrors')?.innerHTML) showErrors(validate(), { scroll: false });
+}
+
+// ---------------------------------------------------------------------------
+// Progress strip: Package → Dishes → Add-ons → Your details
+// ---------------------------------------------------------------------------
+function progressSteps() {
+  const s = b();
+  const pkg = findPackage(s.pkgId);
+  const lines = estimateLines();
+  const addons = lines.some(l => l.kind !== 'package') || s.extras.length > 0;
+  const required = packageChoices(pkg).filter(c => c.required > 0);
+  const picked = required.filter(c => picksFor(c.group.id).length === c.required).length;
+  const steps = [
+    {
+      key: 'package',
+      target: 'pbStepPackage',
+      label: 'Package',
+      done: (!!pkg || addons) && s.guests >= 1,
+      meta: pkg ? `${localName(pkg)} · ${s.guests} guests` : addons ? 'No package' : 'Choose one'
+    },
+    {
+      key: 'dishes',
+      target: 'pbStepChoices',
+      label: 'Dishes',
+      done: pkg ? picked === required.length : addons,
+      meta: pkg ? (required.length ? `${picked} of ${required.length} done` : 'Included') : 'With a package'
+    },
+    {
+      key: 'addons',
+      target: 'pbStepAddons',
+      label: 'Add-ons',
+      done: addons,
+      meta: addons ? 'Added' : 'Optional'
+    },
+    {
+      key: 'details',
+      target: 'pbStepDetails',
+      label: 'Your details',
+      done: !!s.name.trim() && phoneOk(),
+      meta: 'Name & phone'
+    }
+  ];
+  const current = steps.find(st => !st.done && st.key !== 'addons');
+  return steps.map(st => ({ ...st, current: st === current }));
+}
+
+function progressHtml() {
+  return progressSteps()
+    .map(
+      (st, i) => `
+              <li class="builder-progress-step${st.done ? ' is-done' : ''}${st.current ? ' is-current' : ''}">
+                <button type="button" data-action="builder:goto" data-target="${st.target}"${st.current ? ' aria-current="step"' : ''}>
+                  <span class="builder-progress-dot" aria-hidden="true">${st.done ? '<i class="fa-solid fa-check"></i>' : i + 1}</span>
+                  <span class="builder-progress-text"><span class="builder-progress-label">${st.label}</span><span class="builder-progress-meta">${esc(st.meta)}</span></span>
+                  <span class="sr-only">${st.done ? '(done)' : '(to do)'}</span>
+                </button>
+              </li>`
+    )
+    .join('');
+}
+
+function refreshProgress() {
+  const el = document.getElementById('builderProgress');
+  if (el) el.innerHTML = progressHtml();
 }
 
 // ---------------------------------------------------------------------------
@@ -236,8 +367,8 @@ function stationsSection() {
   const stations = cateringList('liveStationMenu');
   if (stations.length === 0) return '';
   return `
-            <div class="builder-step">
-              <h4 class="builder-step-title"><span>3</span> Live stations <small>optional</small></h4>
+            <div class="builder-step" id="pbStepAddons">
+              <h3 class="builder-step-title"><span>${stepNo()}</span> Live stations <small>optional</small></h3>
               <div class="builder-rows">
                 ${stations
                   .map(st => {
@@ -299,8 +430,8 @@ function traysAndBitesSection() {
   const trayCount = Object.values(b().trays).filter(q => q > 0).length;
   const biteCount = Object.values(b().bites).filter(q => q > 0).length;
   return `
-            <div class="builder-step">
-              <h4 class="builder-step-title"><span>4</span> Trays &amp; mini bites <small>optional</small></h4>
+            <div class="builder-step"${cateringList('liveStationMenu').length ? '' : ' id="pbStepAddons"'}>
+              <h3 class="builder-step-title"><span>${stepNo()}</span> Trays &amp; mini bites <small>optional</small></h3>
               ${
                 trays.length
                   ? `<details class="builder-details" ${trayCount ? 'open' : ''}>
@@ -325,7 +456,7 @@ function extrasSection() {
   if (extras.length === 0) return '';
   return `
             <div class="builder-step">
-              <h4 class="builder-step-title"><span>5</span> Extras <small>priced on request</small></h4>
+              <h3 class="builder-step-title"><span>${stepNo()}</span> Extras <small>priced on request</small></h3>
               <div class="builder-checks builder-checks-inline">
                 ${extras
                   .map(
@@ -346,13 +477,36 @@ const textField = (id, field, label, { type = 'text', placeholder = '', required
                   <input type="${type}" id="${id}" class="form-control" value="${esc(b()[field])}" placeholder="${esc(placeholder)}" data-on-input="builder:field" data-field="${field}" ${required ? 'aria-required="true"' : ''} />
                 </div>`;
 
+/** Step numbers follow the sections that are actually shown (an empty list hides its step). */
+let stepCounter = 0;
+const stepNo = () => ++stepCounter;
+
+function confirmationHtml() {
+  return `
+          <div class="builder-sent" role="status" tabindex="-1" id="builderSent">
+            <span class="builder-sent-icon" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+            <span class="eyebrow">Request #${esc(sent.id)}</span>
+            <h3 class="builder-sent-title">Thank you — your request is ready on WhatsApp</h3>
+            <p>Press send in WhatsApp if you have not yet. Our catering team will reply there to confirm the menu, the date and the final price.</p>
+            <div class="hero-actions">
+              <button type="button" class="btn btn-whatsapp" data-action="builder:resend"><i class="fa-brands fa-whatsapp"></i> Open WhatsApp again</button>
+              <button type="button" class="btn btn-outline" data-action="builder:new">Start a new request</button>
+            </div>
+          </div>`;
+}
+
 function builderBody() {
+  if (sent) return confirmationHtml();
   const s = b();
+  stepCounter = 0;
   return `
           <form class="builder" data-on-submit="builder:submit" novalidate>
+            <nav class="builder-progress-wrap" aria-label="Your progress">
+              <ol class="builder-progress" id="builderProgress">${progressHtml()}</ol>
+            </nav>
             <div class="builder-main">
-              <div class="builder-step">
-                <h4 class="builder-step-title"><span>1</span> Package &amp; guests</h4>
+              <div class="builder-step" id="pbStepPackage">
+                <h3 class="builder-step-title"><span>${stepNo()}</span> Package &amp; guests</h3>
                 <div class="form-grid">
                   <div class="form-group full">
                     <label for="pbPackage">Package</label>
@@ -366,8 +520,8 @@ function builderBody() {
                 </div>
               </div>
 
-              <div class="builder-step" id="builderChoices">
-                <h4 class="builder-step-title"><span>2</span> Your choices</h4>
+              <div class="builder-step" id="pbStepChoices">
+                <h3 class="builder-step-title"><span>${stepNo()}</span> Your dishes</h3>
                 ${packageSection()}
               </div>
 
@@ -375,8 +529,8 @@ function builderBody() {
               ${traysAndBitesSection()}
               ${extrasSection()}
 
-              <div class="builder-step">
-                <h4 class="builder-step-title"><span>6</span> Your details</h4>
+              <div class="builder-step" id="pbStepDetails">
+                <h3 class="builder-step-title"><span>${stepNo()}</span> Your details</h3>
                 <div class="form-grid">
                   ${textField('pbName', 'name', 'Your name', { required: true, placeholder: 'e.g. Nadine Karam' })}
                   ${textField('pbPhone', 'phone', 'Phone / WhatsApp', { type: 'tel', required: true, placeholder: 'e.g. 03 123 456' })}
@@ -396,6 +550,7 @@ function builderBody() {
               <button type="submit" class="btn btn-whatsapp btn-block">
                 <i class="fa-brands fa-whatsapp"></i> Send my request on WhatsApp
               </button>
+              <p class="builder-assure"><i class="fa-solid fa-lock"></i> Nothing is booked or paid yet — we confirm everything with you first.</p>
             </aside>
           </form>`;
 }
@@ -408,7 +563,7 @@ export function packageBuilderSection({ ivory = true } = {}) {
           <header class="section-header">
             <span class="eyebrow">Build your package</span>
             <h2 class="section-title">Plan your event with us</h2>
-            <p class="section-desc">Choose a package and your dishes, add live stations, trays or mini bites, and send it to our catering team on WhatsApp.</p>
+            <p class="section-desc">Choose a package and your dishes, add live stations, trays or mini bites, and send it to our catering team on WhatsApp. Your choices are saved on this device as you go.</p>
           </header>
           <div id="pkgBuilder">${builderBody()}</div>
         </div>
@@ -418,6 +573,8 @@ export function packageBuilderSection({ ivory = true } = {}) {
 function rerenderBuilder() {
   const el = document.getElementById('pkgBuilder');
   if (el) el.innerHTML = builderBody();
+  el?.querySelectorAll('i[class*="fa-"]').forEach(i => i.setAttribute('aria-hidden', 'true'));
+  renderBar();
 }
 
 // ---------------------------------------------------------------------------
@@ -441,8 +598,7 @@ function validate() {
     errors.push({ field: 'pbPackage', text: 'Choose a package, or add a station, trays or mini bites.' });
   }
   if (!s.name.trim()) errors.push({ field: 'pbName', text: 'Enter your name.' });
-  if (s.phone.replace(/\D/g, '').length < 7)
-    errors.push({ field: 'pbPhone', text: 'Enter a phone number we can reach on WhatsApp.' });
+  if (!phoneOk()) errors.push({ field: 'pbPhone', text: 'Enter a phone number we can reach on WhatsApp.' });
   return errors;
 }
 
@@ -453,13 +609,27 @@ function showErrors(errors, { scroll = true } = {}) {
       ? `<p>Please check:</p><ul>${errors.map(e => `<li>${esc(e.text)}</li>`).join('')}</ul>`
       : '';
   }
-  document.querySelectorAll('#pkgBuilder [aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
+  document.querySelectorAll('#pkgBuilder [aria-invalid]').forEach(el => {
+    el.removeAttribute('aria-invalid');
+    el.removeAttribute('aria-errormessage');
+  });
   document.querySelectorAll('#pkgBuilder .builder-group.invalid').forEach(el => el.classList.remove('invalid'));
+  document.querySelectorAll('#pkgBuilder .field-error').forEach(el => el.remove());
   for (const e of errors) {
+    const msg = document.createElement('p');
+    msg.className = 'field-error';
+    msg.innerHTML = `<i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> ${esc(e.text)}`;
     if (e.field.startsWith('group:')) {
-      document.querySelector(`#pkgBuilder [data-group="${CSS.escape(e.field.slice(6))}"]`)?.classList.add('invalid');
+      const group = document.querySelector(`#pkgBuilder [data-group="${CSS.escape(e.field.slice(6))}"]`);
+      group?.classList.add('invalid');
+      group?.appendChild(msg);
     } else {
-      document.getElementById(e.field)?.setAttribute('aria-invalid', 'true');
+      const input = document.getElementById(e.field);
+      if (!input) continue;
+      msg.id = `${e.field}-error`;
+      input.setAttribute('aria-invalid', 'true');
+      input.setAttribute('aria-errormessage', msg.id);
+      input.insertAdjacentElement('afterend', msg);
     }
   }
   const first = errors[0];
@@ -582,6 +752,27 @@ function submitBuilder() {
 
   showToast(`Request #${quoteId} saved — opening WhatsApp…`);
   openWhatsApp('catering', msg, true);
+
+  // Show the confirmation and start the next request fresh, keeping the contact details.
+  sent = { id: quoteId, msg };
+  Object.assign(b(), {
+    pkgId: '',
+    guests: 50,
+    picks: {},
+    stationOpt: {},
+    kg: {},
+    trays: {},
+    bites: {},
+    extras: [],
+    prefs: '',
+    date: '',
+    notes: ''
+  });
+  saveDraft();
+  rerenderBuilder();
+  const panel = document.getElementById('builderSent');
+  panel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  panel?.focus({ preventScroll: true });
 }
 
 // ---------------------------------------------------------------------------
@@ -619,14 +810,20 @@ function onPick(el) {
     counter.classList.toggle('done', full);
   }
   refreshErrors();
+  refreshProgress();
+  saveDraft();
 }
 
 /** "Build this package" / "Add to your request": preselect, then scroll to the builder on this page or home. */
 function startBuilder(el) {
   const pkgId = el.dataset.pkg;
-  if (pkgId !== undefined && findPackage(pkgId) && b().pkgId !== pkgId) {
-    b().pkgId = pkgId;
-    b().picks = {};
+  if (pkgId !== undefined && findPackage(pkgId)) {
+    sent = null;
+    if (b().pkgId !== pkgId) {
+      b().pkgId = pkgId;
+      b().picks = {};
+      saveDraft();
+    }
   }
   if (document.getElementById('pkgBuilder')) {
     rerenderBuilder();
@@ -636,12 +833,95 @@ function startBuilder(el) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Phone bottom bar (catering pages, ≤ 760px; hidden by CSS on wider screens)
+// ---------------------------------------------------------------------------
+let builderInView = false;
+const builderWatcher =
+  'IntersectionObserver' in window
+    ? new IntersectionObserver(
+        entries => {
+          for (const e of entries) builderInView = e.isIntersecting;
+          renderBar();
+        },
+        { rootMargin: '-15% 0px -25% 0px' }
+      )
+    : null;
+
+function renderBar() {
+  const onCatering = CATERING_PAGES.includes(state.currentPage) && !state.qrTableMode;
+  let bar = document.getElementById('builderBar');
+  document.body.classList.toggle('has-builder-bar', onCatering);
+  if (!onCatering) {
+    bar?.setAttribute('hidden', '');
+    return;
+  }
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'builderBar';
+    bar.className = 'builder-bar';
+    bar.setAttribute('role', 'region');
+    bar.setAttribute('aria-label', 'Catering request');
+    document.body.appendChild(bar);
+  }
+  bar.removeAttribute('hidden');
+  const estimateMode = builderInView && !sent && document.getElementById('pkgBuilder');
+  const mode = estimateMode ? 'estimate' : 'start';
+  const total = estimateTotal(estimateLines());
+  const html =
+    mode === 'estimate'
+      ? `
+      <div class="builder-bar-total">
+        <span class="builder-bar-label">Estimated total</span>
+        <strong>${money(total)}</strong>
+      </div>
+      <button type="button" class="btn btn-whatsapp" data-action="builder:send"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Send request</button>`
+      : `
+      <button type="button" class="btn btn-primary builder-bar-main" data-action="builder:start">Build your package</button>
+      <button type="button" class="builder-bar-wa" data-action="wa:open" data-brand="catering" aria-label="WhatsApp our catering team"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></button>`;
+  // Only touch the DOM when something changed, so focus inside the bar is not lost.
+  if (bar.dataset.html !== html) {
+    bar.dataset.html = html;
+    bar.dataset.mode = mode;
+    bar.innerHTML = html;
+  }
+}
+
+onAfterRender(() => {
+  builderInView = false;
+  if (builderWatcher) {
+    builderWatcher.disconnect();
+    const section = document.getElementById('planEventSection');
+    if (section) builderWatcher.observe(section);
+  }
+  renderBar();
+});
+
+function goToStep(el) {
+  const target = document.getElementById(el.dataset.target);
+  if (!target) return;
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  target.querySelector('input, select, textarea')?.focus({ preventScroll: true });
+}
+
 registerActions({
   'builder:start': startBuilder,
+  'builder:send': submitBuilder,
+  'builder:goto': goToStep,
+  'builder:resend': () => {
+    if (sent) openWhatsApp('catering', sent.msg, true);
+  },
+  'builder:new': () => {
+    sent = null;
+    rerenderBuilder();
+    document.getElementById('pbPackage')?.focus({ preventScroll: true });
+    document.getElementById('planEventSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
   'builder:package': el => {
     b().pkgId = el.value;
     b().picks = {};
     rerenderBuilder();
+    saveDraft();
     document.getElementById('pbPackage')?.focus();
   },
   'builder:guests': el => {
@@ -682,6 +962,8 @@ registerActions({
   'builder:field': el => {
     b()[el.dataset.field] = el.value;
     refreshErrors();
+    refreshProgress();
+    saveDraft();
   },
   'builder:submit': submitBuilder
 });

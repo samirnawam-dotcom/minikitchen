@@ -5,149 +5,145 @@ import { esc, byId } from '../../shared/dom.js';
 import { data, ui } from '../state.js';
 import { api } from '../api.js';
 import { formatDateTime } from '../format.js';
-import { registerTab } from '../router.js';
+import { registerTab, markSaved } from '../router.js';
+import { confirmDialog } from '../ui/modal.js';
 import { refreshFromServer } from '../sync.js';
 import { setAuthenticated } from '../auth.js';
 import { showToast, showError } from '../ui/toast.js';
 import { downloadFile } from '../ui/download.js';
 
-const STAT = 'background:var(--bo-bg); border:1px solid var(--bo-border); border-radius:12px; padding:14px 16px;';
-const STAT_LABEL = 'font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--bo-muted);';
+const STAT =
+  'background:var(--bo-bg); border:1px solid var(--bo-border); border-radius:12px; padding:14px 16px; min-width:0;';
+const STAT_LABEL = 'font-size:0.78rem; font-weight:700; color:var(--bo-muted);';
+const STAT_VALUE =
+  'font-family:var(--font-serif); font-weight:700; font-size:1.4rem; margin-top:2px; color:var(--bo-text);';
 
 function databasePanel(db, logCount) {
   return `
-    <div class="bo-panel" style="margin-bottom:22px;">
+    <section class="bo-panel">
       <div class="bo-panel-header">
         <div>
-          <div class="bo-panel-title"><i class="fa-solid fa-layer-group" style="color:var(--bo-gold);"></i> Production SQLite Relational Database Engine</div>
-          <div style="font-size:0.8rem; color:var(--bo-muted);">All WhatsApp orders, catering quotes, FineDine menu items, SEO settings, and sessions are persisted in a transactional SQLite database</div>
+          <h2 class="bo-panel-title"><i class="fa-solid fa-database" aria-hidden="true"></i> Backups</h2>
+          <div class="bo-panel-sub">Download a copy of everything (orders, menu, packages, settings) and keep it somewhere safe. The server also makes a backup every day.</div>
         </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button type="button" class="bo-btn bo-btn-outline" data-action="sync:refresh">
-            <i class="fa-solid fa-arrows-rotate"></i> Refresh DB Stats
-          </button>
-          <label class="bo-btn bo-btn-outline" style="cursor:pointer; margin:0;">
-            <i class="fa-solid fa-file-import"></i> Restore Backup (.json)
-            <input type="file" accept=".json,application/json" hidden data-on-change="security:import" />
-          </label>
+        <div class="bo-panel-actions">
           <button type="button" class="bo-btn bo-btn-gold" data-action="security:export">
-            <i class="fa-solid fa-floppy-disk"></i> Download Full Database Backup (.json)
+            <i class="fa-solid fa-download" aria-hidden="true"></i> Download a backup
           </button>
+          <button type="button" class="bo-btn bo-btn-outline" data-action="security:import-pick">
+            <i class="fa-solid fa-upload" aria-hidden="true"></i> Restore a backup…
+          </button>
+          <input type="file" accept=".json,application/json" hidden data-on-change="security:import" id="secImportInput" />
         </div>
       </div>
       <div class="bo-panel-body">
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap:12px;">
           <div style="${STAT}">
-            <div style="${STAT_LABEL}">Database Engine</div>
-            <div style="font-weight:800; font-size:0.95rem; margin-top:4px; color:var(--bo-text);">${esc(db.engine)}</div>
-            <div style="font-size:0.75rem; color:#16a34a; font-weight:700; margin-top:4px;"><i class="fa-solid fa-circle-check"></i> ${esc(db.journalMode)} Mode • ACID Transactions</div>
+            <div style="${STAT_LABEL}">Orders &amp; requests stored</div>
+            <div style="${STAT_VALUE}">${Number(db.tables?.orders ?? data.orders.length) || 0}</div>
           </div>
           <div style="${STAT}">
-            <div style="${STAT_LABEL}">Database File & Size</div>
-            <div style="font-weight:800; font-size:0.95rem; margin-top:4px; color:var(--bo-text);"><code>${esc(db.filePath)}</code></div>
-            <div style="font-size:0.75rem; color:var(--bo-muted); margin-top:4px;">Size: <b>${Number(db.fileSizeKb) || 0} KB</b> + Daily Auto-Backup</div>
+            <div style="${STAT_LABEL}">Database size</div>
+            <div style="${STAT_VALUE}">${Number(db.fileSizeKb) || 0} KB</div>
           </div>
           <div style="${STAT}">
-            <div style="${STAT_LABEL}">Stored Orders & Quotes</div>
-            <div style="font-weight:800; font-size:1.25rem; margin-top:4px; color:var(--bo-text);">${Number(db.tables?.orders ?? data.orders.length) || 0} Records</div>
-            <div style="font-size:0.75rem; color:var(--bo-gold-dark); font-weight:700; margin-top:2px;">Indexed by Date, Brand & Status</div>
+            <div style="${STAT_LABEL}">Activity entries</div>
+            <div style="${STAT_VALUE}">${Number(db.tables?.auditLogs ?? logCount) || 0}</div>
           </div>
           <div style="${STAT}">
-            <div style="${STAT_LABEL}">Security & Audit Events</div>
-            <div style="font-weight:800; font-size:1.25rem; margin-top:4px; color:var(--bo-text);">${Number(db.tables?.auditLogs ?? logCount) || 0} Logged</div>
-            <div style="font-size:0.75rem; color:var(--bo-muted); margin-top:2px;">Active Sessions: <b>${Number(db.tables?.activeSessions) || 1}</b></div>
+            <div style="${STAT_LABEL}">Signed-in sessions</div>
+            <div style="${STAT_VALUE}">${Number(db.tables?.activeSessions) || 1}</div>
           </div>
         </div>
+        <details style="margin-top:14px;">
+          <summary class="bo-muted" style="cursor:pointer; font-size:0.84rem;">Technical details</summary>
+          <div class="bo-muted" style="font-size:0.82rem; margin-top:8px; overflow-wrap:anywhere;">
+            ${esc(db.engine)} · ${esc(db.journalMode)} mode · <code>${esc(db.filePath)}</code>
+          </div>
+        </details>
       </div>
-    </div>
+    </section>
   `;
 }
 
 function credentialsPanel(u) {
   return `
-    <div class="bo-panel" style="margin-bottom:22px;">
+    <section class="bo-panel">
       <div class="bo-panel-header">
         <div>
-          <div class="bo-panel-title"><i class="fa-solid fa-shield-halved" style="color:var(--bo-gold);"></i> Back Office Authentication & Administrator Credentials</div>
-          <div style="font-size:0.8rem; color:var(--bo-muted);">Update your Back Office login username, display name, and encrypted password</div>
+          <h2 class="bo-panel-title"><i class="fa-solid fa-user-lock" aria-hidden="true"></i> Your sign-in details</h2>
+          <div class="bo-panel-sub">Change your username, the name shown in the Back Office, or your password.</div>
         </div>
-        <button type="button" class="bo-btn bo-btn-danger" data-action="auth:logout">
-          <i class="fa-solid fa-right-from-bracket"></i> Sign Out & Lock Portal Now
+        <button type="button" class="bo-btn bo-btn-outline" data-action="auth:logout">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sign out
         </button>
       </div>
       <div class="bo-panel-body">
-        <form data-on-submit="security:change-credentials">
+        <form data-on-submit="security:change-credentials" data-dirty-scope style="border:0;">
           <div class="bo-form-grid">
             <div class="bo-form-group">
-              <label for="secAdminUsername">Admin Login Username *</label>
+              <label for="secAdminUsername">Username *</label>
               <input type="text" id="secAdminUsername" class="bo-input" value="${esc(u.username || 'admin')}" autocomplete="username" required />
             </div>
             <div class="bo-form-group">
-              <label for="secAdminDisplayName">Administrator Display Name *</label>
-              <input type="text" id="secAdminDisplayName" class="bo-input" value="${esc(u.displayName || 'Mini Kitchen Executive Admin')}" required />
+              <label for="secAdminDisplayName">Your name *</label>
+              <input type="text" id="secAdminDisplayName" class="bo-input" value="${esc(u.displayName || 'Mini Kitchen Admin')}" required />
             </div>
             <div class="bo-form-group">
-              <label for="secCurrentPass">Current Password (Required to Authorize Changes) *</label>
-              <input type="password" id="secCurrentPass" class="bo-input" placeholder="Enter your current password" autocomplete="current-password" required />
+              <label for="secNewPass">New password</label>
+              <input type="password" id="secNewPass" class="bo-input" autocomplete="new-password" minlength="10" aria-describedby="secNewPassHelp" />
+              <div class="bo-help" id="secNewPassHelp">At least 10 characters. Leave empty to keep your current password.</div>
             </div>
             <div class="bo-form-group">
-              <label for="secNewPass">New Password (Min 10 characters — leave blank to keep current)</label>
-              <input type="password" id="secNewPass" class="bo-input" placeholder="Enter new password (optional)" autocomplete="new-password" minlength="10" />
+              <label for="secCurrentPass">Current password *</label>
+              <input type="password" id="secCurrentPass" class="bo-input" autocomplete="current-password" required aria-describedby="secCurrentPassHelp" />
+              <div class="bo-help" id="secCurrentPassHelp">Needed to confirm it is really you.</div>
             </div>
           </div>
-          <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-            <div style="font-size:0.8rem; color:var(--bo-muted);">
-              <i class="fa-solid fa-lock" style="color:var(--bo-gold);"></i> Passwords are encrypted with <b>PBKDF2-SHA512 (210,000 iterations)</b> in the SQLite <code>admin_users</code> table.
-            </div>
-            <button type="submit" class="bo-btn bo-btn-gold">
-              <i class="fa-solid fa-key"></i> Update Administrator Credentials
+          <div class="bo-form-footer">
+            <span class="bo-save-state">Unsaved changes</span>
+            <button type="submit" class="bo-btn bo-btn-gold" data-save-button style="margin-left:auto;">
+              <i class="fa-solid fa-check" aria-hidden="true"></i> Save sign-in details
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </section>
   `;
 }
 
 function auditPanel(logs) {
-  const cell = 'padding:8px;';
   return `
-    <div class="bo-panel">
+    <section class="bo-panel">
       <div class="bo-panel-header">
         <div>
-          <div class="bo-panel-title"><i class="fa-solid fa-table-list" style="color:var(--bo-gold);"></i> Recent Database & Security Audit Log</div>
-          <div style="font-size:0.8rem; color:var(--bo-muted);">Recorded in the SQLite <code>audit_logs</code> table</div>
+          <h2 class="bo-panel-title"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Recent activity</h2>
+          <div class="bo-panel-sub">Sign-ins and changes, newest first.</div>
         </div>
       </div>
       <div class="bo-panel-body">
         ${
           logs.length === 0
-            ? '<div style="color:var(--bo-muted); font-size:0.85rem;">No audit events recorded yet.</div>'
-            : `<div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; font-size:0.82rem;">
-                  <thead>
-                    <tr style="text-align:left; border-bottom:1px solid var(--bo-border); color:var(--bo-muted);">
-                      <th style="${cell}">Timestamp</th><th style="${cell}">Actor</th><th style="${cell}">Event</th><th style="${cell}">Details</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${logs
-                      .map(
-                        l => `
-                      <tr style="border-bottom:1px dashed var(--bo-border);">
-                        <td style="${cell} white-space:nowrap; color:var(--bo-muted);">${esc(formatDateTime(l.createdAt))}</td>
-                        <td style="${cell} font-weight:700;">${esc(l.actor)}</td>
-                        <td style="${cell}"><code>${esc(l.action)}</code></td>
-                        <td style="${cell} color:var(--bo-muted);">${esc(l.details)}</td>
-                      </tr>`
-                      )
-                      .join('')}
-                  </tbody>
-                </table>
-              </div>`
+            ? '<div class="bo-empty" style="padding:24px;"><div class="bo-empty-title">No activity yet</div><p>Sign-ins and saved changes will be listed here.</p></div>'
+            : `<table class="bo-table">
+                <thead><tr><th scope="col">When</th><th scope="col">Who</th><th scope="col">What</th><th scope="col">Details</th></tr></thead>
+                <tbody>
+                  ${logs
+                    .map(
+                      l => `
+                    <tr>
+                      <td data-label="When" style="white-space:nowrap;" class="bo-muted">${esc(formatDateTime(l.createdAt))}</td>
+                      <td data-label="Who" style="font-weight:700;">${esc(l.actor)}</td>
+                      <td data-label="What"><code>${esc(l.action)}</code></td>
+                      <td data-label="Details" class="bo-muted">${esc(l.details)}</td>
+                    </tr>`
+                    )
+                    .join('')}
+                </tbody>
+              </table>`
         }
       </div>
-    </div>
+    </section>
   `;
 }
 
@@ -160,7 +156,7 @@ function render() {
     fileSizeKb: 48,
     tables: { orders: data.orders.length, activeSessions: 1, auditLogs: ui.auditLogs.length }
   };
-  return databasePanel(db, logs.length) + credentialsPanel(ui.adminUser || {}) + auditPanel(logs);
+  return credentialsPanel(ui.adminUser || {}) + databasePanel(db, logs.length) + auditPanel(logs);
 }
 
 async function exportDatabase() {
@@ -171,9 +167,9 @@ async function exportDatabase() {
       `minikitchen-sqlite-backup-${new Date().toISOString().slice(0, 10)}.json`,
       'application/json;charset=utf-8;'
     );
-    showToast('Downloaded full SQLite database snapshot!');
+    showToast('Backup downloaded. Keep the file somewhere safe.');
   } catch (err) {
-    showError(`Could not download SQLite backup: ${err.message}`);
+    showError(`Could not download the backup: ${err.message}`);
   }
 }
 
@@ -185,14 +181,18 @@ async function importDatabase(input) {
     try {
       snapshot = JSON.parse(await file.text());
     } catch {
-      showError('Invalid JSON backup file.');
+      showError('This file is not a Mini Kitchen backup.');
       return;
     }
-    if (!window.confirm(`Restore "${file.name}"? This replaces the current website content and orders.`)) return;
-    showToast('Restoring SQLite database backup...');
+    const sure = await confirmDialog(
+      `Restoring “${file.name}” replaces the current website content and orders with the ones in the backup.\n\nThis cannot be undone.`,
+      { title: 'Restore this backup?', confirmLabel: 'Restore backup' }
+    );
+    if (!sure) return;
+    showToast('Restoring the backup…');
     const result = await api.importDatabase(snapshot);
     await refreshFromServer({ silent: true });
-    showToast(`Database restored! Imported ${result.ordersImported || 0} order(s).`);
+    showToast(`Backup restored (${result.ordersImported || 0} orders).`);
   } catch (err) {
     showError(`Could not restore database backup: ${err.message}`);
   } finally {
@@ -211,10 +211,11 @@ async function changeCredentials() {
       newPassword: newPass.value
     });
     setAuthenticated(true, result.user);
+    markSaved(currentPass);
     currentPass.value = '';
     newPass.value = '';
     await refreshFromServer({ silent: true });
-    showToast('Administrator credentials updated in SQLite database!');
+    showToast('Sign-in details saved.');
   } catch (err) {
     showError(err.message || 'Could not update credentials.');
   }
@@ -223,11 +224,12 @@ async function changeCredentials() {
 registerActions({
   'security:export': () => exportDatabase(),
   'security:import': input => importDatabase(input),
+  'security:import-pick': () => document.getElementById('secImportInput')?.click(),
   'security:change-credentials': () => changeCredentials()
 });
 
 registerTab('security', {
-  title: 'Account',
-  subtitle: '',
+  title: 'Account & backups',
+  subtitle: 'Your sign-in details, backups and recent activity.',
   render
 });

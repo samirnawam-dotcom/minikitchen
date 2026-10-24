@@ -10,13 +10,15 @@ import {
   bitesMenu,
   eventPackageCard,
   extrasNote,
+  faqList,
+  howItWorks,
   localName,
   packages,
   stationMenu,
   trayMenu
 } from '../catering-offer.js';
 import { packageBuilderSection } from '../package-builder.js';
-import { pageHero } from './sections.js';
+import { pageHero, sectionHeader } from './sections.js';
 
 const TABS = [
   { id: 'buffet', label: 'Event Buffets' },
@@ -86,6 +88,11 @@ function buildCateringMenusPage() {
         text: 'Event buffets and Birthday Minis priced per person, plus live stations, main course trays and mini bites.',
         photo: 'https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=1400&q=85',
         alt: 'A Mini Kitchen catering buffet',
+        meta: [
+          '<i class="fa-solid fa-user-group"></i> Priced per person',
+          '<i class="fa-solid fa-sliders"></i> Choose your own dishes',
+          '<i class="fa-brands fa-whatsapp"></i> Confirmed with you on WhatsApp'
+        ],
         actions: `
               <button class="btn btn-primary" data-action="builder:start">Build your package</button>
               <button class="btn btn-outline" data-action="wa:open" data-brand="catering" data-msg="Hello Mini Kitchen Catering! I am looking at your catering packages and would like some help choosing.">
@@ -98,14 +105,28 @@ function buildCateringMenusPage() {
           <div class="segmented" role="tablist" aria-label="Catering menus">
             ${TABS.map(
               t => `
-            <button type="button" role="tab" aria-selected="${activeTab === t.id}" class="segmented-btn ${activeTab === t.id ? 'active' : ''}" data-action="catering-menus:tab" data-tab="${t.id}">${t.label}</button>`
+            <button type="button" role="tab" id="cmTab-${t.id}" aria-controls="cmPanel" aria-selected="${activeTab === t.id}" tabindex="${activeTab === t.id ? '0' : '-1'}" class="segmented-btn ${activeTab === t.id ? 'active' : ''}" data-action="catering-menus:tab" data-tab="${t.id}">${t.label}</button>`
             ).join('')}
           </div>
-          <div role="tabpanel">${tabContent(activeTab)}</div>
+          <div role="tabpanel" id="cmPanel" aria-labelledby="cmTab-${activeTab}">${tabContent(activeTab)}</div>
         </div>
       </section>
 
-      ${packageBuilderSection()}
+      <section class="section-pad section-ivory">
+        <div class="container">
+          ${sectionHeader({ eyebrow: 'How it works', title: 'Three steps to your event menu' })}
+          ${howItWorks({ compact: true })}
+        </div>
+      </section>
+
+      ${packageBuilderSection({ ivory: false })}
+
+      <section class="section-pad section-ivory" id="cateringFaq">
+        <div class="container container-narrow">
+          ${sectionHeader({ eyebrow: 'Good to know', title: 'Questions we are often asked' })}
+          ${faqList()}
+        </div>
+      </section>
     `;
 }
 

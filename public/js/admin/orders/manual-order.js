@@ -13,50 +13,50 @@ const FORM_HTML = `
   <form id="manualOrderForm" data-on-submit="orders:manual-submit">
     <div class="bo-form-grid">
       <div class="bo-form-group">
-        <label for="moType">Record Type *</label>
+        <label for="moType">What is it? *</label>
         <select id="moType" class="bo-select" required>
-          <option value="delivery_order">🛵 Delivery Order</option>
-          <option value="catering_quote">👑 Catering & Event Quote</option>
-          <option value="table_reservation">🌲 Restaurant Table Reservation</option>
+          <option value="delivery_order">Delivery order</option>
+          <option value="catering_quote">Catering request</option>
+          <option value="table_reservation">Table booking</option>
         </select>
       </div>
       <div class="bo-form-group">
-        <label for="moName">Customer Name *</label>
+        <label for="moName">Customer name *</label>
         <input type="text" id="moName" class="bo-input" placeholder="e.g., Karim Jumblatt" required />
       </div>
       <div class="bo-form-group">
-        <label for="moPhone">Customer Phone / WhatsApp *</label>
-        <input type="text" id="moPhone" class="bo-input" placeholder="e.g., +961 3 555 123" required />
+        <label for="moPhone">Phone / WhatsApp *</label>
+        <input type="tel" id="moPhone" class="bo-input" placeholder="e.g., +961 3 555 123" required />
       </div>
       <div class="bo-form-group">
-        <label for="moTotal">Total Amount (USD)</label>
+        <label for="moTotal">Total in US dollars</label>
         <input type="number" step="0.5" min="0" id="moTotal" class="bo-input" placeholder="e.g., 45.00" value="0" />
       </div>
     </div>
     <div class="bo-form-group" style="margin-top:14px;">
-      <label for="moAddress">Delivery Address / Event Venue *</label>
+      <label for="moAddress">Address or event venue *</label>
       <input type="text" id="moAddress" class="bo-input" placeholder="e.g., Ain Al Remmaneh, Aley" required />
     </div>
     <div class="bo-form-grid" style="margin-top:14px;">
       <div class="bo-form-group">
-        <label for="moEvent">Event Type / Summary</label>
-        <input type="text" id="moEvent" class="bo-input" placeholder="e.g., Wedding Tasting / Phone Delivery" />
+        <label for="moEvent">Occasion (optional)</label>
+        <input type="text" id="moEvent" class="bo-input" placeholder="e.g. Birthday, tasting" />
       </div>
       <div class="bo-form-group">
-        <label for="moDate">Event Date (if applicable)</label>
+        <label for="moDate">Event or booking date</label>
         <input type="date" id="moDate" class="bo-input" />
       </div>
     </div>
     <div class="bo-form-group" style="margin-top:14px;">
-      <label for="moNotes">Items Ordered / Inquiry Notes *</label>
-      <textarea id="moNotes" class="bo-textarea" rows="3" placeholder="Enter dishes ordered or event details..." required></textarea>
+      <label for="moNotes">What did they order or ask for? *</label>
+      <textarea id="moNotes" class="bo-textarea" rows="3" placeholder="Dishes, number of guests, special requests…" required></textarea>
     </div>
-    ${modalFormButtons('Save to Back Office')}
+    ${modalFormButtons('Save order')}
   </form>
 `;
 
 export function openManualOrderModal() {
-  openModal('Log Manual Phone / WhatsApp Order or Catering Inquiry', FORM_HTML);
+  openModal('New order (phone or walk-in)', FORM_HTML);
 }
 
 async function submitManualOrder(form) {
@@ -90,7 +90,7 @@ async function submitManualOrder(form) {
   closeModal();
   updateNavBadges();
   renderActiveTab();
-  showToast('Order logged in Back Office!');
+  showToast('Order saved. You can find it under Orders & requests.');
 }
 
 registerActions({

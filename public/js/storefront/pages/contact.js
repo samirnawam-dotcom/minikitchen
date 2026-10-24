@@ -10,13 +10,14 @@ function contactCard({ brand, eyebrow, title, text, phone, phoneHref, lines, cta
   return `
             <article class="contact-card contact-card-${brand}">
               <span class="eyebrow">${eyebrow}</span>
-              <h3 class="contact-card-title">${title}</h3>
+              <h2 class="contact-card-title">${title}</h2>
               <p class="contact-card-text">${text}</p>
-              <a class="contact-card-phone" href="tel:${esc(phoneHref)}">${esc(phone)}</a>
+              <a class="contact-card-phone" href="tel:${esc(phoneHref)}"><i class="fa-solid fa-phone" aria-hidden="true"></i> ${esc(phone)}</a>
               <ul class="contact-card-lines">${lines.map(l => `<li>${l}</li>`).join('')}</ul>
               <button class="btn btn-whatsapp btn-block" data-action="wa:open" data-brand="${brand}">
                 <i class="fa-brands fa-whatsapp"></i> ${cta}
               </button>
+              ${brand === 'catering' ? '<button type="button" class="text-link contact-card-link" data-action="builder:start">Or build your package online <i class="fa-solid fa-arrow-right"></i></button>' : ''}
             </article>`;
 }
 
@@ -73,7 +74,7 @@ function buildContactPage() {
       <section class="section-pad section-ivory">
         <div class="container contact-layout">
           <div class="form-card">
-            <h3 class="form-card-title">Send us a message</h3>
+            <h2 class="form-card-title">Send us a message</h2>
             <p class="form-card-text">Fill in the details and press send — the message opens in WhatsApp with the right team.</p>
             <form data-on-submit="quote:submit">
               <div class="form-grid">
@@ -124,7 +125,7 @@ function buildContactPage() {
 
           <div class="contact-aside">
             <span class="eyebrow">Find us</span>
-            <h3 class="visit-panel-title">Ain Al Remmaneh, Aley</h3>
+            <h2 class="visit-panel-title">Ain Al Remmaneh, Aley</h2>
             <ul class="info-list">
               <li><i class="fa-solid fa-location-dot"></i> <span>${esc(location.full)}</span></li>
               <li><i class="fa-regular fa-clock"></i> <span>${esc(location.hours)}</span></li>

@@ -98,6 +98,27 @@
   backdrop-filter: saturate(1.4) blur(14px);
   -webkit-backdrop-filter: saturate(1.4) blur(14px);
   border-bottom: 1px solid var(--line);
+  transition:
+    box-shadow 0.3s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* Once the page scrolls (js/storefront/ui.js): a soft shadow and a slightly smaller logo.
+   The bar keeps its height, so nothing below it jumps. */
+.site-header.is-scrolled {
+  background: rgba(252, 251, 248, 0.97);
+  border-bottom-color: transparent;
+  box-shadow: var(--shadow-header);
+}
+
+.site-header .brand-logo-img {
+  transition: transform 0.3s var(--ease);
+  transform-origin: center;
+}
+
+.site-header.is-scrolled .brand-logo-img {
+  transform: scale(0.88);
 }
 
 .header-inner {
@@ -311,6 +332,10 @@
 .header-pref-btn:hover,
 .header-cart-btn:hover {
   border-color: var(--ink);
+}
+
+.header-cart-btn i {
+  font-size: 0.95rem;
 }
 
 .cart-count-badge {
@@ -601,27 +626,76 @@
 }
 
 /* ============================================================================
-   FOOTER
+   FOOTER: catering call-to-action band, four columns, bottom line with "Back to top"
    ============================================================================ */
 .site-footer {
   background: var(--bg-ivory);
   color: var(--text);
   border-top: 1px solid var(--line);
-  padding: 64px 0 28px;
+  padding: var(--space-8) 0 var(--space-6);
   font-size: var(--fs-small);
+}
+
+.footer-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-5) var(--space-7);
+  margin: 0 0 var(--space-8);
+  padding: clamp(28px, 4vw, 44px) clamp(24px, 4vw, 48px);
+  background: var(--ink);
+  color: rgba(255, 255, 255, 0.82);
+  border-radius: var(--radius-dialog);
+}
+
+.footer-cta .eyebrow {
+  color: #f0d79a;
+}
+
+.footer-cta-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.45rem, 2.6vw, 2rem);
+  line-height: 1.2;
+  color: #fff;
+  margin-top: var(--space-2);
+}
+
+.footer-cta-text {
+  margin-top: var(--space-2);
+  font-size: 0.95rem;
+}
+
+.footer-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.footer-cta .btn-primary {
+  background: #fff;
+  color: var(--ink);
+}
+
+.footer-cta .btn-primary:hover {
+  background: var(--bg-sunken);
+}
+
+.footer-cta :focus-visible {
+  outline-color: #fff;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1.3fr;
-  gap: 48px;
-  margin-bottom: 40px;
+  grid-template-columns: 1.5fr 1fr 1fr 1.35fr;
+  gap: var(--space-7);
+  margin-bottom: var(--space-7);
 }
 
 .site-footer .brand-logo-wrap {
   padding-inline-start: 0;
   border-inline-start: none;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 
 .footer-about {
@@ -629,29 +703,21 @@
   max-width: 38ch;
 }
 
-.footer-col h4 {
+.footer-heading {
+  font-family: var(--font-sans);
   font-size: var(--fs-eyebrow);
   font-weight: 700;
   letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
   color: var(--brand-ink);
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 
 .footer-links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 9px;
-}
-
-.footer-col .footer-subhead {
-  margin: 28px 0 12px;
-  color: var(--text-muted);
-}
-
-.footer-links-secondary .footer-link-btn {
-  font-size: var(--fs-xs);
+  gap: 10px;
 }
 
 .footer-link-btn {
@@ -676,7 +742,6 @@
 .footer-contact li {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
   align-items: baseline;
 }
 
@@ -684,18 +749,21 @@
   width: 16px;
   color: var(--brand-ink);
   flex-shrink: 0;
+  text-align: center;
 }
 
 .footer-contact a {
   color: var(--ink);
   font-weight: 600;
   direction: ltr;
+  unicode-bidi: isolate;
+  white-space: nowrap;
 }
 
 .social-icons-row {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: var(--space-5);
 }
 
 .social-icon-btn {
@@ -707,7 +775,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.98rem;
+  font-size: 1rem;
 }
 
 .social-icon-btn:hover {
@@ -719,12 +787,33 @@
 .footer-bottom {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding-top: 22px;
+  padding-top: var(--space-5);
   border-top: 1px solid var(--line);
   font-size: var(--fs-xs);
   color: var(--text-muted);
+}
+
+.footer-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  background: none;
+  border: none;
+  color: var(--ink);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.footer-top-btn i {
+  transition: transform 0.25s var(--ease);
+}
+
+.footer-top-btn:hover i {
+  transform: translateY(-2px);
 }
 
 /* ============================================================================
@@ -735,6 +824,9 @@
   bottom: 22px;
   inset-inline-end: 22px;
   z-index: 1500;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s var(--ease);
 }
 
 .floating-wa-btn {
@@ -765,7 +857,7 @@
 
 .mk-toast {
   position: fixed;
-  bottom: 90px;
+  bottom: calc(90px + var(--bar-h));
   inset-inline-end: 22px;
   z-index: 3000;
   max-width: min(380px, calc(100vw - 44px));

@@ -31,6 +31,7 @@ function buildDeliveryPage() {
 
       <section class="section-pad section-ivory section-tight-top" id="deliveryMenuStart">
         <div class="container">
+          <h2 class="sr-only">Delivery menu</h2>
           ${renderMenuExplorer('delivery')}
         </div>
       </section>

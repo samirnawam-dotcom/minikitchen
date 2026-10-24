@@ -32,3 +32,26 @@ export function formatAge(minutes) {
   if (minutes < 24 * 60) return `${Math.floor(minutes / 60)} h ${String(minutes % 60).padStart(2, '0')} min`;
   return `${Math.floor(minutes / (24 * 60))} d`;
 }
+
+/** Parses an event date stored as "YYYY-MM-DD" (local day); null for "To confirm" or other text. */
+export function parseEventDate(value) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || '').trim());
+  if (!m) return null;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** "Sat, Nov 7, 2026" for ISO dates; other text (e.g. "To confirm") is returned unchanged. */
+export function formatEventDate(value) {
+  const d = parseEventDate(value);
+  if (!d) return String(value || '');
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+/** Whole days from today (local) to an event date; negative when it has passed, null when unknown. */
+export function daysUntil(value, now = new Date()) {
+  const d = parseEventDate(value);
+  if (!d) return null;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((d.getTime() - today.getTime()) / 86400000);
+}

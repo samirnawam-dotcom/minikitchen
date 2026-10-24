@@ -1,12 +1,11 @@
-/* Back Office — modal dialog and responsive (<=1024px) layout overrides */
+/* Back Office — modal dialog, confirmation dialog and toasts */
 
-/* MODAL */
 .bo-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 18, 24, 0.72);
-  backdrop-filter: blur(4px);
-  z-index: 2000;
+  background: rgba(29, 27, 24, 0.38);
+  backdrop-filter: blur(3px);
+  z-index: 4000;
   display: none;
   align-items: center;
   justify-content: center;
@@ -22,52 +21,134 @@
   max-width: 680px;
   max-height: 90vh;
   background: #fff;
-  border-radius: 20px;
+  border: 1px solid var(--bo-border);
+  border-radius: 18px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--bo-shadow-float);
+}
+
+.bo-confirm-dialog {
+  max-width: 440px;
 }
 
 .bo-modal-header {
-  background: var(--bo-sidebar);
-  color: #fff;
-  padding: 18px 24px;
+  background: var(--bo-card);
+  color: var(--bo-text);
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--bo-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+}
+
+.bo-modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--bo-text);
+  margin: 0;
+  line-height: 1.3;
 }
 
 .bo-modal-body {
-  padding: 22px 24px;
+  padding: 20px 22px 22px;
   overflow-y: auto;
 }
 
-.bo-modal-footer {
-  padding: 16px 24px;
-  background: #f9fafb;
-  border-top: 1px solid var(--bo-border);
+.bo-modal-buttons {
+  margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
-@media (max-width: 1024px) {
-  .bo-sidebar {
-    position: static;
-    width: 100%;
-    height: auto;
+.bo-confirm-text {
+  font-size: 0.95rem;
+  color: var(--bo-body);
+  white-space: pre-line;
+}
+
+.bo-confirm-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bo-danger-soft);
+  color: var(--bo-danger);
+  margin-bottom: 12px;
+}
+
+@media (max-width: 640px) {
+  .bo-modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
   }
-  body {
-    flex-direction: column;
+
+  .bo-modal-dialog {
+    max-height: 92vh;
+    border-radius: 18px 18px 0 0;
   }
-  .bo-main {
-    margin-left: 0;
+
+  .bo-modal-buttons .bo-btn {
+    flex: 1 1 auto;
   }
-  .bo-order-grid {
-    grid-template-columns: 1fr;
-  }
-  .bo-dish-row {
-    grid-template-columns: 1fr;
+}
+
+/* TOASTS */
+.bo-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 6000;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: min(460px, calc(100vw - 32px));
+  padding: 12px 16px;
+  border-radius: var(--bo-radius);
+  background: #fff;
+  color: var(--bo-text);
+  border: 1px solid var(--bo-border);
+  border-left: 4px solid var(--bo-success);
+  box-shadow: var(--bo-shadow-float);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+.bo-toast.show {
+  opacity: 1;
+  transform: none;
+}
+
+.bo-toast i {
+  color: var(--bo-success);
+  margin-top: 3px;
+}
+
+.bo-toast.is-error {
+  border-left-color: var(--bo-danger);
+}
+
+.bo-toast.is-error i {
+  color: var(--bo-danger);
+}
+
+@media (max-width: 640px) {
+  .bo-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
   }
 }
