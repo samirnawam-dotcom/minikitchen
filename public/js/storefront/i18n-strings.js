@@ -207,6 +207,13 @@ const AR = {
   'Our chef shares the current choices with you when you send your request.':
     'يطلعكم الشيف على الخيارات المتوفّرة حين ترسلون طلبكم.',
   'Event buffet menu': 'قائمة بوفيه المناسبات',
+  'Event buffets': 'بوفيهات المناسبات',
+  'Choose {n}': 'اختاروا {n}',
+  'Choose {lo}–{hi}': 'اختاروا من {lo} إلى {hi}',
+  'Show all {n} dishes': 'عرض كل الأطباق ({n})',
+  'Show fewer dishes': 'عرض أطباق أقل',
+  'Which menu': 'أي قائمة',
+  Courses: 'الأصناف',
   'Birthday Mini menu': 'قائمة ميني أعياد الميلاد',
   'Our menu is coming soon.': 'قائمتنا متوفّرة قريبًا.',
   'Extras on request:': 'خدمات إضافية عند الطلب:',

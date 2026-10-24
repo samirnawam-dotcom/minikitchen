@@ -155,6 +155,30 @@ registerActions({
     state.cateringMenusTab = el.dataset.tab;
     renderMainView();
   },
+  // Our Menu tab: switch between the buffet and Birthday Mini menus
+  'menu:kind': el => {
+    state.menuBookType = el.dataset.kind;
+    renderMainView();
+    document.getElementById('cateringPackagesSection')?.scrollIntoView({ block: 'start' });
+  },
+  // Course links jump to the course; the header height is covered by scroll-padding-top
+  'menu:jump': el => {
+    const target = document.getElementById(el.dataset.target);
+    if (!target) return;
+    target.scrollIntoView({
+      behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'start'
+    });
+    target.querySelector('h4')?.focus({ preventScroll: true });
+  },
+  // Long courses show their first dishes on phones until "Show all" is pressed
+  'menu:more': el => {
+    const section = el.closest('.menu-section');
+    const open = !section.classList.contains('is-open');
+    section.classList.toggle('is-open', open);
+    el.setAttribute('aria-expanded', String(open));
+    el.textContent = open ? t('Show fewer dishes') : el.dataset.label || el.textContent;
+  },
   // "See every dish" under the package cards: open the menu tab and bring the tabs into view.
   'catering-menus:show-menu': () => {
     state.cateringMenusTab = 'menu';

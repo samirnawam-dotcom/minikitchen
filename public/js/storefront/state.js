@@ -32,6 +32,7 @@ function loadCart() {
 export const state = {
   currentPage: 'catering', // one of PAGE_IDS
   cateringMenusTab: 'buffet', // 'buffet' | 'birthday' | 'menu' | 'stations' | 'trays' | 'bites'
+  menuBookType: 'buffet', // which menu the Our Menu tab shows: 'buffet' | 'birthday'
   restoViewTab: 'menu', // 'menu' | 'atmosphere'
   deliveryCategory: 'all',
   deliverySearch: '',
