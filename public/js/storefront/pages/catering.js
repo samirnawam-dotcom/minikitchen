@@ -124,7 +124,7 @@ function typesSection() {
   return `
       <section class="section-pad">
         <div class="container">
-          ${sectionHeader({ eyebrow: t('Catering'), title: t('What would you like for your event?') })}
+          ${sectionHeader({ eyebrow: t('Catering'), title: t('Weddings &amp; occasions') })}
           <div class="types-grid">
             ${types
               .map(type => {
