@@ -260,7 +260,6 @@ const AR = {
   'Hot main courses in chafing dishes': 'أطباق رئيسية ساخنة في أواني التسخين',
   'Dessert table with French pastries': 'طاولة حلويات بالمعجنات الفرنسية',
   Showcase: 'من أعمالنا',
-  'What would you like for your event?': 'ماذا تختارون لمناسبتكم؟',
   'See {name}': 'عرض {name}',
   'See prices': 'الأسعار',
   'Event buffets · per person': 'بوفيهات المناسبات · للشخص الواحد',
