@@ -117,6 +117,28 @@ export function fromPriceLabel(typeId) {
   return '';
 }
 
+/**
+ * The starting price of a catering type split for a price block like the package cards':
+ * { value: '$20', unit: 'per person' } (unit 'per tray' for trays), or null when there is none.
+ */
+export function fromPriceParts(typeId) {
+  if (typeId === 'buffet' || typeId === 'birthday') {
+    const n = lowest(packages(typeId).map(p => p.pricePerPerson));
+    return n ? { value: money(n), unit: t('per person') } : null;
+  }
+  if (typeId === 'stations') {
+    const n = lowest(
+      cateringList('liveStationMenu').flatMap(s => (s.options || []).filter(o => o.unit !== 'kg').map(o => o.price))
+    );
+    return n ? { value: money(n), unit: t('per person') } : null;
+  }
+  if (typeId === 'trays') {
+    const n = lowest(cateringList('mainCourseTrays').map(tray => tray.price));
+    return n ? { value: money(n), unit: t('per tray') } : null;
+  }
+  return null;
+}
+
 const optionPrice = opt => t(opt.unit === 'kg' ? '{price} / kg' : '{price} / person', { price: money(opt.price) });
 
 // ---------------------------------------------------------------------------

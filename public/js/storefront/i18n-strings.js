@@ -196,6 +196,8 @@ const AR = {
   '<strong>{name}</strong> included': '<strong>{name}</strong> ضمن الباقة',
   'Build this package': 'صمّموا هذه الباقة',
   Ask: 'استفسار',
+  from: 'ابتداءً من',
+  'per tray': 'للصينية',
   'Ideal for weddings': 'مثالية للأعراس',
   'Live pasta station': 'محطة الباستا المباشرة',
   'Live stations are coming soon.': 'المحطات المباشرة متوفّرة قريبًا.',

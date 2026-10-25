@@ -13,7 +13,7 @@ import {
   extrasNote,
   faqList,
   howItWorks,
-  fromPriceLabel,
+  fromPriceParts,
   localName,
   nameBlock,
   packages,
@@ -125,19 +125,37 @@ function typesSection() {
       <section class="section-pad section-ivory">
         <div class="container">
           ${sectionHeader({ eyebrow: t('Catering'), title: t('What would you like for your event?') })}
-          <div class="types-grid">
+          <div class="packages-grid packages-grid-4">
             ${types
               .map(type => {
-                const from = fromPriceLabel(type.id);
+                const from = fromPriceParts(type.id);
+                const tab = esc(TYPE_TABS[type.id] || 'buffet');
+                const ask = `Hello Mini Kitchen Catering! I would like to know more about your ${type.name || 'catering'} offer.`;
                 return `
-            <article class="type-card">
-              <button type="button" class="type-card-media" data-action="catering:open-type" data-tab="${esc(TYPE_TABS[type.id] || 'buffet')}" aria-label="${esc(t('See {name}', { name: localName(type) }))}">
-                <img src="${esc(type.img)}"${responsiveAttrs(type.img, '(max-width: 760px) 50vw, 25vw')} data-fallback="" alt="" loading="lazy" width="500" height="625" />
+            <article class="package-card event-package type-package">
+              <button type="button" class="package-card-media" data-action="catering:open-type" data-tab="${tab}" aria-label="${esc(t('See {name}', { name: localName(type) }))}">
+                <img src="${esc(type.img)}"${responsiveAttrs(type.img, '(max-width: 560px) 100vw, (max-width: 1100px) 50vw, 25vw')} data-fallback="" alt="" loading="lazy" decoding="async" width="600" height="400" />
               </button>
-              <h3 class="type-card-title">${nameBlock(type)}</h3>
-              ${from ? `<div class="type-card-price">${esc(from)}</div>` : ''}
-              <p class="type-card-text">${esc(t(type.text))}</p>
-              <button type="button" class="text-link" data-action="catering:open-type" data-tab="${esc(TYPE_TABS[type.id] || 'buffet')}">${t('See prices')} <i class="fa-solid fa-arrow-right"></i></button>
+              <div class="package-card-body">
+                <div class="package-card-head">
+                  <div>
+                    <div class="package-card-cat">${t('Catering')}</div>
+                    <h3 class="package-card-title">${nameBlock(type)}</h3>
+                  </div>
+                  ${
+                    from
+                      ? `<div class="package-card-price"><span class="package-price-from">${t('from')}</span><span class="package-price-value">${esc(from.value)}</span><span class="package-price-unit">${esc(from.unit)}</span></div>`
+                      : ''
+                  }
+                </div>
+                <p class="package-card-sub type-package-text">${esc(t(type.text))}</p>
+                <div class="package-card-footer">
+                  <button type="button" class="btn btn-primary btn-sm" data-action="catering:open-type" data-tab="${tab}">${t('See prices')}</button>
+                  <button type="button" class="btn btn-outline btn-sm" data-action="wa:open" data-brand="catering" data-msg="${esc(ask)}">
+                    <i class="fa-brands fa-whatsapp"></i> ${t('Ask')}
+                  </button>
+                </div>
+              </div>
             </article>`;
               })
               .join('')}
