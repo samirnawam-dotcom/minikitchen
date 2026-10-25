@@ -22,6 +22,7 @@ import {
 import { packageBuilderSection } from '../package-builder.js';
 import { t } from '../i18n-strings.js';
 import { galleryGrid, sectionHeader, testimonialsSection, uniqueByImage } from './sections.js';
+import { responsiveAttrs } from '../images.js';
 
 const HERO_FALLBACK = 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1800&q=85';
 
@@ -30,18 +31,23 @@ const TYPE_TABS = { buffet: 'buffet', birthday: 'birthday', stations: 'stations'
 
 /** Event photos for the hero slideshow and the showcase strip (owner's gallery first, then packages). */
 function showcasePhotos() {
-  return uniqueByImage(configList('cateringGallery'), cateringList('cateringTypes'), cateringList('eventPackages'));
+  return uniqueByImage(
+    cateringList('heroPhotos'),
+    configList('cateringGallery'),
+    cateringList('cateringTypes'),
+    cateringList('eventPackages')
+  );
 }
 
 function heroSection() {
-  // The catering gallery photos lead the hero slideshow, so the owner changes them from the Back Office.
+  // The home slideshow photos lead (Back Office → Photos & team → Home slideshow), then the gallery.
   const photos = showcasePhotos().slice(0, 6);
   if (photos.length === 0) photos.push({ img: HERO_FALLBACK, title: t('A Mini Kitchen event set-up') });
   const slides = photos
     .map(
       (p, i) => `
           <figure class="hero-slide${i === 0 ? ' is-active' : ''}" data-hero-slide="${i}"${i === 0 ? '' : ' aria-hidden="true"'}>
-            <img src="${esc(p.img)}" data-fallback="${esc(HERO_FALLBACK)}" alt="${esc(t(p.title || 'A Mini Kitchen event'))}" width="1800" height="1200"${i === 0 ? ' fetchpriority="high"' : ' loading="lazy"'} />
+            <img src="${esc(p.img)}"${responsiveAttrs(p.img, '100vw')} data-fallback="${esc(HERO_FALLBACK)}" alt="${esc(t(p.title || 'A Mini Kitchen event'))}" width="1800" height="1200"${i === 0 ? ' fetchpriority="high"' : ' loading="lazy"'} />
           </figure>`
     )
     .join('');
@@ -61,7 +67,7 @@ function heroSection() {
         </div>`
       : '';
   return `
-      <section class="hero-section home-hero" data-hero-slider aria-roledescription="${t('carousel')}" aria-label="${t('Photos from our events')}">
+      <section class="hero-section home-hero" data-hero-slider aria-roledescription="${t('carousel')}" aria-label="${t('Our catering in pictures')}">
         <div class="home-hero-media">${slides}
         </div>
         <div class="container home-hero-copy">
@@ -90,13 +96,13 @@ function showcaseSection() {
   const rows = [photos, [...photos.slice(half), ...photos.slice(0, half)]];
   const tile = (p, copy) => `
               <button type="button" class="showcase-tile" data-action="lightbox:open" data-lightbox="${copy ? 'showcase-copy' : 'showcase'}" data-caption="${esc([t(p.title), t(p.caption)].filter(Boolean).join(' — '))}"${copy ? ' tabindex="-1" aria-hidden="true"' : ` aria-label="${esc(t('View photo: {title}', { title: t(p.title || 'Mini Kitchen event') }))}"`}>
-                <img src="${esc(p.img)}" data-fallback="" alt="${copy ? '' : esc(t(p.title || 'Mini Kitchen event'))}" loading="lazy" decoding="async" width="520" height="360" />
+                <img src="${esc(p.img)}"${responsiveAttrs(p.img, '(max-width: 760px) 70vw, 360px')} data-fallback="" alt="${copy ? '' : esc(t(p.title || 'Mini Kitchen event'))}" loading="lazy" decoding="async" width="520" height="360" />
                 ${p.title ? `<span class="showcase-caption">${esc(t(p.title))}</span>` : ''}
               </button>`;
   return `
-      <section class="showcase" aria-label="${t('Moments from our events')}">
+      <section class="showcase" aria-label="${t('A taste of our catering')}">
         <div class="container">
-          ${sectionHeader({ eyebrow: t('Showcase'), title: t('Moments from our events') })}
+          ${sectionHeader({ eyebrow: t('Showcase'), title: t('A taste of our catering') })}
         </div>
         ${rows
           .map(
@@ -126,7 +132,7 @@ function typesSection() {
                 return `
             <article class="type-card">
               <button type="button" class="type-card-media" data-action="catering:open-type" data-tab="${esc(TYPE_TABS[type.id] || 'buffet')}" aria-label="${esc(t('See {name}', { name: localName(type) }))}">
-                <img src="${esc(type.img)}" data-fallback="" alt="" loading="lazy" width="500" height="625" />
+                <img src="${esc(type.img)}"${responsiveAttrs(type.img, '(max-width: 760px) 50vw, 25vw')} data-fallback="" alt="" loading="lazy" width="500" height="625" />
               </button>
               <h3 class="type-card-title">${nameBlock(type)}</h3>
               ${from ? `<div class="type-card-price">${esc(from)}</div>` : ''}

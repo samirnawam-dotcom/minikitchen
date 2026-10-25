@@ -6,9 +6,10 @@
 import { esc } from '../../shared/dom.js';
 import { content, getTestimonials } from '../config.js';
 import { t } from '../i18n-strings.js';
+import { responsiveAttrs } from '../images.js';
 
-const img = (src, alt, { fallback = '', lazy = true, cls = '' } = {}) =>
-  `<img src="${esc(src)}" data-fallback="${esc(fallback)}" alt="${esc(alt)}"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'} decoding="async"${cls ? ` class="${cls}"` : ''} />`;
+const img = (src, alt, { fallback = '', lazy = true, cls = '', sizes = '(max-width: 760px) 100vw, 50vw' } = {}) =>
+  `<img src="${esc(src)}"${responsiveAttrs(src, sizes)} data-fallback="${esc(fallback)}" alt="${esc(alt)}"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'} decoding="async"${cls ? ` class="${cls}"` : ''} />`;
 
 /**
  * Light page header: eyebrow, title, one line of text and buttons, with an optional photo beside it.
@@ -17,7 +18,7 @@ const img = (src, alt, { fallback = '', lazy = true, cls = '' } = {}) =>
 export function pageHero({ eyebrow, title, text, actions = '', meta = [], photo, alt = '', fallback }) {
   return `
       <section class="hero-section page-hero${photo ? ' has-photo' : ''}">
-        ${photo ? `<div class="page-hero-bg">${img(photo, alt, { fallback, lazy: false })}</div>` : ''}
+        ${photo ? `<div class="page-hero-bg">${img(photo, alt, { fallback, lazy: false, sizes: '100vw' })}</div>` : ''}
         <div class="container page-hero-inner">
           <div class="page-hero-copy">
             <span class="eyebrow">${eyebrow}</span>
@@ -50,7 +51,7 @@ export function galleryTile(item, group, captionKey, shape = '') {
   const caption = [title, captionKey ? t(item[captionKey] || '') : ''].filter(Boolean).join(' — ');
   return `
             <button type="button" class="gallery-tile${shape ? ` ${shape}` : ''}" data-action="lightbox:open" data-lightbox="${esc(group)}" data-caption="${esc(caption)}" aria-label="${esc(t('View photo: {title}', { title: title || 'Mini Kitchen' }))}">
-              ${img(item.img, title || 'Mini Kitchen')}
+              ${img(item.img, title || 'Mini Kitchen', { sizes: '(max-width: 760px) 100vw, 33vw' })}
               ${title ? `<span class="gallery-tile-caption">${esc(title)}</span>` : ''}
             </button>`;
 }

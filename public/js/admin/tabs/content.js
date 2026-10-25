@@ -1,4 +1,4 @@
-// Content tab: website galleries and team profiles (siteConfig.cateringGallery,
+// Content tab: home slideshow, website galleries and team profiles (siteConfig.heroPhotos, cateringGallery,
 // restaurantGallery, teamMembers, behindTheScenes). Each list stores its fields under slightly
 // different names; FIELD_MAP maps the four generic card fields onto them.
 
@@ -12,6 +12,7 @@ import { showToast } from '../ui/toast.js';
 import { uploadButton } from '../ui/upload.js';
 
 const SUB_TABS = [
+  ['heroPhotos', 'Home slideshow'],
   ['cateringGallery', 'Catering photos'],
   ['restaurantGallery', 'Restaurant photos'],
   ['teamMembers', 'Team'],
@@ -27,6 +28,7 @@ const labelsFor = sub => LABELS[sub] || LABELS.default;
 
 /** Generic card fields → stored property names, per list. */
 const FIELD_MAP = {
+  heroPhotos: { title: 'title', tag: 'category', desc: 'caption' },
   cateringGallery: { title: 'title', tag: 'category', desc: 'caption' },
   restaurantGallery: { title: 'title', tag: 'tag', desc: 'desc' },
   teamMembers: { title: 'name', tag: 'role', desc: 'bio' },

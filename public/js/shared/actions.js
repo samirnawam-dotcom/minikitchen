@@ -61,6 +61,9 @@ document.addEventListener(
     const stage = Number(img.dataset.fallbackStage || 0);
     const next = stage === 0 ? img.dataset.fallback || defaultImageFallback : stage === 1 ? defaultImageFallback : '';
     img.dataset.fallbackStage = String(stage + 1);
+    // A responsive photo picks from srcset, which would override the fallback src
+    img.removeAttribute('srcset');
+    img.removeAttribute('sizes');
     if (next && next !== img.src) {
       img.src = next;
     } else if (stage >= 1) {

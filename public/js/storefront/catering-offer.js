@@ -5,6 +5,7 @@
 import { esc } from '../shared/dom.js';
 import { cateringList, content } from './config.js';
 import { state } from './state.js';
+import { responsiveAttrs } from './images.js';
 import { isAr, isolateLatin, ltr, servesText, t } from './i18n-strings.js';
 
 /** English labels of the package kinds (used in WhatsApp messages and Back Office records). */
@@ -137,7 +138,7 @@ export function eventPackageCard(pkg, { photo = true } = {}) {
         ${
           photo
             ? `<div class="package-card-media">
-          <img src="${esc(pkg.img)}" data-fallback="" alt="${esc(t('{label} catering buffet', { label: `${kind} · ${localName(pkg)}` }))}" loading="lazy" decoding="async" width="600" height="400" />
+          <img src="${esc(pkg.img)}"${responsiveAttrs(pkg.img, '(max-width: 760px) 100vw, 33vw')} data-fallback="" alt="${esc(t('{label} catering buffet', { label: `${kind} · ${localName(pkg)}` }))}" loading="lazy" decoding="async" width="600" height="400" />
           ${badge ? `<span class="package-badge">${esc(badge)}</span>` : ''}
         </div>`
             : ''

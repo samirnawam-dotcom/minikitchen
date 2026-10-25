@@ -540,6 +540,16 @@ const SITE_CONFIG = {
   // ==========================================================================
   // CATERING & WEDDING GALLERY (SECTION 1)
   // ==========================================================================
+  // Home slideshow (Back Office → Photos & team → Home slideshow). Our own photos live in
+  // public/images as name.webp (2000px) with name-1400.webp and name-900.webp beside them.
+  heroPhotos: [
+    { title: "Lebanese mezze buffet in a garden at golden hour", category: "Weddings", caption: "", img: "images/catering/hero-1.webp" },
+    { title: "Lebanese cold mezze spread", category: "Mezze", caption: "", img: "images/catering/hero-2.webp" },
+    { title: "Charcoal-grilled skewers at a live station", category: "Live stations", caption: "", img: "images/catering/hero-3.webp" },
+    { title: "Hot main courses in chafing dishes", category: "Main courses", caption: "", img: "images/catering/hero-4.webp" },
+    { title: "Dessert table with French pastries", category: "Desserts", caption: "", img: "images/catering/hero-5.webp" }
+  ],
+
   cateringGallery: [
     {
       title: "Luxury Mountain Wedding Reception",
