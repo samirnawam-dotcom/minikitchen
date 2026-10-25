@@ -1606,8 +1606,7 @@ textarea.form-control {
 }
 
 .motion-ok .page-hero-bg img,
-.motion-ok .split-media img,
-.motion-ok .type-card-media img {
+.motion-ok .split-media img {
   translate: 0 var(--parallax, 0);
   scale: 1.1;
 }

@@ -41,7 +41,6 @@ window.addEventListener(
 const REVEAL = [
   '.section-header',
   '.tab-intro',
-  '.type-card',
   '.package-card',
   '.how-step',
   '.review-card',

@@ -115,7 +115,7 @@ registerActions({
 // ---------------------------------------------------------------------------
 // Parallax: photos drift a little slower than the page
 // ---------------------------------------------------------------------------
-const PARALLAX = '.page-hero-bg img, .home-hero-media, .split-media img, .type-card-media img';
+const PARALLAX = '.page-hero-bg img, .home-hero-media, .split-media img';
 let parallaxEls = [];
 let parallaxQueued = false;
 
