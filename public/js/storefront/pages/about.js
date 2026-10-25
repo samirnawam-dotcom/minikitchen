@@ -20,7 +20,7 @@ function buildAboutPage() {
         text: t(
           'A catering kitchen first — buffets, birthdays and live stations for your events — with our restaurant terrace and delivery on the side.'
         ),
-        photo: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1400&q=85',
+        photo: 'images/pages/about.webp',
         alt: t('The Mini Kitchen team at work')
       })}
 

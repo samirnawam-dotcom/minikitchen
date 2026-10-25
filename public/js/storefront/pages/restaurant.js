@@ -54,7 +54,7 @@ function buildRestaurantPage() {
         text: t(
           'Lebanese breakfast, charcoal grills, burgers and pizza on our terrace in Aley — every day from 8:00 AM to 10:00 PM.'
         ),
-        photo: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=85',
+        photo: 'images/pages/restaurant.webp',
         alt: t('The Mini Kitchen restaurant terrace'),
         actions: `
               <button class="btn btn-whatsapp" data-action="wa:open" data-brand="restaurant" data-msg="Hello Mini Kitchen Restaurant! I would like to reserve a table in Ain Al Remmaneh, Aley.">

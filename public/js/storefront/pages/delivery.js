@@ -21,7 +21,7 @@ function buildDeliveryPage() {
         eyebrow: t('Mini Kitchen Delivery · Aley'),
         title: t('Order online, send on WhatsApp'),
         text: t('Delivering to {areas} and nearby, daily from 8:00 AM to 10:00 PM.', { areas }),
-        photo: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1800&q=85',
+        photo: 'images/pages/delivery.webp',
         alt: t('A spread of Mini Kitchen dishes ready for delivery'),
         fallback: content.config.logos.cover,
         actions: `

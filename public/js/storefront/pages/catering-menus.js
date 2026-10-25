@@ -104,7 +104,7 @@ function buildCateringMenusPage() {
         text: t(
           'Event buffets and Birthday Minis priced per person, plus live stations, main course trays and mini bites.'
         ),
-        photo: 'https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=1400&q=85',
+        photo: 'images/pages/packages.webp',
         alt: t('A Mini Kitchen catering buffet'),
         meta: [
           `<i class="fa-solid fa-user-group"></i> ${t('Priced per person')}`,
