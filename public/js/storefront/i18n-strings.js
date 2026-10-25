@@ -263,6 +263,7 @@ const AR = {
   'See {name}': 'عرض {name}',
   'See prices': 'الأسعار',
   'Event buffets · per person': 'بوفيهات المناسبات · للشخص الواحد',
+  'What would you like for your event?': 'ماذا تختارون لمناسبتكم؟',
   'Weddings &amp; occasions': 'الأعراس والمناسبات',
   'See our full catering menu': 'قائمة الضيافة كاملة',
   'Birthday Mini · per person': 'ميني أعياد الميلاد · للشخص الواحد',
