@@ -122,9 +122,9 @@ function typesSection() {
   const types = cateringList('cateringTypes');
   if (types.length === 0) return '';
   return `
-      <section class="section-pad">
+      <section class="section-pad section-ivory">
         <div class="container">
-          ${sectionHeader({ eyebrow: t('Catering'), title: t('Weddings &amp; occasions') })}
+          ${sectionHeader({ eyebrow: t('Catering'), title: t('What would you like for your event?') })}
           <div class="types-grid">
             ${types
               .map(type => {
@@ -156,7 +156,7 @@ function buffetSection() {
   const list = packages('buffet');
   if (list.length === 0) return '';
   return `
-      <section class="section-pad section-ivory">
+      <section class="section-pad">
         <div class="container">
           ${sectionHeader({ eyebrow: t('Event buffets · per person'), title: t('Weddings &amp; occasions'), text: esc(typeTagline('buffet')) })}
           <div class="packages-grid packages-grid-3">
@@ -258,10 +258,10 @@ function alsoFromSection() {
 function buildCateringHomePage() {
   return `
       ${heroSection()}
-      ${typesSection()}
+      ${buffetSection()}
       ${showcaseSection()}
       ${howSection()}
-      ${buffetSection()}
+      ${typesSection()}
       ${birthdaySection()}
       ${stationsSection()}
       ${gallerySection()}
