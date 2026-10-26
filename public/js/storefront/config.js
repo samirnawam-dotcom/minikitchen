@@ -4,6 +4,7 @@
 
 import SITE_CONFIG from '../data/site-config.js';
 import { MENU_CATEGORIES, MODIFIER_GROUPS } from '../data/menu.js';
+import { DELIVERY_MENU, DELIVERY_MODIFIER_GROUPS } from '../data/delivery-menu.js';
 import { deepClone } from '../shared/dom.js';
 import { loadJson, saveJson, getItem, setItem, removeItem } from '../shared/storage.js';
 import { upgradeCateringList } from '../shared/catering-menu.js';
@@ -18,14 +19,31 @@ export const SAFE_PASTA_FALLBACK =
 export const SAFE_DEFAULT_FALLBACK =
   'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80';
 
+/** Built-in "MK" placeholder, used when a dish has no photo or every photo failed (see ./images.js). */
+export const INLINE_DISH_SVG =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+        <rect width="400" height="300" fill="#f1ece2"/>
+        <circle cx="200" cy="138" r="46" stroke="#c59b27" stroke-width="1.5" fill="none"/>
+        <text x="200" y="147" text-anchor="middle" fill="#8a6914" font-family="Georgia, serif" font-size="24">MK</text>
+        <text x="200" y="222" text-anchor="middle" fill="#69625a" font-family="sans-serif" font-size="12" letter-spacing="3">MINI KITCHEN</text>
+      </svg>`
+  );
+
 const BROKEN_IMAGE_ID = '1621996346565'; // an Unsplash photo that no longer exists
 
 const isPlainObject = v => Boolean(v) && typeof v === 'object' && !Array.isArray(v);
 
-/** Live content used by every view. Mutated in place so importers always see the latest copy. */
+/**
+ * Live content used by every view. Mutated in place so importers always see the latest copy.
+ * `menu` is the restaurant (and QR table) menu; `deliveryMenu` the Mini Kitchen Delivery menu,
+ * read from siteConfig.deliveryMenu (see deliveryMenuFrom).
+ */
 export const content = {
   config: null,
   menu: [],
+  deliveryMenu: [],
   lbpRate: DEFAULT_LBP_RATE
 };
 
@@ -69,10 +87,31 @@ function menuFrom(saved) {
   return sanitizeMenuImages(source);
 }
 
+/**
+ * The delivery menu: the owner's saved siteConfig.deliveryMenu wins (an empty list means no dishes),
+ * only a missing one falls back to the bundled defaults. Works on a copy; dishes without a photo get
+ * the built-in placeholder.
+ */
+function deliveryMenuFrom(config) {
+  const saved = config?.deliveryMenu;
+  const source = deepClone(Array.isArray(saved) ? saved : DELIVERY_MENU);
+  const categories = source.filter(isPlainObject);
+  for (const cat of categories) {
+    cat.items = Array.isArray(cat.items) ? cat.items.filter(isPlainObject) : [];
+    for (const it of cat.items) {
+      if (!it.img) it.img = INLINE_DISH_SVG;
+      if (!it.fallbackImg || it.fallbackImg === it.img) it.fallbackImg = INLINE_DISH_SVG;
+    }
+    if (!cat.thumbImg) cat.thumbImg = cat.items.find(i => i.img !== INLINE_DISH_SVG)?.img || '';
+  }
+  return categories;
+}
+
 /** Loads content from the localStorage cache (or the bundled defaults). Used at start-up and on cross-tab changes. */
 export function loadContentFromCache() {
   content.config = mergeWithDefaults(loadJson(CONFIG_KEY));
   content.menu = menuFrom(loadJson(MENU_KEY));
+  content.deliveryMenu = deliveryMenuFrom(content.config);
   content.lbpRate = Number(getItem(LBP_KEY)) || DEFAULT_LBP_RATE;
 }
 
@@ -91,6 +130,7 @@ export function applyServerContent(data) {
   }
   if ('siteConfig' in data) {
     content.config = mergeWithDefaults(data.siteConfig);
+    content.deliveryMenu = deliveryMenuFrom(content.config);
     if (isPlainObject(data.siteConfig)) saveJson(CONFIG_KEY, data.siteConfig);
     else removeItem(CONFIG_KEY);
   }
@@ -143,16 +183,29 @@ export function getTestimonials() {
 /** Array-valued config sections that the page templates iterate over. */
 export const configList = key => (Array.isArray(content.config[key]) ? content.config[key] : []);
 
+/** The categories a menu explorer shows: 'delivery' → the delivery menu, otherwise the restaurant menu. */
+export const menuForMode = mode => (mode === 'delivery' ? content.deliveryMenu : content.menu);
+
+/** Finds a dish by id in the restaurant or the delivery menu (delivery ids start with "dl-"). */
 export function findDish(itemId) {
-  for (const cat of content.menu) {
+  for (const cat of [...content.menu, ...content.deliveryMenu]) {
     const item = cat.items.find(i => i.id === itemId);
     if (item) return { item, cat };
   }
   return null;
 }
 
-export function getModifierGroups(cat) {
-  if (cat && cat.modType && MODIFIER_GROUPS[cat.modType]) return MODIFIER_GROUPS[cat.modType];
+const ALL_MODIFIER_GROUPS = { ...MODIFIER_GROUPS, ...DELIVERY_MODIFIER_GROUPS };
+
+/** The dish's option type: its own modType, else its category's ('none' = no options). */
+export const dishModType = (cat, item) => item?.modType || cat?.modType || '';
+
+export function getModifierGroups(cat, item) {
+  const own = item?.modType;
+  if (own === 'none') return [];
+  if (own && ALL_MODIFIER_GROUPS[own]) return ALL_MODIFIER_GROUPS[own];
+  if (cat?.modType === 'none') return [];
+  if (cat && cat.modType && ALL_MODIFIER_GROUPS[cat.modType]) return ALL_MODIFIER_GROUPS[cat.modType];
   // Universal serving preference so every dish is customisable
   return [
     {

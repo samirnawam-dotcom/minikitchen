@@ -545,6 +545,8 @@ const AR = {
   'Browse the menu': 'تصفّحوا القائمة',
   'Note: “{note}”': 'ملاحظة: «{note}»',
   '{price} each': '{price} للواحدة',
+  '{price} / piece': '{price} للقطعة',
+  '/ piece': 'للقطعة',
   'One less': 'إنقاص واحد',
   'One more': 'إضافة واحد',
   '{label} applied ({amount})': 'طُبّق {label} ({amount})',

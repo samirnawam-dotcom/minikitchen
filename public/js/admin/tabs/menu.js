@@ -1,12 +1,14 @@
 // Menu tab: searchable list of FineDine dishes with inline title/description/price editing,
 // sold-out toggles and deletion. Full edit / add forms live in menu-modals.js.
+// A switch at the top picks the menu being edited: the Restaurant menu (data.menuCategories, saved
+// with PUT /api/menu) or the Delivery menu (data.siteConfig.deliveryMenu, saved with the site config).
 
 import { registerActions } from '../../shared/actions.js';
 import { esc } from '../../shared/dom.js';
-import { data, ui, findDish } from '../state.js';
+import { ui, findDish, activeMenu } from '../state.js';
 import { registerTab, renderActiveTab, markSaved, confirmDiscard } from '../router.js';
 import { confirmDialog } from '../ui/modal.js';
-import { saveMenu } from '../sync.js';
+import { saveActiveMenu } from '../sync.js';
 import { showToast, showError } from '../ui/toast.js';
 import './menu-modals.js';
 
@@ -16,12 +18,12 @@ const THUMB_FALLBACK = 'https://images.unsplash.com/photo-1544025162-d7669426594
 function matchingRows() {
   const q = ui.menuSearch.toLowerCase().trim();
   const rows = [];
-  for (const cat of data.menuCategories) {
+  for (const cat of activeMenu()) {
     if (ui.menuCatFilter !== 'all' && cat.id !== ui.menuCatFilter) continue;
     for (const item of cat.items) {
       if (ui.menuStockFilter === 'available' && item.soldOut) continue;
       if (ui.menuStockFilter === 'soldout' && !item.soldOut) continue;
-      const hay = `${item.title || ''} ${item.desc || ''} ${cat.name || ''}`.toLowerCase();
+      const hay = `${item.title || ''} ${item.titleAr || ''} ${item.desc || ''} ${cat.name || ''}`.toLowerCase();
       if (q && !hay.includes(q)) continue;
       rows.push({ cat, item });
     }
@@ -45,7 +47,7 @@ function dishRow({ cat, item }) {
         <input type="text" class="bo-input" id="dd-${key}" data-field="desc" value="${esc(item.desc || '')}" placeholder="Short description" />
       </div>
       <div>
-        <label class="bo-dish-cell-label" for="dp-${key}">Price ($)</label>
+        <label class="bo-dish-cell-label" for="dp-${key}">Price ($)${item.unit === 'piece' ? ' per piece' : ''}</label>
         <input type="number" step="0.25" min="0" class="bo-input" style="font-weight:700;" id="dp-${key}" data-field="price" value="${Number(item.priceValue) || 0}" inputmode="decimal" />
       </div>
       <div>
@@ -73,8 +75,26 @@ function dishRow({ cat, item }) {
   `;
 }
 
+const MENU_SOURCES = [
+  { id: 'restaurant', label: 'Restaurant menu', icon: 'fa-utensils' },
+  { id: 'delivery', label: 'Delivery menu', icon: 'fa-motorcycle' }
+];
+
+function sourceSwitch() {
+  return `
+        <div class="bo-pill-tabs" role="group" aria-label="Menu to edit">
+          ${MENU_SOURCES.map(
+            s => `
+          <button type="button" class="bo-pill-tab ${ui.menuSource === s.id ? 'active' : ''}" data-action="menu:source" data-source="${s.id}" aria-pressed="${ui.menuSource === s.id}">
+            <i class="fa-solid ${s.icon}" aria-hidden="true"></i> ${s.label}
+          </button>`
+          ).join('')}
+        </div>`;
+}
+
 function render() {
-  const cats = data.menuCategories;
+  const cats = activeMenu();
+  const isDelivery = ui.menuSource === 'delivery';
   const rows = matchingRows();
   const shown = rows.slice(0, MAX_ROWS);
   const totalDishes = cats.reduce((n, c) => n + c.items.length, 0);
@@ -83,9 +103,12 @@ function render() {
   return `
     <div class="bo-panel">
       <div class="bo-panel-header">
+        ${sourceSwitch()}
+      </div>
+      <div class="bo-panel-header">
         <div>
-          <h2 class="bo-panel-title">${totalDishes} dishes in ${cats.length} categories</h2>
-          <div class="bo-panel-sub">${soldOut ? `${soldOut} marked sold out. ` : ''}Edit a name, description or price and press <b>Save</b> on that row. Use the pencil for photos and badges.</div>
+          <h2 class="bo-panel-title">${isDelivery ? 'Delivery menu' : 'Restaurant menu'}: ${totalDishes} dishes in ${cats.length} categories</h2>
+          <div class="bo-panel-sub">${isDelivery ? 'Shown on the Delivery page. ' : 'Shown on the Restaurant page and the table QR menu. '}${soldOut ? `${soldOut} marked sold out. ` : ''}Edit a name, description or price and press <b>Save</b> on that row. Use the pencil for photos, Arabic names and badges.</div>
         </div>
         <div class="bo-panel-actions">
           <button type="button" class="bo-btn bo-btn-outline" data-action="menu:category-open">
@@ -163,7 +186,7 @@ async function saveRow(button) {
   item.desc = field('desc').trim();
   item.priceValue = price;
   item.price = `$${price.toFixed(2)}`;
-  if (!(await saveMenu())) {
+  if (!(await saveActiveMenu())) {
     Object.assign(item, before);
     return;
   }
@@ -175,7 +198,7 @@ async function toggleSoldOut(catId, itemId) {
   const { item } = findDish(catId, itemId);
   if (!item || !(await confirmDiscard())) return;
   item.soldOut = !item.soldOut;
-  const saved = await saveMenu();
+  const saved = await saveActiveMenu();
   if (!saved) item.soldOut = !item.soldOut;
   renderActiveTab();
   if (saved) showToast(`“${item.title}” is now ${item.soldOut ? 'sold out' : 'available'} on the website.`);
@@ -192,7 +215,7 @@ async function deleteDish(catId, itemId) {
   const previous = cat.items;
   cat.items = cat.items.filter(i => i.id !== itemId);
   cat.count = cat.items.length;
-  if (!(await saveMenu())) {
+  if (!(await saveActiveMenu())) {
     cat.items = previous;
     cat.count = previous.length;
     return;
@@ -202,6 +225,13 @@ async function deleteDish(catId, itemId) {
 }
 
 registerActions({
+  'menu:source': async el => {
+    const source = el.dataset.source === 'delivery' ? 'delivery' : 'restaurant';
+    if (source === ui.menuSource || !(await confirmDiscard())) return;
+    ui.menuSource = source;
+    ui.menuCatFilter = 'all';
+    renderActiveTab();
+  },
   'menu:search': el => {
     ui.menuSearch = el.value;
     renderActiveTab();

@@ -110,3 +110,8 @@ html[lang='ar'] :is(.review-quote, .menu-course-empty, .cart-item-note) {
 :is(.header-pref-btn, .drawer-utility-item)[lang='ar'] {
   font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', var(--font-sans);
 }
+
+/* The English second line under an Arabic dish name is set left-to-right but lines up on the right */
+html[dir='rtl'] .dish-name-other {
+  text-align: right;
+}

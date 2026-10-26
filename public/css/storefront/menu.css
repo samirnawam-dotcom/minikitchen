@@ -633,3 +633,19 @@
   border-color: var(--ink);
   color: #fff;
 }
+
+/* Bilingual dish names (Arabic first, English underneath) and per-piece prices */
+.dish-name-other {
+  display: block;
+  margin-top: 1px;
+  font-size: 0.8em;
+  font-weight: 500;
+  color: var(--text-muted);
+  unicode-bidi: isolate;
+}
+
+.dish-unit {
+  font-size: 0.78em;
+  font-weight: 500;
+  color: var(--text-muted);
+}

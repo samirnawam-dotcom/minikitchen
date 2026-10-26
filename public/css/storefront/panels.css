@@ -361,6 +361,11 @@
   object-fit: cover;
 }
 
+/* Our square studio photos (delivery menu): a taller window so the whole dish shows */
+.fd-modal-hero-photo {
+  height: min(340px, 42vh);
+}
+
 .fd-modal-close {
   position: absolute;
   top: 14px;

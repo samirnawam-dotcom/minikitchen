@@ -2,19 +2,11 @@
 // fallback and the page-wide default have both failed, a built-in "MK" placeholder is shown.
 
 import { setDefaultImageFallback } from '../shared/actions.js';
-import { SAFE_DEFAULT_FALLBACK } from './config.js';
+import { INLINE_DISH_SVG, SAFE_DEFAULT_FALLBACK } from './config.js';
 import { esc } from '../shared/dom.js';
 
-export const INLINE_DISH_SVG =
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
-        <rect width="400" height="300" fill="#f1ece2"/>
-        <circle cx="200" cy="138" r="46" stroke="#c59b27" stroke-width="1.5" fill="none"/>
-        <text x="200" y="147" text-anchor="middle" fill="#8a6914" font-family="Georgia, serif" font-size="24">MK</text>
-        <text x="200" y="222" text-anchor="middle" fill="#69625a" font-family="sans-serif" font-size="12" letter-spacing="3">MINI KITCHEN</text>
-      </svg>`
-  );
+export { INLINE_DISH_SVG };
+
 export function initImageFallbacks() {
   setDefaultImageFallback(SAFE_DEFAULT_FALLBACK);
 

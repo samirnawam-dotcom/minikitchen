@@ -3,6 +3,7 @@
 
 import DEFAULT_SITE_CONFIG from '../data/site-config.js';
 import { MENU_CATEGORIES as DEFAULT_MENU_CATEGORIES } from '../data/menu.js';
+import { DELIVERY_MENU as DEFAULT_DELIVERY_MENU } from '../data/delivery-menu.js';
 import { deepClone } from '../shared/dom.js';
 import { loadJson, saveJson, getItem, setItem, removeItem } from '../shared/storage.js';
 import { CATERING_LIST_KEYS, CATERING_MENU_VERSION, upgradeCateringList } from '../shared/catering-menu.js';
@@ -72,6 +73,7 @@ export const ui = {
   orderStatusFilter: 'all', // all | new | confirmed | preparing | out_for_delivery | completed | cancelled
   orderSearch: '',
   openOrders: new Set(), // order ids whose details are expanded in the Orders list
+  menuSource: 'restaurant', // restaurant (data.menuCategories) | delivery (data.siteConfig.deliveryMenu)
   menuCatFilter: 'all',
   menuStockFilter: 'all', // all | available | soldout
   menuSearch: '',
@@ -149,8 +151,20 @@ export function clearContentCache() {
 
 export const findOrder = id => data.orders.find(o => o.id === id);
 
+/**
+ * The delivery menu (siteConfig.deliveryMenu), seeded from the bundled defaults when it was never
+ * saved. An empty saved list stays empty (the owner removed every dish).
+ */
+export function deliveryMenu() {
+  if (!Array.isArray(data.siteConfig.deliveryMenu)) data.siteConfig.deliveryMenu = deepClone(DEFAULT_DELIVERY_MENU);
+  return data.siteConfig.deliveryMenu;
+}
+
+/** The menu the Menu tab is editing: the restaurant menu or the delivery menu. */
+export const activeMenu = () => (ui.menuSource === 'delivery' ? deliveryMenu() : data.menuCategories);
+
 export function findDish(catId, itemId) {
-  const cat = data.menuCategories.find(c => c.id === catId);
+  const cat = activeMenu().find(c => c.id === catId);
   const item = cat?.items.find(i => i.id === itemId);
   return { cat, item };
 }
