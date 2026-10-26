@@ -30,7 +30,7 @@ const MIME_TYPES = {
 };
 
 const COMPRESSIBLE = new Set(['.html', '.css', '.js', '.mjs', '.json', '.webmanifest', '.xml', '.txt', '.svg']);
-const NO_INDEX_FILES = new Set(['admin.html', '404.html', 'owner-guide.html']);
+const NO_INDEX_FILES = new Set(['admin.html', '404.html', 'owner-guide.html', 'photo-guide.html']);
 const PUBLIC_ROOT = path.resolve(config.PUBLIC_DIR);
 const UPLOADS_ROOT = path.resolve(config.UPLOADS_DIR);
 const UPLOAD_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']);

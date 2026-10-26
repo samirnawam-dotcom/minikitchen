@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <title>Mini Kitchen Photo Brief</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <style>
+      /* Layout: one reading column of brief sections; each photo slot is a row with a drawn-to-ratio frame */
+      :root {
+        --bg: #fcfbf8;
+        --panel: #ffffff;
+        --ivory: #f6f2ea;
+        --ink: #1d1b18;
+        --muted: #69625a;
+        --line: #e8e2d7;
+        --gold: #c59b27;
+        --gold-ink: #8a6914;
+        --tint: #f7efd9;
+        --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+        --sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --bg: #161411;
+          --panel: #1f1c18;
+          --ivory: #24201b;
+          --ink: #f1ece4;
+          --muted: #b3aa9d;
+          --line: #353029;
+          --gold: #d4ab3e;
+          --gold-ink: #e2c26c;
+          --tint: #2e2717;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme='dark'] {
+        --bg: #161411;
+        --panel: #1f1c18;
+        --ivory: #24201b;
+        --ink: #f1ece4;
+        --muted: #b3aa9d;
+        --line: #353029;
+        --gold: #d4ab3e;
+        --gold-ink: #e2c26c;
+        --tint: #2e2717;
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font: 400 16px/1.65 var(--sans);
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        padding-block: 0 64px;
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--serif);
+        font-weight: 600;
+        text-wrap: balance;
+        margin: 0;
+        line-height: 1.2;
+      }
+      p {
+        margin: 0;
+      }
+      code,
+      .mono {
+        font-family: var(--mono);
+        font-size: 0.86em;
+      }
+      .eyebrow {
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--gold-ink);
+      }
+
+      header.top {
+        padding-block: 56px 36px;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        gap: 14px;
+      }
+      header.top h1 {
+        font-size: clamp(2rem, 5vw, 2.9rem);
+      }
+      header.top p {
+        color: var(--muted);
+        max-width: 64ch;
+      }
+      .facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 8px;
+      }
+      .fact {
+        padding: 6px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 0.84rem;
+        background: var(--panel);
+      }
+      .fact b {
+        color: var(--gold-ink);
+        font-variant-numeric: tabular-nums;
+      }
+
+      nav.toc {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-block: 20px;
+        border-bottom: 1px solid var(--line);
+      }
+      nav.toc a {
+        font-size: 0.86rem;
+        font-weight: 600;
+        color: var(--ink);
+        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: var(--ivory);
+      }
+      nav.toc a:hover,
+      nav.toc a:focus-visible {
+        background: var(--tint);
+        outline: none;
+      }
+
+      section {
+        padding-block: 44px 8px;
+        display: grid;
+        gap: 18px;
+      }
+      section > h2 {
+        font-size: clamp(1.45rem, 3vw, 1.85rem);
+      }
+      section > .lead {
+        color: var(--muted);
+        max-width: 68ch;
+      }
+
+      .rules {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+        gap: 14px;
+      }
+      .rule {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px 20px;
+        display: grid;
+        gap: 6px;
+        align-content: start;
+      }
+      .rule h3 {
+        font-family: var(--sans);
+        font-size: 0.98rem;
+        font-weight: 700;
+      }
+      .rule p,
+      .rule li {
+        color: var(--muted);
+        font-size: 0.93rem;
+      }
+      .rule ul {
+        margin: 0;
+        padding-inline-start: 18px;
+        display: grid;
+        gap: 2px;
+      }
+      .rule.do h3::before {
+        content: '✓ ';
+        color: #2f7a4f;
+      }
+      .rule.dont h3::before {
+        content: '✕ ';
+        color: #b2452f;
+      }
+
+      /* Ratio frames: drawn to the real aspect ratio */
+      .ratios {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 14px;
+        align-items: end;
+      }
+      .ratio {
+        display: grid;
+        gap: 6px;
+      }
+      .frame {
+        width: 100%;
+        max-width: 100%;
+        border: 1.5px solid var(--gold);
+        background: var(--tint);
+        border-radius: 4px;
+        display: grid;
+        place-items: center;
+        color: var(--gold-ink);
+        font: 600 0.95rem var(--mono);
+      }
+      .ratio .cap {
+        font-size: 0.8rem;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+      .r169 {
+        aspect-ratio: 16 / 9;
+      }
+      .r32 {
+        aspect-ratio: 3 / 2;
+      }
+      .r45 {
+        aspect-ratio: 4 / 5;
+      }
+      .r43 {
+        aspect-ratio: 4 / 3;
+      }
+      .r11 {
+        aspect-ratio: 1 / 1;
+      }
+
+      /* Slot list */
+      .slots {
+        display: grid;
+        gap: 12px;
+      }
+      .slot {
+        display: grid;
+        grid-template-columns: 116px minmax(0, 1fr);
+        gap: 18px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px;
+      }
+      .slot .frame {
+        width: 116px;
+        font-size: 0.78rem;
+      }
+      .slot-body {
+        display: grid;
+        gap: 8px;
+        min-width: 0;
+      }
+      .slot-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 6px 14px;
+      }
+      .slot-head h3 {
+        font-size: 1.15rem;
+      }
+      .badge {
+        font-size: 0.74rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--ivory);
+        color: var(--muted);
+      }
+      .badge.qty {
+        background: var(--tint);
+        color: var(--gold-ink);
+      }
+      .spec {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 16px;
+        font-size: 0.84rem;
+        color: var(--muted);
+      }
+      .spec b {
+        color: var(--ink);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .slot p {
+        font-size: 0.94rem;
+      }
+      .names {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .names code {
+        background: var(--ivory);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 2px 8px;
+        color: var(--ink);
+        overflow-wrap: anywhere;
+      }
+      .where {
+        font-size: 0.82rem;
+        color: var(--gold-ink);
+        font-weight: 600;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--panel);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 620px;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        text-align: start;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        font-size: 0.74rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: var(--ivory);
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      td.num {
+        font-variant-numeric: tabular-nums;
+        text-align: end;
+      }
+
+      .namebox {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 22px;
+        display: grid;
+        gap: 14px;
+      }
+      .pattern {
+        font: 500 clamp(0.95rem, 2.4vw, 1.15rem) var(--mono);
+        padding: 14px 16px;
+        background: var(--ivory);
+        border-radius: 8px;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .pattern span {
+        color: var(--gold-ink);
+      }
+      .tree {
+        font: 400 0.86rem/1.7 var(--mono);
+        padding: 16px;
+        background: var(--ivory);
+        border-radius: 8px;
+        overflow-x: auto;
+        white-space: pre;
+        margin: 0;
+      }
+
+      .check {
+        display: grid;
+        gap: 8px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+      .check li {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 8px;
+        font-size: 0.95rem;
+      }
+      .check li::before {
+        content: '';
+        width: 16px;
+        height: 16px;
+        margin-top: 4px;
+        border: 1.5px solid var(--gold);
+        border-radius: 4px;
+      }
+
+      footer {
+        margin-top: 48px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      @media (max-width: 560px) {
+        .slot {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .slot .frame {
+          width: 140px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <span class="eyebrow">Mini Kitchen Catering · Aley, Lebanon</span>
+        <h1>Photo brief for the website</h1>
+        <p>
+          Everything the photographer and the marketing team need to fill minikitchen.restbits.online with real photos:
+          what to shoot, the shape and size of each photo, and how to name the files so they can go straight onto the
+          site.
+        </p>
+        <div class="facts">
+          <span class="fact"><b>35</b> priority photos</span>
+          <span class="fact"><b>~70</b> with galleries</span>
+          <span class="fact"><b>+ dishes</b> for the restaurant &amp; delivery menu</span>
+          <span class="fact">JPG · sRGB · full resolution</span>
+        </div>
+      </header>
+
+      <nav class="toc" aria-label="Sections">
+        <a href="#rules">Ground rules</a>
+        <a href="#shapes">Photo shapes</a>
+        <a href="#naming">File names</a>
+        <a href="#priority">Priority shot list</a>
+        <a href="#galleries">Galleries &amp; team</a>
+        <a href="#dishes">Menu dishes</a>
+        <a href="#delivery">How to deliver</a>
+      </nav>
+
+      <section id="rules">
+        <span class="eyebrow">Before the shoot</span>
+        <h2>Ground rules</h2>
+        <p class="lead">
+          The website is light, calm and photo-led: white and ivory backgrounds with gold details. Photos should feel
+          the same: bright, natural, generous, and real.
+        </p>
+        <div class="rules">
+          <div class="rule do">
+            <h3>Light &amp; style</h3>
+            <ul>
+              <li>Natural daylight or warm event light</li>
+              <li>Light, airy tones; white linen, flowers, silver and gold</li>
+              <li>Real Mini Kitchen food, set-ups and team</li>
+            </ul>
+          </div>
+          <div class="rule do">
+            <h3>Shoot both ways</h3>
+            <ul>
+              <li>Every scene in landscape <em>and</em> portrait</li>
+              <li>Leave space around the subject; the site crops</li>
+              <li>Keep the main subject near the centre</li>
+            </ul>
+          </div>
+          <div class="rule do">
+            <h3>Files</h3>
+            <ul>
+              <li>JPG, sRGB colour, highest quality</li>
+              <li>At least the size listed for each photo</li>
+              <li>Edited (colour, straightened), not filtered</li>
+            </ul>
+          </div>
+          <div class="rule dont">
+            <h3>Avoid</h3>
+            <ul>
+              <li>Text, logos, watermarks or frames on the photo</li>
+              <li>Heavy filters, dark moody edits, harsh flash</li>
+              <li>Photos sent through WhatsApp (it shrinks them)</li>
+            </ul>
+          </div>
+          <div class="rule dont">
+            <h3>People</h3>
+            <ul>
+              <li>No guest faces without their permission</li>
+              <li>Prefer hands, chefs at work, guests softly blurred</li>
+              <li>Team portraits only with the person's OK</li>
+            </ul>
+          </div>
+          <div class="rule do">
+            <h3>Text sits on top</h3>
+            <p>
+              Large headers have white text over the photo, on the left in English and on the right in Arabic. Keep the
+              middle of the photo calm and avoid important details at the far edges.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="shapes">
+        <span class="eyebrow">Aspect ratios</span>
+        <h2>Photo shapes used on the site</h2>
+        <p class="lead">
+          Each photo is shown in one of these shapes. Frame the shot so it still works when cropped to its shape. Sizes
+          are the minimum width × height in pixels.
+        </p>
+        <div class="ratios">
+          <div class="ratio">
+            <div class="frame r169">16:9</div>
+            <span class="cap"><b>Wide</b> · 2400 × 1350<br />Home slideshow, page headers</span>
+          </div>
+          <div class="ratio">
+            <div class="frame r32">3:2</div>
+            <span class="cap"><b>Landscape</b> · 1800 × 1200<br />Catering &amp; package cards, galleries</span>
+          </div>
+          <div class="ratio">
+            <div class="frame r45">4:5</div>
+            <span class="cap"><b>Portrait</b> · 1200 × 1500<br />Team, about story, tall gallery tiles</span>
+          </div>
+          <div class="ratio">
+            <div class="frame r43">4:3</div>
+            <span class="cap"><b>Dish</b> · 1200 × 900<br />Restaurant &amp; delivery dishes</span>
+          </div>
+          <div class="ratio">
+            <div class="frame r11">1:1</div>
+            <span class="cap"><b>Square</b> · 800 × 800<br />Menu category circles</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="naming">
+        <span class="eyebrow">File names</span>
+        <h2>How to name every file</h2>
+        <div class="namebox">
+          <div class="pattern">
+            <span>section</span>-<span>slot</span>-<span>number</span>-<span>short-description</span>.jpg
+          </div>
+          <ul class="check">
+            <li>Lowercase English letters, numbers and hyphens only: no spaces, no Arabic, no capitals.</li>
+            <li>Numbers have two digits: <code>01</code>, <code>02</code> … <code>12</code>.</li>
+            <li>The description is 2–5 words saying what is in the photo.</li>
+            <li>Alternatives of the same shot: add <code>-alt1</code>, <code>-alt2</code> at the end.</li>
+          </ul>
+          <p>
+            <b>Good:</b> <code>hero-01-garden-wedding-buffet.jpg</code> ·
+            <code>pkg-buffet-vip-01-gold-buffet-candles.jpg</code> · <code>team-02-head-chef.jpg</code>
+          </p>
+          <p>
+            <b>Not good:</b> <code>IMG_4582.JPG</code> · <code>Photo wedding final(2).jpg</code> ·
+            <code>صورة بوفيه.jpg</code>
+          </p>
+        </div>
+      </section>
+
+      <section id="priority">
+        <span class="eyebrow">Priority 1 · 35 photos</span>
+        <h2>Priority shot list</h2>
+        <p class="lead">These fill every main area of the website. Shoot these first.</p>
+
+        <div class="slots">
+          <article class="slot">
+            <div class="frame r169">16:9</div>
+            <div class="slot-body">
+              <div class="slot-head">
+                <h3>Home slideshow</h3>
+                <span class="badge qty">6–8 photos</span><span class="badge">Wide</span>
+              </div>
+              <div class="where">Top of the home page, full screen, cross-fading with a slow zoom</div>
+              <div class="spec">
+                <span>Min <b>2400 × 1350</b></span
+                ><span>Best <b>3000 × 1688</b> or larger</span>
+              </div>
+              <p>
+                The most important photos on the site. Big, beautiful, wide scenes: a full wedding buffet, a mezze
+                spread from above, a live grill with smoke, chafing dishes of hot mains, a dessert table, an evening
+                event with string lights. White text sits in the centre, so keep the middle calm.
+              </p>
+              <div class="names">
+                <code>hero-01-garden-wedding-buffet.jpg</code><code>hero-02-mezze-from-above.jpg</code
+                ><code>hero-03-live-grill.jpg</code><code>… hero-08-…</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="slot">
+            <div class="frame r32">3:2</div>
+            <div class="slot-body">
+              <div class="slot-head">
+                <h3>Catering types</h3>
+                <span class="badge qty">4 photos</span><span class="badge">Landscape</span>
+              </div>
+              <div class="where">
+                Home page cards: Event Buffets · Birthday Minis · Live Stations · Trays &amp; Mini Bites
+              </div>
+              <div class="spec">
+                <span>Min <b>1800 × 1200</b></span>
+              </div>
+              <p>
+                One photo that sums up each kind of catering: a long event buffet; a birthday table with mini
+                sandwiches, sliders and mini desserts; a chef cooking at a live station in front of guests; large trays
+                of main courses ready to serve.
+              </p>
+              <div class="names">
+                <code>type-buffet-01-long-buffet.jpg</code><code>type-birthday-01-mini-table.jpg</code
+                ><code>type-stations-01-pasta-station.jpg</code><code>type-trays-01-rice-trays.jpg</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="slot">
+            <div class="frame r32">3:2</div>
+            <div class="slot-body">
+              <div class="slot-head">
+                <h3>Packages</h3>
+                <span class="badge qty">6 photos</span><span class="badge">Landscape</span>
+              </div>
+              <div class="where">Package cards on the home and Packages &amp; Menus pages</div>
+              <div class="spec">
+                <span>Min <b>1800 × 1200</b></span>
+              </div>
+              <p>
+                Show the difference between the levels. <b>Buffet Classic $20</b>: neat and simple. <b>Premium $25</b>:
+                richer, quiches and pastries, flowers. <b>VIP $30</b>: luxury, gold details, candles, the live pasta
+                station. <b>Birthday Mini</b> Classic / Premium / VIP: the same idea with mini bites and desserts.
+              </p>
+              <div class="names">
+                <code>pkg-buffet-classic-01-….jpg</code><code>pkg-buffet-premium-01-….jpg</code
+                ><code>pkg-buffet-vip-01-….jpg</code><code>pkg-birthday-classic-01-….jpg</code
+                ><code>pkg-birthday-premium-01-….jpg</code><code>pkg-birthday-vip-01-….jpg</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="slot">
+            <div class="frame r169">16:9</div>
+            <div class="slot-body">
+              <div class="slot-head">
+                <h3>Page headers</h3>
+                <span class="badge qty">4 photos</span><span class="badge">Wide</span>
+              </div>
+              <div class="where">Behind the title of Packages &amp; Menus, Restaurant, Delivery and About Us</div>
+              <div class="spec">
+                <span>Min <b>2400 × 1350</b></span>
+              </div>
+              <p>
+                Packages: a styled buffet close-up. Restaurant: the terrace with the mountain view and food on the
+                table. Delivery: dishes in Mini Kitchen takeaway packaging. About: the team at work in the kitchen. Text
+                sits on one side, so place the subject slightly off-centre with calm space for words.
+              </p>
+              <div class="names">
+                <code>page-packages-01-buffet-closeup.jpg</code><code>page-restaurant-01-terrace-view.jpg</code
+                ><code>page-delivery-01-takeaway-boxes.jpg</code><code>page-about-01-kitchen-team.jpg</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="slot">
+            <div class="frame r45">4:5</div>
+            <div class="slot-body">
+              <div class="slot-head">
+                <h3>Our story</h3>
+                <span class="badge qty">1 photo</span><span class="badge">Portrait</span>
+              </div>
+              <div class="where">About Us page, next to the story text</div>
+              <div class="spec">
+                <span>Min <b>1200 × 1500</b></span>
+              </div>
+              <p>The owner or head chef in the kitchen or at an event, natural and welcoming.</p>
+              <div class="names"><code>about-story-01-chef-in-kitchen.jpg</code></div>
+            </div>
+          </article>
+
+          <article class="slot">
+            <div class="frame r32">3:2</div>
+            <div class="slot-body">
+              <div class="slot-head">
+                <h3>Live stations</h3>
+                <span class="badge qty">7 photos</span><span class="badge">Landscape</span
+                ><span class="badge">Recommended</span>
+              </div>
+              <div class="where">Photo strip and future station cards</div>
+              <div class="spec">
+                <span>Min <b>1800 × 1200</b></span>
+              </div>
+              <p>
+                One per station, in action at an event: Pasta, Salad, Mashewe (grill), Burger &amp; sandwiches, Sajj,
+                Shawarma, Real fillet.
+              </p>
+              <div class="names">
+                <code>station-pasta-01.jpg</code><code>station-salad-01.jpg</code><code>station-mashewe-01.jpg</code
+                ><code>station-burger-01.jpg</code><code>station-sajj-01.jpg</code><code>station-shawarma-01.jpg</code
+                ><code>station-real-fillet-01.jpg</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="slot">
+            <div class="frame r32">3:2</div>
+            <div class="slot-body">
+              <div class="slot-head">
+                <h3>Course close-ups</h3>
+                <span class="badge qty">6 photos</span><span class="badge">Landscape</span
+                ><span class="badge">Recommended</span>
+              </div>
+              <div class="where">Photo strip on the home page</div>
+              <div class="spec">
+                <span>Min <b>1800 × 1200</b></span>
+              </div>
+              <p>
+                Close-ups of what customers choose in a package: appetizers, pastries, salads, quiche, hot main courses,
+                desserts.
+              </p>
+              <div class="names">
+                <code>course-appetizers-01.jpg</code><code>course-pastries-01.jpg</code><code>course-salads-01.jpg</code
+                ><code>course-quiche-01.jpg</code><code>course-hot-mains-01.jpg</code
+                ><code>course-desserts-01.jpg</code>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="galleries">
+        <span class="eyebrow">Priority 2 · about 34 photos</span>
+        <h2>Galleries &amp; team</h2>
+        <p class="lead">
+          Galleries mix landscape and portrait tiles. Send a mix of both shapes for every gallery. The owner can add and
+          replace these himself in the Back Office.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Gallery</th>
+                <th>Where on the site</th>
+                <th class="num">Photos</th>
+                <th>Shape</th>
+                <th>Min size</th>
+                <th>File name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Catering events</td>
+                <td>Home · “From our events”</td>
+                <td class="num">8–12</td>
+                <td>3:2 and 4:5 mixed</td>
+                <td>1800 long side</td>
+                <td><code>gallery-catering-01-….jpg</code></td>
+              </tr>
+              <tr>
+                <td>Restaurant</td>
+                <td>Restaurant page · photos</td>
+                <td class="num">6–8</td>
+                <td>3:2 and 4:5 mixed</td>
+                <td>1800 long side</td>
+                <td><code>gallery-restaurant-01-….jpg</code></td>
+              </tr>
+              <tr>
+                <td>Behind the scenes</td>
+                <td>About Us page</td>
+                <td class="num">4–6</td>
+                <td>3:2 and 4:5 mixed</td>
+                <td>1800 long side</td>
+                <td><code>gallery-behind-01-….jpg</code></td>
+              </tr>
+              <tr>
+                <td>Team</td>
+                <td>About Us · team cards</td>
+                <td class="num">4</td>
+                <td>4:5 portrait</td>
+                <td>1200 × 1500</td>
+                <td><code>team-01-firstname-role.jpg</code></td>
+              </tr>
+              <tr>
+                <td>Social share</td>
+                <td>Preview when the link is shared on WhatsApp / Facebook</td>
+                <td class="num">1</td>
+                <td>1.91:1</td>
+                <td>1200 × 630</td>
+                <td><code>share-01-signature-buffet.jpg</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="dishes">
+        <span class="eyebrow">Priority 3 · restaurant &amp; delivery</span>
+        <h2>Menu dishes</h2>
+        <p class="lead">
+          The restaurant and delivery menu has 239 items in 22 categories. Start with the dishes that sell most and the
+          22 category circles, then complete the rest over time.
+        </p>
+        <div class="rules">
+          <div class="rule">
+            <h3>Dish photos · 4:3 · 1200 × 900</h3>
+            <ul>
+              <li>Same set-up for every dish: same table, same light, same angle (45° or straight from above)</li>
+              <li>The dish fills about 70% of the frame, centred</li>
+              <li>Name: <code>dish-</code>category<code>-</code>dish-name<code>.jpg</code></li>
+              <li>Example: <code>dish-burgers-classic-cheeseburger.jpg</code></li>
+            </ul>
+          </div>
+          <div class="rule">
+            <h3>Category circles · 1:1 · 800 × 800</h3>
+            <ul>
+              <li>One per category, shown as a small circle</li>
+              <li>One clear hero item, centred, plain background</li>
+              <li>Name: <code>category-</code>category<code>.jpg</code></li>
+              <li>Example: <code>category-breakfast.jpg</code></li>
+            </ul>
+          </div>
+          <div class="rule">
+            <h3>Category names to use in file names</h3>
+            <p class="mono" style="overflow-wrap: anywhere">
+              hot-offers · breakfast · bil-foron · appetisers · cheddar-fountain · burgers · sandwiches · pizzeria ·
+              main-course · wraps · pasta · salads · lebanese-corner · kids-corner · dessert · crepe · hot-beverage ·
+              juices · shakes · the-bar · awesome-add · arguile
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="delivery">
+        <span class="eyebrow">Hand-over</span>
+        <h2>How to deliver the photos</h2>
+        <p class="lead">
+          Upload the full-size files to one shared Google Drive (or WeTransfer) folder, organised like this. Do not send
+          them through WhatsApp: it compresses them and they look blurry on large screens.
+        </p>
+        <pre class="tree">
+Mini Kitchen Website Photos/
+├── 01-home-slideshow/      hero-01-….jpg … hero-08-….jpg
+├── 02-catering-types/      type-buffet-01-….jpg …
+├── 03-packages/            pkg-buffet-classic-01-….jpg …
+├── 04-page-headers/        page-packages-01-….jpg …
+├── 05-about-story/         about-story-01-….jpg
+├── 06-live-stations/       station-pasta-01.jpg …
+├── 07-course-closeups/     course-appetizers-01.jpg …
+├── 08-galleries/           gallery-catering-01-….jpg …
+├── 09-team/                team-01-firstname-role.jpg …
+├── 10-share/               share-01-….jpg
+└── 11-menu-dishes/         category-….jpg, dish-….jpg</pre>
+        <ul class="check">
+          <li>Every file is JPG, at least the minimum size, named with the pattern above.</li>
+          <li>Each photo is in the folder of the place it goes on the site.</li>
+          <li>Landscape and portrait versions are sent for gallery scenes.</li>
+          <li>No text, logos or watermarks on any photo.</li>
+          <li>Permission is collected for every recognisable face.</li>
+        </ul>
+      </section>
+
+      <footer>
+        Mini Kitchen Catering · Ain Al Remmaneh, Aley · The website optimises every photo automatically (smaller files
+        for phones, sharp files for large screens), so always send the largest original.
+      </footer>
+    </div>
+  </body>
+</html>
