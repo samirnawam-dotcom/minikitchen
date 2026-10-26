@@ -9,7 +9,8 @@ import { addCartLine } from './cart.js';
 import { formatPrice } from './format.js';
 import { render } from './view.js';
 import { showToast } from './toast.js';
-import { minutesText, t } from './i18n-strings.js';
+import { isAr, minutesText, t } from './i18n-strings.js';
+import { categoryName, dishDesc, dishPriceHtml, dishTitle, dishTitleHtml } from './dish-text.js';
 
 const BADGES = {
   Popular: () => `<span class="fd-badge popular">${t('Popular')}</span>`,
@@ -30,13 +31,20 @@ function ensureModalDom() {
   return backdrop;
 }
 
+/** Group name / option label in the visitor's language (delivery options carry nameAr / labelAr). */
+const optionText = (obj, key) => (isAr() && obj[`${key}Ar`] ? obj[`${key}Ar`] : t(obj[key]));
+
+/** Our own delivery photos: the card uses name-900.webp, the dish window the 1200px name.webp. */
+const DELIVERY_PHOTO = /^\/?images\/delivery\/[\w-]+-900\.webp$/;
+const largePhoto = src => (DELIVERY_PHOTO.test(String(src || '')) ? String(src).replace(/-900\.webp$/, '.webp') : src);
+
 function renderModifierGroups(modGroups) {
   return modGroups
     .map(
       (grp, gIdx) => `
         <div class="fd-mod-group">
           <div class="fd-mod-header">
-            <span class="fd-mod-name">${esc(t(grp.name))}</span>
+            <span class="fd-mod-name">${esc(optionText(grp, 'name'))}</span>
             <span class="fd-mod-pill ${grp.required ? 'required' : 'optional'}">
               ${grp.required ? t('Required · choose 1') : t('Optional')}
             </span>
@@ -57,7 +65,7 @@ function renderModifierGroups(modGroups) {
                     ${opt.default ? 'checked' : ''}
                     data-on-change="dish:recalc"
                   />
-                  <span>${esc(t(opt.label))}</span>
+                  <span>${esc(optionText(opt, 'label'))}</span>
                 </span>
                 <span class="fd-mod-option-price">
                   ${opt.price > 0 ? `+ ${formatPrice(opt.price)}` : ''}
@@ -77,20 +85,21 @@ export function openDishModal(itemId, mode) {
   const found = findDish(itemId);
   if (!found) return;
   const { item, cat } = found;
-  const modGroups = getModifierGroups(cat);
+  const modGroups = getModifierGroups(cat, item);
 
   state.modalCtx = { item, cat, mode: mode || 'delivery', qty: 1, modGroups };
 
   const backdrop = ensureModalDom();
+  const hero = largePhoto(item.img);
   const badgesHtml = (item.badges || []).map(b => (BADGES[b] ? BADGES[b]() : '')).join('');
 
   backdrop.innerHTML = `
-      <div class="fd-modal-dialog" role="dialog" aria-modal="true" aria-label="${esc(item.title)}">
-        <div class="fd-modal-hero">
-          <img src="${esc(item.img)}" data-fallback="${esc(item.fallbackImg)}" alt="${esc(item.title)}" />
+      <div class="fd-modal-dialog" role="dialog" aria-modal="true" aria-label="${esc(dishTitle(item))}">
+        <div class="fd-modal-hero${hero !== item.img ? ' fd-modal-hero-photo' : ''}">
+          <img src="${esc(hero)}" data-fallback="${esc(hero !== item.img ? item.img : item.fallbackImg)}" alt="${esc(dishTitle(item))}" />
           <button class="fd-modal-close" data-action="dish:close" aria-label="${t('Close')}"><i class="fa-solid fa-xmark"></i></button>
           <div class="fd-modal-hero-badges">
-            <span class="fd-modal-chip">${esc(t(cat.name))}</span>
+            <span class="fd-modal-chip">${esc(categoryName(cat))}</span>
             <span class="fd-modal-chip"><i class="fa-regular fa-clock"></i> ${esc(minutesText(item.prepTime || '15–20 min'))}</span>
             ${badgesHtml}
           </div>
@@ -98,11 +107,11 @@ export function openDishModal(itemId, mode) {
 
         <div class="fd-modal-body">
           <div class="fd-modal-title-row">
-            <h3 class="fd-modal-title">${esc(item.title)}</h3>
-            <span class="fd-modal-base-price">${formatPrice(item.priceValue)}</span>
+            <h3 class="fd-modal-title">${dishTitleHtml(item)}</h3>
+            <span class="fd-modal-base-price">${dishPriceHtml(item)}</span>
           </div>
           <p class="fd-modal-desc">
-            ${esc(item.desc || t('Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen using signature Mini Kitchen ingredients.'))}
+            ${esc(dishDesc(item) || t('Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen using signature Mini Kitchen ingredients.'))}
           </p>
 
           ${renderModifierGroups(modGroups)}
@@ -182,7 +191,7 @@ function confirmModalAdd() {
 
   closeDishModal();
   render();
-  showToast(t('Added {qty}x "{title}" to your Order!', { qty, title: item.title }));
+  showToast(t('Added {qty}x "{title}" to your Order!', { qty, title: dishTitle(item) }));
 }
 
 registerActions({

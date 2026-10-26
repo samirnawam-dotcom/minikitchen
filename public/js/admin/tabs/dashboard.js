@@ -103,7 +103,11 @@ function render() {
   const upcomingSoon = upcoming.filter(o => daysUntil(o.eventDate) <= UPCOMING_DAYS);
   const today = orders.filter(o => isToday(o.createdAt) && o.status !== 'cancelled');
   const todayValue = today.reduce((s, o) => s + (Number(o.totalUsd) || 0), 0);
-  const soldOut = menuCategories.reduce((n, c) => n + c.items.filter(i => i.soldOut).length, 0);
+  const deliveryCats = Array.isArray(data.siteConfig?.deliveryMenu) ? data.siteConfig.deliveryMenu : [];
+  const soldOut = [...menuCategories, ...deliveryCats].reduce(
+    (n, c) => n + (Array.isArray(c.items) ? c.items.filter(i => i.soldOut).length : 0),
+    0
+  );
   const sound = isSoundEnabled();
 
   const cateringList = newCatering.length

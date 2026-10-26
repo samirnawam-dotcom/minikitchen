@@ -179,6 +179,9 @@
   .fd-modal-hero {
     height: 200px;
   }
+  .fd-modal-hero-photo {
+    height: min(280px, 36vh);
+  }
   .fd-modal-body,
   .modal-body {
     padding: 18px;

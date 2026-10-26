@@ -14,6 +14,7 @@ import { showCartDrawer, closeCartDrawer } from './navigation.js';
 import { render } from './view.js';
 import { showToast } from './toast.js';
 import { isAr, ltr, minutesText, t } from './i18n-strings.js';
+import { dishTitleHtml, isPerPiece } from './dish-text.js';
 
 const FORM_FIELDS = {
   name: 'cartCustName',
@@ -64,10 +65,10 @@ function renderCartRows() {
       return `
         <div class="cart-item-row">
           <div class="cart-item-info">
-            <div class="cart-item-title">${esc(item.title)}</div>
+            <div class="cart-item-title">${dishTitleHtml(item)}</div>
             ${modsText}
             ${noteText}
-            <div class="cart-item-price">${t('{price} each', { price: formatPrice(item.priceValue) })} · <b>${formatPrice(sub)}</b></div>
+            <div class="cart-item-price">${t(isPerPiece(item) ? '{price} / piece' : '{price} each', { price: formatPrice(item.priceValue) })} · <b>${formatPrice(sub)}</b></div>
           </div>
           <div class="cart-qty-controls">
             <button class="cart-qty-btn" data-action="cart:qty" data-key="${key}" data-delta="-1" aria-label="${t('One less')}">−</button>
@@ -236,7 +237,8 @@ function buildOrderMessage({ orderId, name, phone, address, notes, zoneLabel, pr
     const sub = item.priceValue * item.qty;
     const modsPart = item.modifiers && item.modifiers.length ? `\n   ↳ _Options: ${item.modifiers.join(', ')}_` : '';
     const notePart = item.note ? `\n   ↳ _Note: ${item.note}_` : '';
-    return `${idx + 1}. *${item.qty}x ${item.title}* (${usd(item.priceValue)}) = ${usd(sub)}${modsPart}${notePart}`;
+    const unitPart = isPerPiece(item) ? ' / piece' : '';
+    return `${idx + 1}. *${item.qty}x ${item.title}* (${usd(item.priceValue)}${unitPart}) = ${usd(sub)}${modsPart}${notePart}`;
   });
 
   const summaryLines = [

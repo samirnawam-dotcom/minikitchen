@@ -126,6 +126,11 @@ export async function saveSiteConfig() {
   }
 }
 
+/** Saves the menu the Menu tab is editing: the delivery menu lives in the site config. */
+export function saveActiveMenu() {
+  return ui.menuSource === 'delivery' ? saveSiteConfig() : saveMenu();
+}
+
 /** Saves data.menuCategories (+ LBP rate). Returns true on success. */
 export async function saveMenu() {
   cacheMenu();

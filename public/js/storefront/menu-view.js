@@ -1,13 +1,23 @@
 // Interactive menu explorer (FineDine-style) shared by the restaurant table menu and the delivery menu:
 // category stories, search, currency / layout / dietary toggles and dish cards.
 //
-// `mode` is 'resto' | 'delivery'; each mode keeps its own category + search state.
+// `mode` is 'resto' | 'delivery'; each mode keeps its own category + search state and shows its own
+// menu: the restaurant menu (content.menu) or the delivery menu (content.deliveryMenu).
 
 import { registerActions } from '../shared/actions.js';
 import { esc } from '../shared/dom.js';
 import { state, cartCount, cartSubtotal } from './state.js';
-import { content } from './config.js';
+import { content, dishModType, menuForMode } from './config.js';
 import { formatPrice } from './format.js';
+import {
+  categoryName,
+  categorySubtitle,
+  dishDesc,
+  dishPriceHtml,
+  dishSearchText,
+  dishTitle,
+  dishTitleHtml
+} from './dish-text.js';
 import { renderTableBanner } from './table-banner.js';
 import { render, renderMainView } from './view.js';
 import { minutesText, t } from './i18n-strings.js';
@@ -26,28 +36,26 @@ const BADGE_PILLS = {
   Sharing: () => `<span class="fd-badge sharing">${t('Sharing')}</span>`
 };
 
-export function availableCategories(allowedCatIds) {
-  return allowedCatIds ? content.menu.filter(cat => allowedCatIds.includes(cat.id)) : content.menu;
+export function availableCategories(allowedCatIds, mode) {
+  const menu = menuForMode(mode);
+  return allowedCatIds ? menu.filter(cat => allowedCatIds.includes(cat.id)) : menu;
 }
 
-export function getFilteredMenuCategories(selectedCat, searchQuery, allowedCatIds) {
+export function getFilteredMenuCategories(selectedCat, searchQuery, allowedCatIds, mode) {
   const q = (searchQuery || '').toLowerCase().trim();
   const diet = state.dietaryFilter || 'all';
 
-  return availableCategories(allowedCatIds)
+  return availableCategories(allowedCatIds, mode)
     .filter(cat => selectedCat === 'all' || cat.id === selectedCat)
     .map(cat => {
       const matchedItems = cat.items.filter(item => {
         const matchesQuery =
           !q ||
-          String(item.title || '')
-            .toLowerCase()
-            .includes(q) ||
-          (item.desc && String(item.desc).toLowerCase().includes(q)) ||
+          dishSearchText(item).includes(q) ||
           String(cat.name || '')
             .toLowerCase()
             .includes(q) ||
-          t(String(cat.name || '')).includes(q);
+          categoryName(cat).toLowerCase().includes(q);
         if (!matchesQuery) return false;
         if (diet === 'all') return true;
         return (item.badges || []).map(b => String(b).toLowerCase()).includes(diet.toLowerCase());
@@ -73,7 +81,7 @@ const dishAction = (item, mode) =>
 /** Accessible name of a dish's add button: "Add: Halloumi Plate", "2 in basket, add another: …". */
 function addLabel(item, isSoldOut, inBagQty) {
   const status = isSoldOut ? t('Sold out') : inBagQty > 0 ? t('{n} in basket, add another', { n: inBagQty }) : t('Add');
-  return `${status}: ${item.title}`;
+  return `${status}: ${dishTitle(item)}`;
 }
 
 function renderGridItem(item, mode, inBagQty) {
@@ -84,14 +92,14 @@ function renderGridItem(item, mode, inBagQty) {
   return `
                             <article class="dish-card${isSoldOut ? ' is-sold-out' : ''}" ${dishAction(item, mode)}>
                               <div class="dish-card-img-wrap">
-                                <img src="${esc(item.img)}" data-fallback="${esc(item.fallbackImg)}" alt="${esc(item.title)}" loading="lazy" />
+                                <img src="${esc(item.img)}" data-fallback="${esc(item.fallbackImg)}" alt="${esc(dishTitle(item))}" loading="lazy" />
                               </div>
                               <div class="dish-card-body">
                                 ${renderBadgePills(item.badges)}
-                                <h4 class="dish-title">${esc(item.title)}</h4>
-                                <p class="dish-desc">${esc(item.desc || t('Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen.'))}</p>
+                                <h4 class="dish-title">${dishTitleHtml(item)}</h4>
+                                <p class="dish-desc">${esc(dishDesc(item) || t('Prepared fresh to order in our Ain Al Remmaneh, Aley kitchen.'))}</p>
                                 <div class="dish-actions">
-                                  <span class="fd-item-price">${formatPrice(item.priceValue)}</span>
+                                  <span class="fd-item-price">${dishPriceHtml(item)}</span>
                                   <button type="button" class="btn-add-order${inBagQty > 0 ? ' in-cart' : ''}" ${isSoldOut ? 'aria-disabled="true"' : ''} ${dishAction(item, mode)} aria-label="${esc(addLabel(item, isSoldOut, inBagQty))}">${label}</button>
                                 </div>
                               </div>
@@ -100,7 +108,8 @@ function renderGridItem(item, mode, inBagQty) {
 }
 
 function renderSplitItem(item, cat, mode, inBagQty) {
-  const hasCustomMods = cat.modType && cat.modType !== 'none';
+  const modType = dishModType(cat, item);
+  const hasCustomMods = modType && modType !== 'none';
   const isSoldOut = Boolean(item.soldOut);
   let tag = '';
   if (isSoldOut) tag = `<span class="fd-item-customize-tag is-sold-out">${t('Sold out')}</span>`;
@@ -115,10 +124,10 @@ function renderSplitItem(item, cat, mode, inBagQty) {
                             <article class="fd-item-card${isSoldOut ? ' is-sold-out' : ''}" ${dishAction(item, mode)}>
                               <div class="fd-item-info">
                                 ${renderBadgePills(item.badges)}
-                                <h4 class="fd-item-title">${esc(item.title)}</h4>
-                                <p class="fd-item-desc">${esc(item.desc || t('Prepared fresh to order with signature Mini Kitchen ingredients.'))}</p>
+                                <h4 class="fd-item-title">${dishTitleHtml(item)}</h4>
+                                <p class="fd-item-desc">${esc(dishDesc(item) || t('Prepared fresh to order with signature Mini Kitchen ingredients.'))}</p>
                                 <div class="fd-item-bottom">
-                                  <span class="fd-item-price">${formatPrice(item.priceValue)}</span>
+                                  <span class="fd-item-price">${dishPriceHtml(item)}</span>
                                   <span class="fd-item-meta-pill"><i class="fa-regular fa-clock"></i> ${esc(minutesText(item.prepTime || '15–20 min'))}</span>
                                   ${tag}
                                 </div>
@@ -128,7 +137,7 @@ function renderSplitItem(item, cat, mode, inBagQty) {
                                 <img
                                   src="${esc(item.img)}"
                                   data-fallback="${esc(item.fallbackImg)}"
-                                  alt="${esc(item.title)}"
+                                  alt="${esc(dishTitle(item))}"
                                   class="fd-item-media-img"
                                   loading="lazy"
                                 />
@@ -143,7 +152,7 @@ function renderSplitItem(item, cat, mode, inBagQty) {
 function renderCategorySection(cat, { mode, activeCat, isOverviewMode, qtyByItemId }) {
   const visibleItems = isOverviewMode ? cat.items.slice(0, 6) : cat.items;
   const hiddenCount = cat.items.length - visibleItems.length;
-  const catName = esc(t(cat.name));
+  const catName = esc(categoryName(cat));
   const askMsg = `Hello Mini Kitchen! I have a question about your *${cat.name}* menu section.`;
   const items =
     state.menuLayout === 'grid'
@@ -167,7 +176,7 @@ function renderCategorySection(cat, { mode, activeCat, isOverviewMode, qtyByItem
                       />
                       <div>
                         <h3 class="fd-category-banner-title">${catName}</h3>
-                        <div class="fd-category-banner-sub">${esc(t(cat.subtitle || cat.badge || ''))} · ${t('{n} dishes', { n: cat.items.length })}</div>
+                        <div class="fd-category-banner-sub">${esc(categorySubtitle(cat))} · ${t('{n} dishes', { n: cat.items.length })}</div>
                       </div>
                     </div>
                     <div class="fd-category-actions">
@@ -244,8 +253,8 @@ export function renderMenuExplorer(mode) {
   const ms = modeState(mode);
   const activeCat = state[ms.cat];
   const activeSearch = state[ms.search];
-  const catsList = availableCategories(ms.allowed);
-  const filteredCats = getFilteredMenuCategories(activeCat, activeSearch, ms.allowed);
+  const catsList = availableCategories(ms.allowed, mode);
+  const filteredCats = getFilteredMenuCategories(activeCat, activeSearch, ms.allowed, mode);
   const totalDishCount = catsList.reduce((acc, c) => acc + c.items.length, 0);
   const logo = esc(content.config.logos.main);
 
@@ -288,9 +297,9 @@ export function renderMenuExplorer(mode) {
                 data-action="menu:category" data-mode="${mode}" data-cat="${esc(c.id)}"
               >
                 <div class="fd-story-thumb">
-                  <img src="${esc(c.thumbImg || c.items[0]?.img || content.config.logos.main)}" data-fallback="" alt="${esc(t(c.name))}" loading="lazy" />
+                  <img src="${esc(c.thumbImg || c.items[0]?.img || content.config.logos.main)}" data-fallback="" alt="${esc(categoryName(c))}" loading="lazy" />
                 </div>
-                <div class="fd-story-name">${esc(t(c.name))}</div>
+                <div class="fd-story-name">${esc(categoryName(c))}</div>
                 <div class="fd-story-count">${c.items.length}</div>
               </div>
             `
@@ -371,7 +380,12 @@ function searchMenu(mode, query) {
   const container = document.getElementById('menuCategoriesResults');
   if (!container) return;
   const activeCat = state[ms.cat];
-  container.innerHTML = renderResults(mode, getFilteredMenuCategories(activeCat, query, ms.allowed), activeCat, query);
+  container.innerHTML = renderResults(
+    mode,
+    getFilteredMenuCategories(activeCat, query, ms.allowed, mode),
+    activeCat,
+    query
+  );
 }
 
 registerActions({

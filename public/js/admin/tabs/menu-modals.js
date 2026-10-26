@@ -3,9 +3,9 @@
 
 import { registerActions } from '../../shared/actions.js';
 import { esc, byId, $$ } from '../../shared/dom.js';
-import { data, ui, findDish } from '../state.js';
+import { ui, findDish, activeMenu } from '../state.js';
 import { renderActiveTab } from '../router.js';
-import { saveMenu } from '../sync.js';
+import { saveActiveMenu } from '../sync.js';
 import { openModal, closeModal, modalFormButtons } from '../ui/modal.js';
 import { showToast, showError } from '../ui/toast.js';
 import { uploadButton } from '../ui/upload.js';
@@ -58,11 +58,20 @@ function openEditDish(catId, itemId) {
             <label for="edPrep">Preparation time (shown on the menu)</label>
             <input type="text" id="edPrep" class="bo-input" value="${esc(item.prepTime || '15–20 min')}" />
           </div>
+          <div class="bo-form-group">
+            <label for="edTitleAr">Arabic name (Arabic website)</label>
+            <input type="text" id="edTitleAr" class="bo-input" dir="rtl" lang="ar" value="${esc(item.titleAr || '')}" placeholder="الاسم بالعربي" />
+          </div>
         </div>
+        <label style="${checkboxLabel} margin-top:12px;"><input type="checkbox" id="edPerPiece" ${item.unit === 'piece' ? 'checked' : ''} /> Price is per piece (shown as “/ piece”)</label>
         ${photoField('edImg', 'Photo * (paste a link or upload from your device)', item.img || '', { required: true })}
         <div class="bo-form-group" style="margin-top:14px;">
           <label for="edDesc">Description</label>
           <textarea id="edDesc" class="bo-textarea" rows="3">${esc(item.desc || '')}</textarea>
+        </div>
+        <div class="bo-form-group" style="margin-top:14px;">
+          <label for="edDescAr">Description in Arabic</label>
+          <textarea id="edDescAr" class="bo-textarea" rows="2" dir="rtl" lang="ar">${esc(item.descAr || '')}</textarea>
         </div>
         <div class="bo-form-group" style="margin-top:14px;">
           <span class="bo-label" id="edBadgeLabel">Badges</span>
@@ -86,9 +95,14 @@ async function submitEditDish(form) {
     prepTime: byId('edPrep').value.trim() || '15–20 min',
     img: byId('edImg').value.trim(),
     desc: byId('edDesc').value.trim(),
+    titleAr: byId('edTitleAr').value.trim(),
+    descAr: byId('edDescAr').value.trim(),
     badges: checkedValues('edBadge')
   });
-  if (!(await saveMenu())) {
+  if (byId('edPerPiece').checked) item.unit = 'piece';
+  else delete item.unit;
+  if (!(await saveActiveMenu())) {
+    for (const key of Object.keys(item)) if (!(key in before)) delete item[key];
     Object.assign(item, before);
     return;
   }
@@ -101,14 +115,16 @@ async function submitEditDish(form) {
 
 function openAddDish() {
   openModal(
-    'Add a dish',
+    ui.menuSource === 'delivery' ? 'Add a dish to the Delivery menu' : 'Add a dish to the Restaurant menu',
     `
       <form data-on-submit="menu:add-submit">
         <div class="bo-form-grid">
           <div class="bo-form-group">
             <label for="newDishCat">Category *</label>
             <select id="newDishCat" class="bo-select" required>
-              ${data.menuCategories.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}
+              ${activeMenu()
+                .map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`)
+                .join('')}
             </select>
           </div>
           <div class="bo-form-group">
@@ -140,12 +156,13 @@ function openAddDish() {
 }
 
 async function submitAddDish() {
-  const cat = data.menuCategories.find(c => c.id === byId('newDishCat').value);
+  const isDelivery = ui.menuSource === 'delivery';
+  const cat = activeMenu().find(c => c.id === byId('newDishCat').value);
   if (!cat) return;
   const price = parseFloat(byId('newDishPrice').value) || 0;
   const img = byId('newDishImg').value.trim();
   const dish = {
-    id: `mk-custom-${Date.now()}`,
+    id: `${isDelivery ? 'dl' : 'mk'}-custom-${Date.now()}`,
     categoryId: cat.id,
     categoryName: cat.name,
     title: byId('newDishTitle').value.trim(),
@@ -161,7 +178,7 @@ async function submitAddDish() {
   };
   cat.items.unshift(dish);
   cat.count = cat.items.length;
-  if (!(await saveMenu())) {
+  if (!(await saveActiveMenu())) {
     cat.items.shift();
     cat.count = cat.items.length;
     return;
@@ -175,7 +192,7 @@ async function submitAddDish() {
 
 function openAddCategory() {
   openModal(
-    'New menu category',
+    ui.menuSource === 'delivery' ? 'New Delivery menu category' : 'New Restaurant menu category',
     `
       <form data-on-submit="menu:category-submit">
         <div class="bo-form-grid">
@@ -211,12 +228,15 @@ async function submitAddCategory() {
     showError('Category title must contain letters or numbers.');
     return;
   }
-  if (data.menuCategories.some(c => c.id === id)) {
+  const isDelivery = ui.menuSource === 'delivery';
+  const menu = activeMenu();
+  const catId = isDelivery ? `dl-${id}` : id;
+  if (menu.some(c => c.id === catId)) {
     showError(`A category called "${name}" already exists.`);
     return;
   }
-  data.menuCategories.unshift({
-    id,
+  menu.unshift({
+    id: catId,
     rawCategory: name.toUpperCase(),
     name,
     subtitle,
@@ -224,16 +244,16 @@ async function submitAddCategory() {
     icon: 'fa-utensils',
     thumbImg,
     fallbackImg: thumbImg,
-    modType: 'burger',
+    modType: isDelivery ? 'none' : 'burger',
     count: 0,
     items: []
   });
-  if (!(await saveMenu())) {
-    data.menuCategories.shift();
+  if (!(await saveActiveMenu())) {
+    menu.shift();
     return;
   }
   closeModal();
-  ui.menuCatFilter = id;
+  ui.menuCatFilter = catId;
   renderActiveTab();
   showToast(`Category “${name}” created.`);
 }

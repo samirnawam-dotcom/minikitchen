@@ -17,6 +17,8 @@ export function addCartLine({ item, qty, unitPrice, modifiers, note }) {
       cartKey,
       id: item.id,
       title: item.title,
+      ...(item.titleAr ? { titleAr: item.titleAr } : {}),
+      ...(item.unit ? { unit: item.unit } : {}),
       price: `$${unitPrice.toFixed(2)}`,
       priceValue: unitPrice,
       img: item.img,
