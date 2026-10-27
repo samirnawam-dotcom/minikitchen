@@ -189,6 +189,67 @@ export function eventPackageCard(pkg, { photo = true } = {}) {
       </article>`;
 }
 
+/**
+ * The owner's seasonal offers (Eid, Christmas…) with the section's texts, or null while the section
+ * is switched off in the Back Office or has no offers.
+ */
+export function specialOffers() {
+  const section = content.config?.specialOffers;
+  if (!section || section.show !== true || !Array.isArray(section.items)) return null;
+  const items = section.items.filter(o => o && o.name);
+  if (!items.length) return null;
+  const brand = ['catering', 'delivery', 'restaurant'].includes(section.brand) ? section.brand : 'catering';
+  return { section: { ...section, brand }, items };
+}
+
+/** One seasonal offer: photo, name, price (or "ask for the price"), what is included, WhatsApp. */
+export function specialOfferCard(offer, brand = 'catering') {
+  const amount = price(offer.price);
+  const unit = localName(offer, 'unit');
+  const badge = localName(offer, 'badge');
+  const arLines = Array.isArray(offer.includesAr) ? offer.includesAr.filter(Boolean) : [];
+  const lines = isAr() && arLines.length ? arLines : (offer.includes || []).filter(Boolean);
+  const priceText = amount ? ` (${moneyEn(amount)}${offer.unit ? ` ${offer.unit}` : ''})` : '';
+  const inquiry = `Hello Mini Kitchen Catering! I would like to order the ${offer.name} offer${priceText}. Could you share the details?`;
+  return `
+      <article class="package-card event-package special-offer">
+        ${
+          offer.img
+            ? `<div class="package-card-media">
+          <img src="${esc(offer.img)}"${responsiveAttrs(offer.img, '(max-width: 760px) 100vw, 33vw')} data-fallback="" alt="${esc(localName(offer))}" loading="lazy" decoding="async" width="600" height="400" />
+          ${badge ? `<span class="package-badge">${esc(badge)}</span>` : ''}
+        </div>`
+            : ''
+        }
+        <div class="package-card-body">
+          <div class="package-card-head">
+            <div>
+              <div class="package-card-cat">${t('Special offer')}${!offer.img && badge ? ` · ${esc(badge)}` : ''}</div>
+              <h3 class="package-card-title">${nameBlock(offer)}</h3>
+            </div>
+            <div class="package-card-price">${
+              amount
+                ? `<span class="package-price-value">${money(amount)}</span>${unit ? `<span class="package-price-unit">${esc(unit)}</span>` : ''}`
+                : `<span class="package-price-unit">${t('Ask for the price')}</span>`
+            }</div>
+          </div>
+          ${localName(offer, 'desc') ? `<p class="package-card-sub">${esc(localName(offer, 'desc'))}</p>` : ''}
+          ${
+            lines.length
+              ? `<ul class="package-counts">
+            ${lines.map(line => `<li class="is-included"><span class="package-count is-all"><i class="fa-solid fa-check" aria-hidden="true"></i></span><span>${esc(line)}</span></li>`).join('')}
+          </ul>`
+              : ''
+          }
+          <div class="package-card-footer">
+            <button type="button" class="btn btn-primary btn-sm" data-action="wa:open" data-brand="${esc(brand)}" data-msg="${esc(inquiry)}">
+              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i> ${t('Order this offer')}
+            </button>
+          </div>
+        </div>
+      </article>`;
+}
+
 /** Live stations with their options and prices. */
 export function stationMenu() {
   const stations = cateringList('liveStationMenu');

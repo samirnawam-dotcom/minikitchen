@@ -55,6 +55,24 @@
   align-items: stretch;
 }
 
+/* Seasonal offers: one or two cards stay a comfortable width, centred */
+.packages-grid-1,
+.packages-grid-2 {
+  margin-inline: auto;
+  align-items: stretch;
+}
+.packages-grid-1 {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 420px;
+}
+.packages-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 860px;
+}
+.special-offer {
+  border-color: var(--brand-primary);
+}
+
 /* Catering types on the home page: the same card as the packages, four in a row */
 .packages-grid-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1198,6 +1216,7 @@
 }
 
 @media (max-width: 560px) {
+  .packages-grid-2,
   .packages-grid-4 {
     grid-template-columns: minmax(0, 1fr);
   }

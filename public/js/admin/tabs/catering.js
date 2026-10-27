@@ -1,4 +1,6 @@
 // Packages tab: everything on the website's catering offer, editable without code.
+//   Special occasions — siteConfig.specialOffers: seasonal offers (Eid, Christmas…) shown above the
+//                   event buffets on the home page only while switched on ("show")
 //   Packages      — siteConfig.eventPackages (event buffets & Birthday Minis): name, price per person,
 //                   badge, how many dishes per dish list, what is included, photo
 //   Dish lists    — siteConfig.cateringChoiceGroups: the dishes customers pick from ("appetizers")
@@ -10,7 +12,7 @@
 
 import { registerActions } from '../../shared/actions.js';
 import { esc } from '../../shared/dom.js';
-import { ui, siteList } from '../state.js';
+import { ui, data, siteList, defaultSiteConfig } from '../state.js';
 import { registerTab, renderActiveTab, markDirty, confirmDiscard, afterCardSaved } from '../router.js';
 import { confirmDialog } from '../ui/modal.js';
 import { saveSiteConfig } from '../sync.js';
@@ -18,6 +20,7 @@ import { showToast, showError } from '../ui/toast.js';
 import { uploadButton } from '../ui/upload.js';
 
 const SUBTABS = [
+  { id: 'offers', icon: 'fa-gift', label: 'Special occasions', key: 'specialOffers' },
   { id: 'packages', icon: 'fa-crown', label: 'Packages', key: 'eventPackages' },
   { id: 'groups', icon: 'fa-list-check', label: 'Dish lists', key: 'cateringChoiceGroups' },
   { id: 'stations', icon: 'fa-fire-burner', label: 'Live stations', key: 'liveStationMenu' },
@@ -27,7 +30,19 @@ const SUBTABS = [
 ];
 
 const TYPE_NAMES = { buffet: 'Event buffet', birthday: 'Birthday Mini' };
-const list = key => siteList(key);
+
+/** siteConfig.specialOffers: the section's switch and texts plus its offers (seeded when missing). */
+function offersSection() {
+  const config = data.siteConfig;
+  const current = config.specialOffers;
+  if (!current || typeof current !== 'object' || Array.isArray(current)) {
+    config.specialOffers = defaultSiteConfig().specialOffers || { show: false, items: [] };
+  }
+  if (!Array.isArray(config.specialOffers.items)) config.specialOffers.items = [];
+  return config.specialOffers;
+}
+
+const list = key => (key === 'specialOffers' ? offersSection().items : siteList(key));
 const newId = prefix => `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
 // ---------------------------------------------------------------------------
@@ -192,6 +207,106 @@ function packageCard(p, idx) {
       </div>`;
 }
 
+function offerCard(o, idx) {
+  const imgId = `offerImg${idx}`;
+  const priceText = Number(o.price) > 0 ? `$${esc(o.price)} ${esc(o.unit || '')}` : 'ask for the price';
+  return `
+      <div class="bo-pk-card" data-dirty-scope data-list="specialOffers" data-index="${idx}">
+        <div class="bo-pk-card-head">
+          <img src="${esc(o.img)}" alt="" class="bo-pk-thumb" data-fallback="" />
+          <div>
+            <div class="bo-pk-kicker">${esc(o.badge || 'Special offer')}</div>
+            <div class="bo-pk-title">${esc(o.name)} · ${priceText}</div>
+          </div>
+        </div>
+        <div class="bo-pk-grid">
+          ${field('Offer name (English)', 'name', o.name, { placeholder: 'e.g. Eid gathering' })}
+          ${field('Offer name (Arabic)', 'nameAr', o.nameAr, { dir: 'rtl' })}
+          ${field('Badge on the photo (English)', 'badge', o.badge, { placeholder: 'e.g. Eid offer' })}
+          ${field('Badge (Arabic)', 'badgeAr', o.badgeAr, { dir: 'rtl' })}
+          ${field('Price ($) — 0 shows “ask for the price”', 'price', o.price, { type: 'number' })}
+          ${field('Price per (English)', 'unit', o.unit, { placeholder: 'e.g. per person, per tray' })}
+          ${field('Price per (Arabic)', 'unitAr', o.unitAr, { dir: 'rtl', placeholder: 'للشخص الواحد' })}
+        </div>
+        <div class="bo-pk-grid">
+          <label class="bo-pk-field">
+            <span>Short description (English)</span>
+            <textarea class="bo-textarea" rows="2" data-field="desc">${esc(o.desc || '')}</textarea>
+          </label>
+          <label class="bo-pk-field">
+            <span>Short description (Arabic)</span>
+            <textarea class="bo-textarea" rows="2" data-field="descAr" dir="rtl">${esc(o.descAr || '')}</textarea>
+          </label>
+          <label class="bo-pk-field">
+            <span>What is included (English) <small>one per line, optional</small></span>
+            <textarea class="bo-textarea" rows="3" data-field="includes" data-type="lines">${esc((o.includes || []).join('\n'))}</textarea>
+          </label>
+          <label class="bo-pk-field">
+            <span>What is included (Arabic) <small>one per line, optional</small></span>
+            <textarea class="bo-textarea" rows="3" data-field="includesAr" data-type="lines" dir="rtl">${esc((o.includesAr || []).join('\n'))}</textarea>
+          </label>
+        </div>
+        <label class="bo-pk-field">
+          <span>Photo <small>(paste a link or upload from your device)</small></span>
+          <span class="bo-pk-photo">
+            <input type="text" id="${imgId}" class="bo-input" data-field="img" value="${esc(o.img)}" placeholder="Photo link or upload" />
+            ${uploadButton(imgId, { compact: true, label: '' })}
+          </span>
+        </label>
+        ${cardActions('Save offer')}
+      </div>`;
+}
+
+/** Show / hide switch, the section's title and text, then one card per offer. */
+function offersBody() {
+  const section = offersSection();
+  const shown = section.show === true;
+  const empty = section.items.length === 0;
+  return `
+      <div class="bo-offers-switch${shown ? ' is-on' : ''}">
+        <i class="fa-solid ${shown ? 'fa-eye' : 'fa-eye-slash'}" aria-hidden="true"></i>
+        <div class="bo-offers-switch-text">
+          <strong>${shown ? 'Showing on the website' : 'Hidden from the website'}</strong>
+          <small>${
+            shown
+              ? empty
+                ? 'Add an offer: the section only appears when it has at least one.'
+                : 'Visitors see these offers on the home page, above “Weddings &amp; occasions”.'
+              : 'Prepare your offers, then press “Show on website” to put them above “Weddings &amp; occasions”.'
+          }</small>
+        </div>
+        <button type="button" class="bo-btn ${shown ? 'bo-btn-outline' : 'bo-btn-gold'}" data-action="offers:toggle">
+          <i class="fa-solid ${shown ? 'fa-eye-slash' : 'fa-eye'}" aria-hidden="true"></i> ${shown ? 'Hide section' : 'Show on website'}
+        </button>
+      </div>
+      <div class="bo-pk-card bo-pk-card-wide" data-dirty-scope data-list="specialOffers" data-section="1">
+        <div class="bo-pk-section-label">Section title, text &amp; WhatsApp <small>(e.g. Eid offers, Christmas offers)</small></div>
+        <div class="bo-pk-grid">
+          ${field('Title (English)', 'title', section.title, { placeholder: 'e.g. Eid offers' })}
+          ${field('Title (Arabic)', 'titleAr', section.titleAr, { dir: 'rtl' })}
+          ${field('Text under the title (English)', 'text', section.text)}
+          ${field('Text under the title (Arabic)', 'textAr', section.textAr, { dir: 'rtl' })}
+          <label class="bo-pk-field">
+            <span>Orders go to WhatsApp</span>
+            <select class="bo-select" data-field="brand">
+              ${[
+                ['catering', 'Catering number'],
+                ['delivery', 'Delivery number'],
+                ['restaurant', 'Restaurant number']
+              ]
+                .map(
+                  ([v, text]) =>
+                    `<option value="${v}" ${(section.brand || 'catering') === v ? 'selected' : ''}>${text}</option>`
+                )
+                .join('')}
+            </select>
+          </label>
+        </div>
+        ${cardActions('Save section', { deletable: false })}
+      </div>
+      ${cardsOrEmpty('specialOffers', offerCard, 'Press “Add an offer” to create your first seasonal offer.')}`;
+}
+
 function groupCard(g, idx) {
   const used = list('eventPackages').filter(p => (p.choices || []).some(c => c.group === g.id));
   return `
@@ -239,6 +354,7 @@ function cardsOrEmpty(key, cardFn, emptyText) {
 }
 
 function subtabBody(sub) {
+  if (sub === 'offers') return offersBody();
   if (sub === 'groups') {
     return `<p class="bo-pk-intro">The dishes customers pick from inside a package. Lists without dishes show “our team will confirm the options”.</p>
       ${cardsOrEmpty('cateringChoiceGroups', groupCard, 'Press “Add a dish list” to create one (for example Appetizers).')}`;
@@ -275,6 +391,7 @@ function subtabBody(sub) {
 }
 
 const ADD_BUTTONS = {
+  offers: 'Add an offer',
   packages: 'Add a package',
   groups: 'Add a dish list',
   stations: 'Add a live station'
@@ -345,6 +462,19 @@ async function saveCard(button) {
   const key = card.dataset.list;
   const items = list(key);
 
+  if (card.dataset.section) {
+    const section = offersSection();
+    const before = { ...section };
+    for (const input of card.querySelectorAll('[data-field]')) section[input.dataset.field] = readValue(input);
+    if (!(await saveSiteConfig())) {
+      Object.assign(section, before);
+      return;
+    }
+    afterCardSaved(card);
+    showToast('Saved — the section is updated.');
+    return;
+  }
+
   if (card.dataset.whole) {
     const before = items.slice();
     const rows = readRows(card.querySelector('.bo-pk-rows[data-rows]'), key);
@@ -399,6 +529,24 @@ async function deleteCard(button) {
 }
 
 const NEW_ITEMS = {
+  offers: () => ({
+    key: 'specialOffers',
+    item: {
+      id: newId('offer'),
+      name: 'New offer',
+      nameAr: '',
+      badge: '',
+      badgeAr: '',
+      desc: '',
+      descAr: '',
+      price: 0,
+      unit: 'per person',
+      unitAr: 'للشخص الواحد',
+      includes: [],
+      includesAr: [],
+      img: 'images/catering/hero-1.webp'
+    }
+  }),
   packages: () => ({
     key: 'eventPackages',
     item: {
@@ -452,6 +600,19 @@ registerActions({
     if (!(await confirmDiscard())) return;
     ui.cateringSubTab = el.dataset.subtab;
     renderActiveTab();
+  },
+  // Shows or hides the Special occasions section on the website straight away.
+  'offers:toggle': async () => {
+    if (!(await confirmDiscard())) return;
+    const section = offersSection();
+    const was = section.show === true;
+    section.show = !was;
+    if (!(await saveSiteConfig())) {
+      section.show = was;
+      return;
+    }
+    renderActiveTab();
+    showToast(was ? 'Special occasions are now hidden from the website.' : 'Special occasions are now on the website.');
   },
   'pk:save': el => saveCard(el),
   'pk:delete': el => deleteCard(el),

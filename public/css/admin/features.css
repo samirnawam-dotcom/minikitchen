@@ -321,6 +321,46 @@
 /* ============================================================================
    PACKAGES TAB (tabs/catering.js) & CATERING REQUEST SELECTIONS (orders/order-card.js)
    ============================================================================ */
+/* Special occasions: show / hide switch above the offers */
+.bo-offers-switch {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  margin: 0 0 16px;
+  border: 1px solid var(--bo-border);
+  border-radius: 12px;
+  background: var(--bo-surface-2, transparent);
+}
+
+.bo-offers-switch > .fa-solid {
+  font-size: 1.2rem;
+  color: var(--bo-muted);
+}
+
+.bo-offers-switch.is-on {
+  border-color: var(--bo-success, #2e7d4f);
+}
+
+.bo-offers-switch.is-on > .fa-solid {
+  color: var(--bo-success, #2e7d4f);
+}
+
+.bo-offers-switch-text {
+  flex: 1 1 260px;
+  display: grid;
+  gap: 2px;
+}
+
+.bo-offers-switch-text small {
+  color: var(--bo-muted);
+}
+
+.bo-pk-card-wide + .bo-pk-cards {
+  margin-top: 16px;
+}
+
 .bo-pk-intro,
 .bo-pk-hint {
   color: var(--bo-muted);
