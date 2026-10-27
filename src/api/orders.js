@@ -1,5 +1,6 @@
 'use strict';
 
+const crypto = require('crypto');
 const store = require('../db');
 const security = require('../security');
 const { LIMITS, HttpError, sendJson, readJsonBody } = require('./http');
@@ -12,6 +13,36 @@ const ORDER_BRANDS = ['catering', 'restaurant', 'delivery'];
 const ORDER_STATUSES = ['new', 'confirmed', 'preparing', 'out_for_delivery', 'completed', 'cancelled'];
 
 const orderLimiter = new RateLimiter({ windowMs: 10 * 60 * 1000, max: 60 });
+// Failed tracking look-ups per IP: stops anyone stepping through order numbers or phone digits.
+const trackFailLimiter = new RateLimiter({ windowMs: 15 * 60 * 1000, max: 10 });
+
+/**
+ * Private tracking key for an order: an HMAC of its id with a server secret. It goes into the
+ * customer's own browser and the links staff send, so those open the tracker without questions.
+ */
+function trackKey(id) {
+  return crypto.createHmac('sha256', store.getTrackSecret()).update(String(id)).digest('base64url').slice(0, 20);
+}
+
+const withTrackKey = order => (order ? { ...order, trackKey: trackKey(order.id) } : order);
+const lastDigits = (value, n = 4) =>
+  String(value || '')
+    .replace(/\D/g, '')
+    .slice(-n);
+
+function keyMatches(given, expected) {
+  const a = Buffer.from(String(given || ''));
+  const b = Buffer.from(expected);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+/** True when the visitor proved the order is theirs: the private key or the phone's last 4 digits. */
+function canTrack(order, { key, phone }) {
+  if (key && keyMatches(key, trackKey(order.id))) return true;
+  const want = lastDigits(order.customerPhone);
+  const given = lastDigits(phone);
+  return want.length === 4 && given.length === 4 && keyMatches(given, want);
+}
 
 const roundMoney = n => Math.round(n * 100) / 100;
 
@@ -78,7 +109,7 @@ const PATCHABLE_FIELDS = {
 
 function listOrders(req, res) {
   requireAdmin(req);
-  return sendJson(res, 200, { ok: true, orders: store.listOrders() });
+  return sendJson(res, 200, { ok: true, orders: store.listOrders().map(withTrackKey) });
 }
 
 async function createOrder(req, res) {
@@ -107,7 +138,7 @@ async function createOrder(req, res) {
     `${saved.id} (${saved.type}) - ${saved.customerName} ($${saved.totalUsd})`,
     ip
   );
-  return sendJson(res, 201, { ok: true, order: saved });
+  return sendJson(res, 201, { ok: true, order: withTrackKey(saved) });
 }
 
 async function patchOrder(req, res, { id }) {
@@ -124,7 +155,7 @@ async function patchOrder(req, res, { id }) {
   }
   const updated = store.updateOrder(id, patch);
   store.logAudit(session.username, 'order.updated', `${id} -> ${JSON.stringify(patch)}`, getClientIp(req));
-  return sendJson(res, 200, { ok: true, order: updated });
+  return sendJson(res, 200, { ok: true, order: withTrackKey(updated) });
 }
 
 function deleteOrder(req, res, { id }) {
@@ -134,14 +165,29 @@ function deleteOrder(req, res, { id }) {
   return sendJson(res, 200, { ok: true });
 }
 
+// Public status look-up. Order numbers are sequential, so the reference alone is not enough: the
+// visitor also needs the private key from their link, or the last 4 digits of the order's phone.
+// A wrong guess and an unknown order give the same answer, and repeated misses are blocked.
 function trackOrder(req, res, { id: rawId }) {
+  const ip = getClientIp(req);
+  const failState = trackFailLimiter.peek(ip);
+  if (failState.blocked) {
+    throw new HttpError(429, 'Too many attempts. Please wait a few minutes or message us on WhatsApp.', {
+      retryAfter: failState.retryAfterSec
+    });
+  }
+  const query = new URL(req.url, 'http://localhost').searchParams;
   const normalizedId = String(rawId || '')
     .trim()
     .replace(/^#/, '')
     .toUpperCase();
   const order = store.getOrderById(normalizedId);
-  if (!order) {
-    throw new HttpError(404, `Order reference #${normalizedId} was not found. Please check your Order Reference ID.`);
+  if (!order || !canTrack(order, { key: query.get('key'), phone: query.get('phone') })) {
+    trackFailLimiter.hit(ip);
+    throw new HttpError(
+      404,
+      'We could not find an order with that reference and phone number. Please check both and try again.'
+    );
   }
   const firstName = String(order.customerName || 'Valued Guest').split(' ')[0];
   return sendJson(res, 200, {
@@ -170,4 +216,4 @@ function trackOrder(req, res, { id: rawId }) {
   });
 }
 
-module.exports = { listOrders, createOrder, patchOrder, deleteOrder, trackOrder };
+module.exports = { listOrders, createOrder, patchOrder, deleteOrder, trackOrder, trackKey };

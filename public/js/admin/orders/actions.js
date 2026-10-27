@@ -59,7 +59,8 @@ function replyOnWhatsApp(id) {
   if (!o) return;
   const phone = customerPhoneDigits(o) || data.siteConfig.contacts.delivery.whatsappNumber;
 
-  const trackUrl = `${window.location.origin}/delivery.html?track=${encodeURIComponent(o.id)}`;
+  const keyParam = o.trackKey ? `&key=${encodeURIComponent(o.trackKey)}` : '';
+  const trackUrl = `${window.location.origin}/delivery.html?track=${encodeURIComponent(o.id)}${keyParam}`;
   const message =
     o.type === 'catering_quote'
       ? `Hello ${o.customerName}! This is Mini Kitchen Catering regarding your inquiry (#${o.id}) for ${o.eventType || 'your event'} on ${o.eventDate || 'your selected date'}. We have prepared your proposal—you can also check your live status here: ${trackUrl}`

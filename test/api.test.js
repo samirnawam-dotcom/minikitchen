@@ -102,10 +102,35 @@ test('public order is created as new and can be tracked', async () => {
   assert.equal(order.status, 'new', 'public clients cannot set status');
   assert.equal(order.totalUsd, 19);
 
-  const tracked = await c.request('GET', `/api/orders/track/${order.id.toLowerCase()}`);
+  assert.match(order.trackKey, /^[\w-]{20}$/, 'the customer gets a private tracking key');
+
+  const tracked = await c.request('GET', `/api/orders/track/${order.id.toLowerCase()}?phone=4567`);
   assert.equal(tracked.status, 200);
   assert.equal(tracked.data.order.customerFirstName, 'Test');
   assert.equal(tracked.data.order.customerPhone, undefined);
+
+  const byKey = await c.request('GET', `/api/orders/track/${order.id}?key=${order.trackKey}`);
+  assert.equal(byKey.status, 200);
+});
+
+test('order tracking needs proof and blocks guessing', async () => {
+  const c = client(app.base);
+  const { data } = await c.request('POST', '/api/orders', {
+    customerName: 'Private Guest',
+    customerPhone: '03 682 186',
+    eventType: 'Wedding'
+  });
+  const id = data.order.id;
+
+  // The reference alone, a wrong phone or a wrong key all look like an unknown order
+  for (const query of ['', '?phone=0000', '?key=wrong-key-wrong-key-', '?phone=86']) {
+    const res = await c.request('GET', `/api/orders/track/${id}${query}`);
+    assert.equal(res.status, 404, `query "${query}"`);
+    assert.equal(res.data.order, undefined);
+  }
+  const unknown = await c.request('GET', '/api/orders/track/MK-99999?phone=2186');
+  assert.equal(unknown.status, 404);
+  assert.equal(unknown.data.error, (await c.request('GET', `/api/orders/track/${id}`)).data.error);
 });
 
 test('admin can update and delete an order', async () => {
