@@ -17,6 +17,8 @@ import {
   localName,
   nameBlock,
   packages,
+  specialOfferCard,
+  specialOffers,
   stationMenu
 } from '../catering-offer.js';
 import { packageBuilderSection } from '../package-builder.js';
@@ -170,6 +172,24 @@ const typeTagline = id => {
   return type ? localName(type, 'tagline') : '';
 };
 
+/** Seasonal offers (Eid, Christmas…): only while the owner has switched the section on. */
+function specialOffersSection() {
+  const offers = specialOffers();
+  if (!offers) return '';
+  const { section, items } = offers;
+  // One card centred, two or four as a 2×2 block, otherwise three in a row.
+  const grid = items.length === 1 ? 'packages-grid-1' : items.length % 3 && items.length <= 4 ? 'packages-grid-2' : 'packages-grid-3';
+  return `
+      <section class="section-pad section-offers" id="specialOffers">
+        <div class="container">
+          ${sectionHeader({ eyebrow: t('Limited-time offers'), title: esc(localName(section, 'title') || t('Special offer')), text: esc(localName(section, 'text')) })}
+          <div class="packages-grid ${grid}">
+            ${items.map(o => specialOfferCard(o, section.brand)).join('')}
+          </div>
+        </div>
+      </section>`;
+}
+
 function buffetSection() {
   const list = packages('buffet');
   if (list.length === 0) return '';
@@ -276,6 +296,7 @@ function alsoFromSection() {
 function buildCateringHomePage() {
   return `
       ${heroSection()}
+      ${specialOffersSection()}
       ${buffetSection()}
       ${showcaseSection()}
       ${howSection()}
