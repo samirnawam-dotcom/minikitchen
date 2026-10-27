@@ -16,3 +16,9 @@ Thumbs.db
 deploy/.env
 deploy/data/
 dist/
+
+# Files Plesk/Passenger create on the server
+.node-version
+public/.php-ini
+public/.php-version
+tmp/
