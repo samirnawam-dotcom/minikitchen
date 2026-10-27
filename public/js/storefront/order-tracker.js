@@ -1,6 +1,8 @@
 // Live order status tracker modal (#MK-XXXX): looks the reference up via /api/orders/track/:id,
 // falls back to this browser's own order history when offline, and renders the status timeline.
-// Everything coming from the API or the URL (?track=) is escaped.
+// The server only answers with proof the order is the visitor's: the private key from a tracking
+// link (?track=…&key=…) or from this browser's own order, or the last 4 digits of the phone used.
+// Everything coming from the API or the URL is escaped.
 
 import { registerActions } from '../shared/actions.js';
 import { esc } from '../shared/dom.js';
@@ -38,10 +40,20 @@ function ensureTrackerDom() {
   return backdrop;
 }
 
-export function openOrderTracker(prefillId) {
+/** The private key for an order: from the tracking link, else from this browser's own copy. */
+function keyFor(cleanId, linkKey) {
+  if (linkKey) return linkKey;
+  const own = loadLocalOrders().find(o => o && String(o.id || '').toUpperCase() === cleanId);
+  return (own && own.trackKey) || '';
+}
+
+let linkKey = '';
+
+export function openOrderTracker(prefillId, prefillKey = '') {
   const backdrop = ensureTrackerDom();
-  const initialId =
-    prefillId || new URLSearchParams(window.location.search).get('track') || getLastOrderId() || 'MK-1001';
+  const params = new URLSearchParams(window.location.search);
+  const initialId = prefillId || params.get('track') || getLastOrderId() || '';
+  linkKey = prefillKey || (initialId && initialId === params.get('track') ? params.get('key') || '' : '');
 
   backdrop.innerHTML = `
       <div class="modal-dialog tracker-dialog" role="dialog" aria-modal="true" aria-label="${t('Track an order')}">
@@ -64,7 +76,19 @@ export function openOrderTracker(prefillId) {
               placeholder="${t('Order reference, e.g. MK-1001')}"
               aria-label="${t('Order reference')}"
               value="${esc(String(initialId).replace(/^#/, ''))}"
+              autocomplete="off"
               required
+            />
+            <input
+              type="text"
+              id="trackPhoneInput"
+              class="form-control tracker-input tracker-phone"
+              placeholder="${t('Last 4 digits of your phone')}"
+              aria-label="${t('Last 4 digits of the phone number you ordered with')}"
+              inputmode="numeric"
+              autocomplete="off"
+              maxlength="4"
+              pattern="[0-9]{4}"
             />
             <button type="submit" class="btn btn-primary">
               <i class="fa-solid fa-magnifying-glass"></i> ${t('Track')}
@@ -79,26 +103,31 @@ export function openOrderTracker(prefillId) {
     `;
 
   backdrop.classList.add('open');
-  lookupOrder(initialId);
+  const id = normaliseId(initialId);
+  if (id && keyFor(id, linkKey)) lookupOrder(id);
+  else showPrompt();
+}
+
+function showPrompt() {
+  const box = document.getElementById('trackOrderResultBox');
+  if (box) {
+    box.innerHTML = `<div class="tracker-card tracker-empty tracker-hint">
+          <i class="fa-solid fa-lock"></i>
+          <p>${t('Enter your order reference and the last 4 digits of the phone number you ordered with.')}</p>
+        </div>`;
+  }
 }
 
 export function closeOrderTracker() {
   document.getElementById('orderTrackerBackdrop')?.classList.remove('open');
 }
 
-function renderNotFound(cleanId) {
-  const tryButton = id =>
-    `<button type="button" class="chip" data-action="tracker:try" data-id="${id}">#${id}</button>`;
+function renderNotFound(message) {
   return `
         <div class="tracker-card tracker-empty">
           <i class="fa-solid fa-circle-exclamation"></i>
-          <h4>${t('Order #{id} not found', { id: esc(cleanId) })}</h4>
-          <p>${t('Please check the reference on your WhatsApp message, for example <b>MK-1001</b>.')}</p>
-          <div class="chip-row chip-row-center">
-            ${tryButton('MK-1001')}
-            ${tryButton('MK-1002')}
-            ${tryButton('MK-1004')}
-          </div>
+          <p>${esc(message)}</p>
+          <p class="tracker-help">${t('You can also message us on WhatsApp with your order reference.')}</p>
         </div>
       `;
 }
@@ -203,17 +232,28 @@ function renderOrder(order) {
     `;
 }
 
-async function lookupOrder(rawId) {
+async function lookupOrder(rawId, phone = '') {
   const box = document.getElementById('trackOrderResultBox');
   if (!box) return;
   const cleanId = normaliseId(rawId);
   box.innerHTML = `<div class="tracker-loading"><i class="fa-solid fa-spinner fa-spin"></i> ${t('Looking up <b>#{id}</b>…', { id: esc(cleanId) })}</div>`;
 
-  // Fall back to this browser's own records when the server cannot be reached
-  const order =
-    (await trackOrder(cleanId)) || loadLocalOrders().find(o => o && String(o.id || '').toUpperCase() === cleanId);
-
-  box.innerHTML = order ? renderOrder(order) : renderNotFound(cleanId);
+  const own = loadLocalOrders().find(o => o && String(o.id || '').toUpperCase() === cleanId);
+  const result = await trackOrder(cleanId, { key: keyFor(cleanId, linkKey), phone });
+  if (result && result.order) {
+    box.innerHTML = renderOrder(result.order);
+    return;
+  }
+  // Offline, or the server cannot confirm it yet: this browser's own copy of its own order
+  if (own && (!result || !result.status || result.status >= 500)) {
+    box.innerHTML = renderOrder(own);
+    return;
+  }
+  box.innerHTML = renderNotFound(
+    result && result.status === 429
+      ? t('Too many attempts. Please wait a few minutes or message us on WhatsApp.')
+      : t('We could not find an order with that reference and phone number. Please check both and try again.')
+  );
 }
 
 registerActions({
@@ -227,11 +267,16 @@ registerActions({
   },
   'tracker:submit': () => {
     const val = document.getElementById('trackOrderInput')?.value?.trim() || '';
-    if (val) lookupOrder(val);
+    const phone = (document.getElementById('trackPhoneInput')?.value || '').replace(/\D/g, '');
+    if (!val) return;
+    if (normaliseId(val) !== normaliseId(new URLSearchParams(window.location.search).get('track'))) linkKey = '';
+    if (!phone && !keyFor(normaliseId(val), linkKey)) {
+      showPrompt();
+      document.getElementById('trackPhoneInput')?.focus();
+      return;
+    }
+    lookupOrder(val, phone);
   },
-  'tracker:try': el => {
-    const input = document.getElementById('trackOrderInput');
-    if (input) input.value = el.dataset.id;
-    lookupOrder(el.dataset.id);
-  }
+  'tracker:try': el =>
+    lookupOrder(el.dataset.id, (document.getElementById('trackPhoneInput')?.value || '').replace(/\D/g, ''))
 });

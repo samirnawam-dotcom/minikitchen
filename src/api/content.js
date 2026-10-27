@@ -4,6 +4,7 @@ const store = require('../db');
 const security = require('../security');
 const { LIMITS, HttpError, sendJson, readJsonBody } = require('./http');
 const { getSession, requireAdmin } = require('./session');
+const { trackKey } = require('./orders');
 
 const { cleanNumber, pickEnum, getClientIp } = security;
 
@@ -28,7 +29,7 @@ function getState(req, res) {
   };
   if (session) {
     payload.database = store.getDatabaseStats();
-    payload.orders = store.listOrders();
+    payload.orders = store.listOrders().map(order => ({ ...order, trackKey: trackKey(order.id) }));
     payload.auditLogs = store.listAuditLogs(30);
   }
   return sendJson(res, 200, payload);

@@ -583,11 +583,17 @@ const AR = {
   'Order reference, e.g. MK-1001': 'رقم الطلب، مثلًا MK-1001',
   'Order reference': 'رقم الطلب',
   Track: 'تتبّع',
+  'Last 4 digits of your phone': 'آخر 4 أرقام من هاتفكم',
+  'Last 4 digits of the phone number you ordered with': 'آخر 4 أرقام من رقم الهاتف الذي طلبتم به',
+  'Enter your order reference and the last 4 digits of the phone number you ordered with.':
+    'أدخلوا رقم الطلب وآخر 4 أرقام من رقم الهاتف الذي طلبتم به.',
+  'We could not find an order with that reference and phone number. Please check both and try again.':
+    'لم نعثر على طلب بهذا الرقم ورقم الهاتف. يُرجى التحقّق منهما والمحاولة مجددًا.',
+  'Too many attempts. Please wait a few minutes or message us on WhatsApp.':
+    'محاولات كثيرة. يُرجى الانتظار بضع دقائق أو مراسلتنا عبر واتساب.',
+  'You can also message us on WhatsApp with your order reference.': 'يمكنكم أيضًا مراسلتنا عبر واتساب برقم طلبكم.',
   'Looking up your order…': 'جارٍ البحث عن طلبكم…',
   'Looking up <b>#{id}</b>…': 'جارٍ البحث عن <b>\u2066#{id}\u2069</b>…',
-  'Order #{id} not found': 'لم نعثر على الطلب \u2066#{id}\u2069',
-  'Please check the reference on your WhatsApp message, for example <b>MK-1001</b>.':
-    'يُرجى التحقّق من رقم الطلب في رسالة واتساب، مثلًا <b>MK-1001</b>.',
   'This order was cancelled. Message us on WhatsApp if you need help.':
     'أُلغي هذا الطلب. راسلونا عبر واتساب إن احتجتم إلى المساعدة.',
   'Order Received': 'استلمنا الطلب',

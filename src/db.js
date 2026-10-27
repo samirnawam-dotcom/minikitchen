@@ -404,6 +404,16 @@ function getDatabaseStats() {
   };
 }
 
+/** Random server secret used to sign order tracking links (created on first use, kept in settings). */
+function getTrackSecret() {
+  let secret = getSetting('trackSecret', null);
+  if (typeof secret !== 'string' || secret.length < 32) {
+    secret = require('crypto').randomBytes(32).toString('hex');
+    setSetting('trackSecret', secret);
+  }
+  return secret;
+}
+
 function exportFullSnapshot() {
   return {
     exportedAt: new Date().toISOString(),
@@ -698,6 +708,7 @@ function close() {
 
 module.exports = {
   SQLITE_FILE,
+  getTrackSecret,
   init,
   close,
   getUpdatedAt,

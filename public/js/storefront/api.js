@@ -34,14 +34,21 @@ export async function postOrder(entry) {
   }
 }
 
-/** Public order status lookup (limited fields). Resolves to the order or null. */
-export async function trackOrder(orderId) {
+/**
+ * Public order status lookup (limited fields). The server needs proof the order is the visitor's:
+ * the private `key` from their link or this browser, or the last 4 digits of the order's `phone`.
+ * Resolves to { order } on success, { error, status } when the server says no, or null offline.
+ */
+export async function trackOrder(orderId, { key = '', phone = '' } = {}) {
   if (!API_ENABLED) return null;
+  const query = new URLSearchParams();
+  if (key) query.set('key', key);
+  if (phone) query.set('phone', phone);
   try {
-    const res = await fetch(`/api/orders/track/${encodeURIComponent(orderId)}`, { cache: 'no-store' });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data && data.order ? data.order : null;
+    const res = await fetch(`/api/orders/track/${encodeURIComponent(orderId)}?${query}`, { cache: 'no-store' });
+    const data = await res.json().catch(() => null);
+    if (res.ok && data && data.order) return { order: data.order };
+    return { error: (data && data.error) || '', status: res.status };
   } catch {
     return null;
   }

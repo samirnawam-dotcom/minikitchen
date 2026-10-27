@@ -680,6 +680,17 @@
   text-transform: uppercase;
 }
 
+.tracker-input.tracker-phone {
+  flex: 0 1 200px;
+  min-width: 0;
+}
+
+.tracker-help {
+  margin-top: 6px;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
 .tracker-result {
   min-height: 120px;
 }

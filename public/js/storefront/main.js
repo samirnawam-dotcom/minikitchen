@@ -67,8 +67,9 @@ function init() {
   const hashPage = window.location.hash.replace('#', '').trim();
   navigateToPage(hashPage || document.body.getAttribute('data-default-page') || 'catering');
 
-  const urlTrackId = new URLSearchParams(window.location.search).get('track');
-  if (urlTrackId) setTimeout(() => openOrderTracker(urlTrackId), 350);
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlTrackId = urlParams.get('track');
+  if (urlTrackId) setTimeout(() => openOrderTracker(urlTrackId, urlParams.get('key') || ''), 350);
 
   initRouting();
   listenForOtherTabs();
