@@ -178,7 +178,12 @@ function specialOffersSection() {
   if (!offers) return '';
   const { section, items } = offers;
   // One card centred, two or four as a 2×2 block, otherwise three in a row.
-  const grid = items.length === 1 ? 'packages-grid-1' : items.length % 3 && items.length <= 4 ? 'packages-grid-2' : 'packages-grid-3';
+  const grid =
+    items.length === 1
+      ? 'packages-grid-1'
+      : items.length % 3 && items.length <= 4
+        ? 'packages-grid-2'
+        : 'packages-grid-3';
   return `
       <section class="section-pad section-offers" id="specialOffers">
         <div class="container">
