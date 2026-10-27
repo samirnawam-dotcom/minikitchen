@@ -8,11 +8,11 @@ Requirements: Plesk with the **NodeJS support** and **Phusion Passenger** compon
 Add/Remove Components → Web hosting) and Node.js **20.12 or newer**. On Node 20/21 the app uses the `better-sqlite3`
 package for its database (installed by step 3); on Node 22.13+ it uses Node's built-in SQLite.
 
-The examples use the subscription `restbits.online` and the domain `minikitchen.restbits.online`.
+The examples use the subscription `restbits.online` and the domain `minikitchencatering.com` (the old `minikitchen.restbits.online` now forwards to it — see "Moving to a new domain" below).
 
 ## 1. Get the code onto the server
 
-Open **Websites & Domains → minikitchen.restbits.online → SSH Terminal** (or SSH in as the subscription user) and run:
+Open **Websites & Domains → minikitchencatering.com → SSH Terminal** (or SSH in as the subscription user) and run:
 
 ```bash
 git clone https://github.com/samirnawam-dotcom/minikitchen.git ~/minikitchen-app
@@ -22,7 +22,7 @@ This creates `/var/www/vhosts/restbits.online/minikitchen-app`. (Already done? R
 
 ## 2. Configure the Node.js app in Plesk
 
-**Websites & Domains → minikitchen.restbits.online → Node.js**, then click **Enable Node.js** and set:
+**Websites & Domains → minikitchencatering.com → Node.js**, then click **Enable Node.js** and set:
 
 | Setting                  | Value                          |
 | :----------------------- | :----------------------------- |
@@ -40,7 +40,7 @@ Under **Custom environment variables**, click **specify** and add:
 | `NODE_ENV`       | `production`                               |
 | `ADMIN_PASSWORD` | your Back Office password (10+ characters) |
 | `TRUST_PROXY`    | `1`                                        |
-| `SITE_URL`       | `https://minikitchen.restbits.online`      |
+| `SITE_URL`       | `https://minikitchencatering.com`          |
 
 Click **OK** to save.
 
@@ -51,12 +51,12 @@ Click **OK** to save.
 
 On the same Node.js page click **NPM install**, wait for it to finish, then click **Restart App**.
 
-Open `https://minikitchen.restbits.online` — the website — and `https://minikitchen.restbits.online/admin` to sign
+Open `https://minikitchencatering.com` — the website — and `https://minikitchencatering.com/admin` to sign
 in as `admin` with your password.
 
 ## 4. HTTPS
 
-**Websites & Domains → minikitchen.restbits.online → SSL/TLS Certificates → Install** a free Let's Encrypt
+**Websites & Domains → minikitchencatering.com → SSL/TLS Certificates → Install** a free Let's Encrypt
 certificate, then in **Hosting Settings** tick **Permanent SEO-safe 301 redirect from HTTP to HTTPS**.
 
 ## Updating to a new version
@@ -90,3 +90,13 @@ Then **Node.js → NPM install** (only needed if `package.json` changed) and **R
   cd ~/minikitchen-app && DATA_DIR=/tmp/mk-check ADMIN_PASSWORD=test-password-1 PORT=3999 /opt/plesk/node/20/bin/node server.js
   ```
   then press Ctrl+C. Errors are printed in the terminal.
+
+## Moving to a new domain
+
+1. At the domain registrar (e.g. GoDaddy), point the domain at the server: an **A** record for `@` with the server IP
+   and a **CNAME** for `www` → the domain. Remove parked/forwarding records and any **AAAA** record.
+2. In Plesk, **Add Domain** to the same subscription with document root `minikitchen-app/public`, enable Node.js with
+   the settings from step 2 (`SITE_URL` set to the new address), then **NPM install** and **Restart App**.
+3. Install the Let's Encrypt certificate (domain and `www`) and the HTTP→HTTPS redirect, as in step 4.
+4. On the old domain, **disable Node.js** and set **Hosting → Forwarding (301)** to the new address, so only one app
+   instance uses the `data/` folder and old links keep working.
