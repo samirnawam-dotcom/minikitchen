@@ -3,7 +3,7 @@
 import { esc } from '../../shared/dom.js';
 import { configList } from '../config.js';
 import { registerPage } from '../view.js';
-import { galleryGrid, pageHero, sectionHeader, testimonialsSection } from './sections.js';
+import { bannerPhoto, bannerText, galleryGrid, pageHero, sectionHeader, testimonialsSection } from './sections.js';
 import { t } from '../i18n-strings.js';
 
 const stat = (value, label) => `
@@ -15,12 +15,16 @@ const stat = (value, label) => `
 function buildAboutPage() {
   return `
       ${pageHero({
-        eyebrow: t('About Mini Kitchen'),
-        title: t('A family kitchen in the mountains of Aley'),
-        text: t(
-          'A catering kitchen first — buffets, birthdays and live stations for your events — with our restaurant terrace and delivery on the side.'
+        eyebrow: bannerText('about', 'eyebrow', t('About Mini Kitchen')),
+        title: bannerText('about', 'title', t('A family kitchen in the mountains of Aley')),
+        text: bannerText(
+          'about',
+          'text',
+          t(
+            'A catering kitchen first — buffets, birthdays and live stations for your events — with our restaurant terrace and delivery on the side.'
+          )
         ),
-        photo: 'images/pages/about.webp',
+        photo: bannerPhoto('about', 'images/pages/about.webp'),
         alt: t('The Mini Kitchen team at work')
       })}
 

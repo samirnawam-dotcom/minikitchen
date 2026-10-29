@@ -7,7 +7,7 @@ import { configList, content } from '../config.js';
 import { formatPrice } from '../format.js';
 import { renderMenuExplorer } from '../menu-view.js';
 import { registerPage } from '../view.js';
-import { pageHero } from './sections.js';
+import { bannerPhoto, bannerText, pageHero } from './sections.js';
 import { isAr, t } from '../i18n-strings.js';
 
 function buildDeliveryPage() {
@@ -18,10 +18,14 @@ function buildDeliveryPage() {
 
   return `
       ${pageHero({
-        eyebrow: t('Mini Kitchen Delivery · Aley'),
-        title: t('Order online, send on WhatsApp'),
-        text: t('Delivering to {areas} and nearby, daily from 8:00 AM to 10:00 PM.', { areas }),
-        photo: 'images/pages/delivery.webp',
+        eyebrow: bannerText('delivery', 'eyebrow', t('Mini Kitchen Delivery · Aley')),
+        title: bannerText('delivery', 'title', t('Order online, send on WhatsApp')),
+        text: bannerText(
+          'delivery',
+          'text',
+          t('Delivering to {areas} and nearby, daily from 8:00 AM to 10:00 PM.', { areas })
+        ),
+        photo: bannerPhoto('delivery', 'images/pages/delivery.webp'),
         alt: t('A spread of Mini Kitchen dishes ready for delivery'),
         fallback: content.config.logos.cover,
         actions: `

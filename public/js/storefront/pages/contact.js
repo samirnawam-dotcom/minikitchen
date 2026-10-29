@@ -4,7 +4,7 @@
 import { esc } from '../../shared/dom.js';
 import { content } from '../config.js';
 import { registerPage } from '../view.js';
-import { pageHero } from './sections.js';
+import { bannerPhoto, bannerText, pageHero } from './sections.js';
 import { t } from '../i18n-strings.js';
 
 function contactCard({ brand, eyebrow, title, text, phone, phoneHref, lines, cta }) {
@@ -27,11 +27,16 @@ function buildContactPage() {
 
   return `
       ${pageHero({
-        eyebrow: t('Contact'),
-        title: t('Talk to the right team'),
-        text: t(
-          'Catering and weddings, a table at the restaurant, or a delivery order — we answer on WhatsApp and by phone.'
-        )
+        eyebrow: bannerText('contact', 'eyebrow', t('Contact')),
+        title: bannerText('contact', 'title', t('Talk to the right team')),
+        text: bannerText(
+          'contact',
+          'text',
+          t(
+            'Catering and weddings, a table at the restaurant, or a delivery order — we answer on WhatsApp and by phone.'
+          )
+        ),
+        photo: bannerPhoto('contact', '')
       })}
 
       <section class="section-pad section-tight-top">
