@@ -184,6 +184,29 @@ test('image uploads land in DATA_DIR and are served from /uploads', async () => 
   assert.equal(fake.status, 400);
 });
 
+test('iPhone HEIC uploads are converted to JPEG', async () => {
+  const c = client(app.base);
+  await c.login();
+  // A 16×16 HEIC photo.
+  const heic =
+    'AAAAHGZ0eXBoZWljAAAAAG1pZjFoZWljbWlhZgAAAXxtZXRhAAAAAAAAACFoZGxyAAAAAAAAAABwaWN0AAAAAAAAAAAAAAAAAAAA' +
+    'ACJpbG9jAAAAAERAAAEAAQAAAAABoAABAAAAAAAAADIAAAAjaWluZgAAAAAAAQAAABVpbmZlAgAAAAABAABodmMxAAAAAA5waXRt' +
+    'AAAAAAABAAAA/GlwcnAAAADcaXBjbwAAAHVodmNDAQNwAAAAkAAAAAAAHvAA/P34+AAADwNgAAEAGEABDAH//wNwAAADAJAAAAMA' +
+    'AAMAHroCQGEAAQApQgEBA3AAAAMAkAAAAwAAAwAeoCCBBZbqrprm4CGgwIAAAAyAAAADAIRiAAEABkQBwXPBiQAAABNjb2xybmNs' +
+    'eAABAA0ABoAAAAAUaXNwZQAAAAAAAABAAAAAQAAAAChjbGFwAAAAEAAAAAEAAAAQAAAAAf///9AAAAAC////0AAAAAIAAAAQcGl4' +
+    'aQAAAAADCAgIAAAAGGlwbWEAAAAAAAAAAQABBYECAwWEAAAAOm1kYXQAAAAuKAGvEyFiY0D1JyL2ftdaf/ZiSf552WFncrrBW/L6' +
+    'wPZkm8DzqpGegIdppzAVeA==';
+  const res = await c.request('POST', '/api/upload', {
+    filename: 'IMG_0001.HEIC',
+    dataUrl: `data:image/heic;base64,${heic}`
+  });
+  assert.equal(res.status, 201);
+  assert.match(res.data.url, /^\/uploads\/\d+-img_0001-[0-9a-f]+\.jpg$/);
+  const served = await fetch(app.base + res.data.url);
+  assert.equal(served.headers.get('content-type'), 'image/jpeg');
+  assert.deepEqual([...new Uint8Array(await served.arrayBuffer()).subarray(0, 3)], [0xff, 0xd8, 0xff]);
+});
+
 test('password change enforces the minimum length', async () => {
   const c = client(app.base);
   await c.login();

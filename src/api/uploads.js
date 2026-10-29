@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const heicConvert = require('heic-convert');
 const config = require('../config');
 const store = require('../db');
 const { cleanString, getClientIp } = require('../security');
@@ -17,8 +18,13 @@ const IMAGE_MIME_EXT = {
   'image/png': '.png',
   'image/webp': '.webp',
   'image/gif': '.gif',
-  'image/avif': '.avif'
+  'image/avif': '.avif',
+  // iPhone photos: converted to JPEG on upload (browsers outside Apple devices cannot show HEIC).
+  'image/heic': '.heic',
+  'image/heif': '.heic'
 };
+
+const HEIC_BRANDS = new Set(['heic', 'heix', 'hevc', 'hevx', 'mif1', 'msf1']);
 
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
@@ -36,6 +42,8 @@ function hasValidImageMagicBytes(buf, ext) {
       return ascii(0, 4) === 'RIFF' && ascii(8, 12) === 'WEBP';
     case '.avif':
       return ascii(4, 8) === 'ftyp';
+    case '.heic':
+      return ascii(4, 8) === 'ftyp' && HEIC_BRANDS.has(ascii(8, 12));
     default:
       return false;
   }
@@ -59,19 +67,29 @@ async function uploadImage(req, res) {
   const body = await readJsonBody(req, LIMITS.admin);
   const dataUrl = String(body.dataUrl || '').trim();
 
-  const match = dataUrl.match(/^data:(image\/(?:jpeg|jpg|png|webp|gif|avif));base64,([A-Za-z0-9+/=\s]+)$/i);
+  const match = dataUrl.match(/^data:(image\/(?:jpeg|jpg|png|webp|gif|avif|heic|heif));base64,([A-Za-z0-9+/=\s]+)$/i);
   if (!match) {
-    throw new HttpError(400, 'Unsupported image format. Please upload a JPG, PNG, WebP, GIF, or AVIF image.');
+    throw new HttpError(400, 'Unsupported image format. Please upload a JPG, PNG, WebP, GIF, AVIF or HEIC image.');
   }
 
-  const ext = IMAGE_MIME_EXT[match[1].toLowerCase()];
-  const buffer = Buffer.from(match[2], 'base64');
+  let ext = IMAGE_MIME_EXT[match[1].toLowerCase()];
+  let buffer = Buffer.from(match[2], 'base64');
 
   if (!buffer.length || buffer.length > MAX_IMAGE_BYTES) {
     throw new HttpError(413, 'Image file size must be under 6 MB.');
   }
   if (!hasValidImageMagicBytes(buffer, ext)) {
     throw new HttpError(400, 'Uploaded file header does not match a valid image.');
+  }
+  if (ext === '.heic') {
+    // ponytail: decoded in pure JS at full size (a 12 MP photo takes a few seconds and ~100 MB of
+    // memory); resize here too if very large HEIC files become common.
+    try {
+      buffer = Buffer.from(await heicConvert({ buffer, format: 'JPEG', quality: 0.85 }));
+    } catch {
+      throw new HttpError(400, 'This HEIC photo could not be read. Please save it as JPG and try again.');
+    }
+    ext = '.jpg';
   }
 
   fs.mkdirSync(config.UPLOADS_DIR, { recursive: true });

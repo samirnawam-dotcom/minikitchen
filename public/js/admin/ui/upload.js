@@ -13,7 +13,7 @@ const MAX_SIDE = 2400;
 /**
  * Camera and phone photos are often 8–20 MB: shrink them in the browser to at most MAX_SIDE pixels
  * (WebP keeps transparency, quality 0.85) so they fit the 6 MB limit and load fast. GIFs and photos
- * that are already small stay as they are. Rejects when the browser cannot read the file (e.g. HEIC).
+ * that are already small stay as they are; HEIC the browser cannot read is left for the server to convert.
  */
 async function shrinkPhoto(file) {
   if (file.type === 'image/gif') return file;
@@ -21,7 +21,11 @@ async function shrinkPhoto(file) {
   try {
     bitmap = await createImageBitmap(file);
   } catch {
-    throw new Error('This photo format cannot be read here (iPhone HEIC?). Save it as JPG and try again.');
+    // iPhone HEIC photos cannot be read by Chrome or Edge: send them as they are, the server converts them.
+    if (/\.hei[cf]$/i.test(file.name) || /^image\/hei[cf]$/.test(file.type)) {
+      return new File([file], file.name, { type: 'image/heic' });
+    }
+    throw new Error('This photo format cannot be read. Please save it as JPG and try again.');
   }
   const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
   if (scale === 1 && file.size <= 1.5 * 1024 * 1024) {
@@ -83,7 +87,7 @@ export function uploadButton(targetId, { label = 'Upload', compact = false } = {
         title="Upload a photo from this device" aria-label="Upload a photo from this device">
         <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>${label && !compact ? ` ${esc(label)}` : ''}
       </button>
-      <input type="file" accept="image/*" hidden data-on-change="upload:photo" data-target="${esc(targetId)}" />
+      <input type="file" accept="image/*,.heic,.heif" hidden data-on-change="upload:photo" data-target="${esc(targetId)}" />
     </span>
   `;
 }
