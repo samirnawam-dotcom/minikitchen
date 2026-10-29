@@ -7,6 +7,36 @@ import { api } from '../api.js';
 import { showToast, showError } from './toast.js';
 
 const MAX_BYTES = 6 * 1024 * 1024;
+/** Longest side of an uploaded photo; the website never shows photos larger than this. */
+const MAX_SIDE = 2400;
+
+/**
+ * Camera and phone photos are often 8–20 MB: shrink them in the browser to at most MAX_SIDE pixels
+ * (WebP keeps transparency, quality 0.85) so they fit the 6 MB limit and load fast. GIFs and photos
+ * that are already small stay as they are. Rejects when the browser cannot read the file (e.g. HEIC).
+ */
+async function shrinkPhoto(file) {
+  if (file.type === 'image/gif') return file;
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch {
+    throw new Error('This photo format cannot be read here (iPhone HEIC?). Save it as JPG and try again.');
+  }
+  const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
+  if (scale === 1 && file.size <= 1.5 * 1024 * 1024) {
+    bitmap.close();
+    return file;
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.85));
+  if (!blob || blob.type !== 'image/webp') return file; // ponytail: browsers without WebP export keep the original
+  return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' });
+}
 
 function readAsDataUrl(file) {
   return new Promise((resolve, reject) => {
@@ -18,9 +48,11 @@ function readAsDataUrl(file) {
 }
 
 async function uploadPhoto(input) {
-  const file = input.files?.[0];
-  if (!file) return;
+  const picked = input.files?.[0];
+  if (!picked) return;
   try {
+    showToast('Preparing photo…');
+    const file = await shrinkPhoto(picked);
     if (file.size > MAX_BYTES) {
       showError('Image must be under 6 MB.');
       return;
