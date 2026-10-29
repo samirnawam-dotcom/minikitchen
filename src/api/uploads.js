@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const heicConvert = require('heic-convert');
 const config = require('../config');
 const store = require('../db');
 const { cleanString, getClientIp } = require('../security');
@@ -84,6 +83,16 @@ async function uploadImage(req, res) {
   if (ext === '.heic') {
     // ponytail: decoded in pure JS at full size (a 12 MP photo takes a few seconds and ~100 MB of
     // memory); resize here too if very large HEIC files become common.
+    let heicConvert;
+    try {
+      // Loaded on first use: a server where `npm install` has not run yet still starts.
+      heicConvert = require('heic-convert');
+    } catch {
+      throw new HttpError(
+        500,
+        'iPhone (HEIC) photos are not set up on the server yet. Run NPM install, or upload a JPG.'
+      );
+    }
     try {
       buffer = Buffer.from(await heicConvert({ buffer, format: 'JPEG', quality: 0.85 }));
     } catch {
