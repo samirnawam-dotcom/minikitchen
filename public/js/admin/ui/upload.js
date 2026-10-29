@@ -1,5 +1,6 @@
 // "Upload Photo" buttons: <input type="file" data-on-change="upload:photo" data-target="inputId">
-// uploads the image to /api/upload and writes the returned URL into the target text input.
+// uploads the image to /api/upload, writes the returned URL into the target text input and saves
+// the card or dish it belongs to, so the website shows the new photo straight away.
 
 import { registerActions } from '../../shared/actions.js';
 import { byId, esc } from '../../shared/dom.js';
@@ -70,7 +71,13 @@ async function uploadPhoto(input) {
     }
     const preview = input.dataset.preview && byId(input.dataset.preview);
     if (preview) preview.src = result.url;
-    showToast(`Photo uploaded (${result.sizeKb} KB). Remember to press Save.`);
+    // Replacing the photo of something already on the website saves it straight away (with any other
+    // edits on that card); "Add" forms still wait for their button, since the rest may not be filled in.
+    const editForm = target?.closest('form[data-on-submit="menu:edit-submit"]');
+    const saveButton = editForm ? null : target?.closest('[data-dirty-scope]')?.querySelector('[data-save-button]');
+    if (editForm) editForm.requestSubmit();
+    else if (saveButton) saveButton.click();
+    else showToast(`Photo uploaded (${result.sizeKb} KB). Press the button below to add it.`);
   } catch (err) {
     showError(err.message || 'Could not upload photo to server.');
   } finally {
