@@ -23,7 +23,7 @@ import {
 } from '../catering-offer.js';
 import { packageBuilderSection } from '../package-builder.js';
 import { t } from '../i18n-strings.js';
-import { galleryGrid, sectionHeader, testimonialsSection, uniqueByImage } from './sections.js';
+import { bannerText, galleryGrid, sectionHeader, testimonialsSection, uniqueByImage } from './sections.js';
 import { responsiveAttrs } from '../images.js';
 
 const HERO_FALLBACK = 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1800&q=85';
@@ -73,9 +73,9 @@ function heroSection() {
         <div class="home-hero-media">${slides}
         </div>
         <div class="container home-hero-copy">
-          <span class="eyebrow">${t('Mini Kitchen Catering · Aley, Lebanon')}</span>
-          <h1 class="home-hero-title">${t('Catering for weddings, birthdays &amp; every occasion')}</h1>
-          <p class="home-hero-text">${t('Event buffets, Birthday Mini packages, live stations and main course trays — priced per person, anywhere in Lebanon.')}</p>
+          <span class="eyebrow">${bannerText('home', 'eyebrow', t('Mini Kitchen Catering · Aley, Lebanon'))}</span>
+          <h1 class="home-hero-title">${bannerText('home', 'title', t('Catering for weddings, birthdays &amp; every occasion'))}</h1>
+          <p class="home-hero-text">${bannerText('home', 'text', t('Event buffets, Birthday Mini packages, live stations and main course trays — priced per person, anywhere in Lebanon.'))}</p>
           <div class="hero-actions">
             <button class="btn btn-primary" data-action="nav:go" data-page="catering" data-scroll="planEventSection">${t('Build your package')}</button>
             <button class="btn btn-outline" data-action="nav:go" data-page="catering-menus">${t('See packages &amp; prices')}</button>

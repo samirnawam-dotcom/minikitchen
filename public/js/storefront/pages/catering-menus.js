@@ -19,7 +19,7 @@ import {
   trayMenu
 } from '../catering-offer.js';
 import { packageBuilderSection } from '../package-builder.js';
-import { pageHero, sectionHeader } from './sections.js';
+import { bannerPhoto, bannerText, pageHero, sectionHeader } from './sections.js';
 import { t } from '../i18n-strings.js';
 
 const TABS = [
@@ -99,12 +99,14 @@ function buildCateringMenusPage() {
   const activeTab = TABS.some(tab => tab.id === state.cateringMenusTab) ? state.cateringMenusTab : 'buffet';
   return `
       ${pageHero({
-        eyebrow: t('Mini Kitchen Catering · Packages'),
-        title: t('Packages &amp; menus'),
-        text: t(
-          'Event buffets and Birthday Minis priced per person, plus live stations, main course trays and mini bites.'
+        eyebrow: bannerText('packages', 'eyebrow', t('Mini Kitchen Catering · Packages')),
+        title: bannerText('packages', 'title', t('Packages &amp; menus')),
+        text: bannerText(
+          'packages',
+          'text',
+          t('Event buffets and Birthday Minis priced per person, plus live stations, main course trays and mini bites.')
         ),
-        photo: 'images/pages/packages.webp',
+        photo: bannerPhoto('packages', 'images/pages/packages.webp'),
         alt: t('A Mini Kitchen catering buffet'),
         meta: [
           `<i class="fa-solid fa-user-group"></i> ${t('Priced per person')}`,

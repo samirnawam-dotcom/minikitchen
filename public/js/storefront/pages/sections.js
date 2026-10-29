@@ -5,7 +5,7 @@
 
 import { esc } from '../../shared/dom.js';
 import { content, getTestimonials } from '../config.js';
-import { t } from '../i18n-strings.js';
+import { isAr, t } from '../i18n-strings.js';
 import { responsiveAttrs } from '../images.js';
 
 const img = (src, alt, { fallback = '', lazy = true, cls = '', sizes = '(max-width: 760px) 100vw, 50vw' } = {}) =>
@@ -15,6 +15,19 @@ const img = (src, alt, { fallback = '', lazy = true, cls = '', sizes = '(max-wid
  * Light page header: eyebrow, title, one line of text and buttons, with an optional photo beside it.
  * Keeps the .hero-section class so the table-QR mode can hide it.
  */
+/**
+ * A page banner's text: what the owner wrote in the Back Office (Photos & team → Page banners) in
+ * the visitor's language, else the built-in text. `key` is eyebrow, title or text.
+ */
+export function bannerText(page, key, builtIn) {
+  const own = content.config.banners?.[page] || {};
+  const text = (isAr() && own[`${key}Ar`]) || own[key];
+  return text ? esc(text) : builtIn;
+}
+
+/** A page banner's photo: the owner's upload, else the built-in photo. */
+export const bannerPhoto = (page, builtIn) => content.config.banners?.[page]?.img || builtIn;
+
 export function pageHero({ eyebrow, title, text, actions = '', meta = [], photo, alt = '', fallback }) {
   return `
       <section class="hero-section page-hero${photo ? ' has-photo' : ''}">

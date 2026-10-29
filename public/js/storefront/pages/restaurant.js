@@ -7,7 +7,7 @@ import { state } from '../state.js';
 import { content, configList } from '../config.js';
 import { renderMenuExplorer } from '../menu-view.js';
 import { registerPage, renderMainView } from '../view.js';
-import { galleryGrid, pageHero } from './sections.js';
+import { bannerPhoto, bannerText, galleryGrid, pageHero } from './sections.js';
 import { t } from '../i18n-strings.js';
 
 function atmosphereTab() {
@@ -49,12 +49,16 @@ function buildRestaurantPage() {
 
   return `
       ${pageHero({
-        eyebrow: t('Mini Kitchen Restaurant · Ain Al Remmaneh'),
-        title: t('Mountain views &amp; honest food'),
-        text: t(
-          'Lebanese breakfast, charcoal grills, burgers and pizza on our terrace in Aley — every day from 8:00 AM to 10:00 PM.'
+        eyebrow: bannerText('restaurant', 'eyebrow', t('Mini Kitchen Restaurant · Ain Al Remmaneh')),
+        title: bannerText('restaurant', 'title', t('Mountain views &amp; honest food')),
+        text: bannerText(
+          'restaurant',
+          'text',
+          t(
+            'Lebanese breakfast, charcoal grills, burgers and pizza on our terrace in Aley — every day from 8:00 AM to 10:00 PM.'
+          )
         ),
-        photo: 'images/pages/restaurant.webp',
+        photo: bannerPhoto('restaurant', 'images/pages/restaurant.webp'),
         alt: t('The Mini Kitchen restaurant terrace'),
         actions: `
               <button class="btn btn-whatsapp" data-action="wa:open" data-brand="restaurant" data-msg="Hello Mini Kitchen Restaurant! I would like to reserve a table in Ain Al Remmaneh, Aley.">
