@@ -7,7 +7,7 @@ import { MENU_CATEGORIES, MODIFIER_GROUPS } from '../data/menu.js';
 import { DELIVERY_MENU, DELIVERY_MODIFIER_GROUPS } from '../data/delivery-menu.js';
 import { deepClone } from '../shared/dom.js';
 import { loadJson, saveJson, getItem, setItem, removeItem } from '../shared/storage.js';
-import { upgradeCateringList } from '../shared/catering-menu.js';
+import { upgradeCateringList, upgradeSpecialOffers } from '../shared/catering-menu.js';
 
 export const CONFIG_KEY = 'mk_custom_site_config_v3';
 export const MENU_KEY = 'mk_custom_menu_data_v3';
@@ -51,7 +51,8 @@ export const content = {
 function mergeWithDefaults(saved) {
   const merged = deepClone(SITE_CONFIG);
   if (!isPlainObject(saved)) return merged;
-  for (const [key, value] of Object.entries(saved)) {
+  for (const [key, stored] of Object.entries(saved)) {
+    const value = key === 'specialOffers' ? upgradeSpecialOffers(stored, SITE_CONFIG.specialOffers) : stored;
     merged[key] = isPlainObject(value) && isPlainObject(merged[key]) ? { ...merged[key], ...value } : value;
   }
   return merged;

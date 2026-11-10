@@ -126,3 +126,26 @@ test('the published defaults contain no old Arabic and corrections are final', a
     assert.equal(correctedArabic(fixed), fixed, `"${fixed}" is not upgraded twice`);
   }
 });
+
+test('saved old Christmas offers are replaced by the published ones, owner offers kept', async () => {
+  const { upgradeSpecialOffers } = await load();
+  const published = { text: 'New text', items: [{ id: 'offer-xmas-formula-1', name: 'Formula 1' }] };
+  const saved = {
+    show: false,
+    title: 'Owner title',
+    text: 'Festive spreads for 10 to 15 persons, delivered in Aley. Book on WhatsApp.',
+    items: [
+      { id: 'offer-xmas-100', name: 'Old offer' },
+      { id: 'offer-own', name: 'Owner offer' }
+    ]
+  };
+  const up = upgradeSpecialOffers(saved, published);
+  assert.deepEqual(
+    up.items.map(o => o.id),
+    ['offer-xmas-formula-1', 'offer-own']
+  );
+  assert.equal(up.text, 'New text', 'the old default text is updated');
+  assert.equal(up.title, 'Owner title', 'the owner’s title is kept');
+  assert.equal(up.show, false, 'the owner’s show / hide choice is kept');
+  assert.equal(upgradeSpecialOffers(up, published), up, 'runs once');
+});

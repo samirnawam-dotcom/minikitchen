@@ -6,7 +6,12 @@ import { MENU_CATEGORIES as DEFAULT_MENU_CATEGORIES } from '../data/menu.js';
 import { DELIVERY_MENU as DEFAULT_DELIVERY_MENU } from '../data/delivery-menu.js';
 import { deepClone } from '../shared/dom.js';
 import { loadJson, saveJson, getItem, setItem, removeItem } from '../shared/storage.js';
-import { CATERING_LIST_KEYS, CATERING_MENU_VERSION, upgradeCateringList } from '../shared/catering-menu.js';
+import {
+  CATERING_LIST_KEYS,
+  CATERING_MENU_VERSION,
+  upgradeCateringList,
+  upgradeSpecialOffers
+} from '../shared/catering-menu.js';
 
 export const DEFAULT_LBP_RATE = 89500;
 
@@ -101,6 +106,8 @@ function upgradeSiteConfig(config) {
     if (Array.isArray(config[key])) upgraded[key] = upgradeCateringList(config, DEFAULT_SITE_CONFIG, key);
   }
   Object.assign(config, upgraded);
+  if (config.specialOffers)
+    config.specialOffers = upgradeSpecialOffers(config.specialOffers, DEFAULT_SITE_CONFIG.specialOffers);
   config.cateringMenuVersion = CATERING_MENU_VERSION;
   return config;
 }

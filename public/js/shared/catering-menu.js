@@ -202,3 +202,42 @@ export function upgradeCateringList(siteConfig, defaults, key) {
   if (savedVersion(siteConfig) >= CATERING_MENU_VERSION) return saved;
   return saved.map(upgradeArabicEntry);
 }
+
+// ---------------------------------------------------------------------------
+// Seasonal offers (siteConfig.specialOffers)
+// ---------------------------------------------------------------------------
+
+export const SPECIAL_OFFERS_VERSION = 2;
+
+/** Offers published before version 2; a saved copy of them is replaced by the current ones. */
+const OLD_OFFER_IDS = new Set([
+  'offer-eid',
+  'offer-christmas',
+  'offer-xmas-turkey',
+  'offer-xmas-100',
+  'offer-xmas-150',
+  'offer-xmas-200'
+]);
+const OLD_OFFER_TEXT = {
+  text: 'Festive spreads for 10 to 15 persons, delivered in Aley. Book on WhatsApp.',
+  textAr: 'ولائم الأعياد لـ 10 إلى 15 شخصًا، مع التوصيل في عاليه. احجزوا عبر واتساب.'
+};
+
+/**
+ * A saved Special occasions section from before version 2 gets the current published offers in place
+ * of the old ones (offers the owner added are kept, after them), and the old default text updated.
+ * The owner's switch, title and WhatsApp choice stay. Once saved at version 2 it is left alone.
+ */
+export function upgradeSpecialOffers(saved, defaults) {
+  if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return saved;
+  if ((Number(saved.offersVersion) || 1) >= SPECIAL_OFFERS_VERSION || !Array.isArray(saved.items)) return saved;
+  const upgraded = {
+    ...saved,
+    items: [...(defaults?.items || []), ...saved.items.filter(o => !OLD_OFFER_IDS.has(o?.id))],
+    offersVersion: SPECIAL_OFFERS_VERSION
+  };
+  for (const [key, old] of Object.entries(OLD_OFFER_TEXT)) {
+    if (saved[key] === old && defaults?.[key]) upgraded[key] = defaults[key];
+  }
+  return upgraded;
+}
