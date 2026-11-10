@@ -138,7 +138,7 @@ const SITE_CONFIG = {
   //                  `offersVersion`: see upgradeSpecialOffers in ../shared/catering-menu.js.
   specialOffers: {
     show: true,
-    offersVersion: 2,
+    offersVersion: 3,
     brand: "delivery",
     title: "Christmas & New Year offers",
     titleAr: "عروض الميلاد ورأس السنة",
@@ -158,7 +158,7 @@ const SITE_CONFIG = {
         "unitAr": "ديك رومي كامل",
         "includes": [],
         "includesAr": [],
-        "img": "images/catering/hero-4.webp"
+        "img": "images/catering/oriental-turkey.webp"
       },
       {
         "id": "offer-xmas-formula-1",

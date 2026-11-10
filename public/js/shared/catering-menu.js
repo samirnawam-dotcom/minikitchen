@@ -207,7 +207,7 @@ export function upgradeCateringList(siteConfig, defaults, key) {
 // Seasonal offers (siteConfig.specialOffers)
 // ---------------------------------------------------------------------------
 
-export const SPECIAL_OFFERS_VERSION = 2;
+export const SPECIAL_OFFERS_VERSION = 3;
 
 /** Offers published before version 2; a saved copy of them is replaced by the current ones. */
 const OLD_OFFER_IDS = new Set([
@@ -223,14 +223,26 @@ const OLD_OFFER_TEXT = {
   textAr: 'ولائم الأعياد لـ 10 إلى 15 شخصًا، مع التوصيل في عاليه. احجزوا عبر واتساب.'
 };
 
+/** Version 3: the Oriental Turkey got a real turkey photo in place of a buffet stand-in. */
+const TURKEY_PHOTO = { id: 'offer-xmas-turkey', old: 'images/catering/hero-4.webp' };
+
 /**
  * A saved Special occasions section from before version 2 gets the current published offers in place
  * of the old ones (offers the owner added are kept, after them), and the old default text updated.
- * The owner's switch, title and WhatsApp choice stay. Once saved at version 2 it is left alone.
+ * The owner's switch, title and WhatsApp choice stay. From version 2, only the turkey's stand-in photo
+ * is swapped (version 3) when the owner has not replaced it. Once saved at version 3 it is left alone.
  */
 export function upgradeSpecialOffers(saved, defaults) {
   if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return saved;
-  if ((Number(saved.offersVersion) || 1) >= SPECIAL_OFFERS_VERSION || !Array.isArray(saved.items)) return saved;
+  const version = Number(saved.offersVersion) || 1;
+  if (version >= SPECIAL_OFFERS_VERSION || !Array.isArray(saved.items)) return saved;
+  if (version === 2) {
+    const photo = defaults?.items?.find(o => o.id === TURKEY_PHOTO.id)?.img;
+    const items = saved.items.map(o =>
+      o?.id === TURKEY_PHOTO.id && o.img === TURKEY_PHOTO.old && photo ? { ...o, img: photo } : o
+    );
+    return { ...saved, items, offersVersion: SPECIAL_OFFERS_VERSION };
+  }
   const upgraded = {
     ...saved,
     items: [...(defaults?.items || []), ...saved.items.filter(o => !OLD_OFFER_IDS.has(o?.id))],
