@@ -132,127 +132,138 @@ const SITE_CONFIG = {
   // specialOffers — seasonal offers (Christmas, Eid…) shown above the event buffets on the home page
   //                  only while `show` is true. Price 0 = "ask for the price". `brand` = which
   //                  WhatsApp number takes the orders (catering, delivery or restaurant).
+  // specialOffers — seasonal offers (Christmas, Eid…) shown above the event buffets on the home page
+  //                  only while `show` is true. Price 0 = "ask for the price". `brand` = which
+  //                  WhatsApp number takes the orders (catering, delivery or restaurant).
+  //                  `offersVersion`: see upgradeSpecialOffers in ../shared/catering-menu.js.
   specialOffers: {
     show: true,
+    offersVersion: 2,
     brand: "delivery",
     title: "Christmas & New Year offers",
     titleAr: "عروض الميلاد ورأس السنة",
-    text: "Festive spreads for 10 to 15 persons, delivered in Aley. Book on WhatsApp.",
-    textAr: "ولائم الأعياد لـ 10 إلى 15 شخصًا، مع التوصيل في عاليه. احجزوا عبر واتساب.",
+    text: "Festive spreads for 7 to 15 persons, delivered in Aley. Book on WhatsApp.",
+    textAr: "ولائم الأعياد لـ 7 إلى 15 شخصًا، مع التوصيل في عاليه. احجزوا عبر واتساب.",
     items: [
       {
-        id: "offer-xmas-turkey",
-        name: "Christmas Oriental Turkey",
-        nameAr: "ديك رومي عالطريقة الشرقية",
-        badge: "Christmas",
-        badgeAr: "الميلاد",
-        desc: "A whole roast turkey on spiced rice, topped with toasted almonds, chestnuts and pomegranate.",
-        descAr: "ديك رومي كامل محمّر على رز متبّل، مزيّن باللوز المحمّص والكستناء والرمان.",
-        price: 110,
-        unit: "whole turkey",
-        unitAr: "ديك رومي كامل",
-        includes: [],
-        includesAr: [],
-        img: "images/catering/hero-4.webp"
+        "id": "offer-xmas-turkey",
+        "name": "Oriental Turkey",
+        "nameAr": "ديك رومي عالطريقة الشرقية",
+        "badge": "Christmas",
+        "badgeAr": "الميلاد",
+        "desc": "A whole turkey served with oriental rice, fried nuts, chestnuts and sauce.",
+        "descAr": "ديك رومي كامل يُقدَّم مع رز شرقي ومكسرات مقلية وكستناء وصلصة.",
+        "price": 180,
+        "unit": "whole turkey",
+        "unitAr": "ديك رومي كامل",
+        "includes": [],
+        "includesAr": [],
+        "img": "images/catering/hero-4.webp"
       },
       {
-        id: "offer-xmas-100",
-        name: "Christmas Mezze Offer",
-        nameAr: "عرض المازة للميلاد",
-        badge: "10–15 persons",
-        badgeAr: "10 إلى 15 شخصًا",
-        desc: "Christmas & New Year offer for 10 to 15 persons.",
-        descAr: "عرض الميلاد ورأس السنة لـ 10 إلى 15 شخصًا.",
-        price: 100,
-        unit: "10–15 persons",
-        unitAr: "10 إلى 15 شخصًا",
-        includes: [
-          "Hummus 0.5 kg",
-          "Moutabal 0.5 kg",
-          "Wara2 3enab 0.5 kg",
-          "Pizza 2 dozens",
-          "Rkakat 2 dozens",
-          "Tabbouleh or fattoush",
-          "Rice with chicken 2 kg"
+        "id": "offer-xmas-formula-1",
+        "name": "Christmas Formula 1",
+        "nameAr": "باقة الميلاد الأولى",
+        "badge": "7–10 persons",
+        "badgeAr": "7 إلى 10 أشخاص",
+        "desc": "For 7 to 10 persons. All served in aluminium boxes.",
+        "descAr": "لـ 7 إلى 10 أشخاص. يُقدَّم كل شيء في علب ألمنيوم.",
+        "price": 150,
+        "unit": "7–10 persons",
+        "unitAr": "7 إلى 10 أشخاص",
+        "includes": [
+          "Hummus 1 kg",
+          "Moutabal 1 kg",
+          "Wara2 3enab 1 kg",
+          "Fattoush for 5",
+          "Tabbouleh for 5",
+          "Mixed mo3ajanet 2 dozens",
+          "Rice with chicken or sayadieh"
         ],
-        includesAr: [
-          "حمص 0.5 كغ",
-          "متبّل 0.5 كغ",
-          "ورق عنب 0.5 كغ",
-          "بيتزا 2 دزينة",
-          "رقاقات 2 دزينة",
-          "تبولة أو فتوش",
-          "رز عالدجاج 2 كغ"
+        "includesAr": [
+          "حمص 1 كغ",
+          "متبّل 1 كغ",
+          "ورق عنب 1 كغ",
+          "فتوش لـ 5 أشخاص",
+          "تبولة لـ 5 أشخاص",
+          "معجنات مشكّلة 2 دزينة",
+          "رز عالدجاج أو صيادية"
         ],
-        img: "images/catering/hero-2.webp"
+        "img": "images/catering/christmas-formula-1.webp"
       },
       {
-        id: "offer-xmas-150",
-        name: "Christmas Feast",
-        nameAr: "وليمة الميلاد",
-        badge: "10–15 persons",
-        badgeAr: "10 إلى 15 شخصًا",
-        desc: "Christmas & New Year offer for 10 to 15 persons, with 2 main dishes of your choice.",
-        descAr: "عرض الميلاد ورأس السنة لـ 10 إلى 15 شخصًا، مع طبقين رئيسيين من اختياركم.",
-        price: 150,
-        unit: "10–15 persons",
-        unitAr: "10 إلى 15 شخصًا",
-        includes: [
-          "Wara2 3enab or chanklich 1 kg",
-          "Hummus, hummus pesto or hummus Beiruti 1 kg",
+        "id": "offer-xmas-formula-2",
+        "name": "Christmas Formula 2",
+        "nameAr": "باقة الميلاد الثانية",
+        "badge": "10–15 persons",
+        "badgeAr": "10 إلى 15 شخصًا",
+        "desc": "For 10 to 15 persons, with 3 salads and 2 main courses of your choice. All served in aluminium boxes.",
+        "descAr": "لـ 10 إلى 15 شخصًا، مع ثلاثة أنواع سلطة وطبقين رئيسيين من اختياركم. يُقدَّم كل شيء في علب ألمنيوم.",
+        "price": 250,
+        "unit": "10–15 persons",
+        "unitAr": "10 إلى 15 شخصًا",
+        "includes": [
+          "Hummus or beetroot hummus 1 kg",
+          "Moutabal or batenjen raheb 1 kg",
+          "Wara2 3enab or dolma 1 kg",
+          "Chanklich mix 1 kg",
+          "Samke harra or tajen 1 kg",
+          "3 salads of your choice: tabbouleh, fattoush, chicken caesar, aubergine salad or crab salad",
+          "Mixed mo3ajanet 3 dozens",
+          "2 main courses of your choice: rice with chicken, rice with meat, sayadieh, paella, chicken cajun with white rice, beef stroganoff, freekeh with meat or freekeh with chicken"
+        ],
+        "includesAr": [
+          "حمص أو حمص بالشمندر 1 كغ",
+          "متبّل أو باذنجان راهب 1 كغ",
+          "ورق عنب أو دولمة 1 كغ",
+          "شنكليش مشكّل 1 كغ",
+          "سمكة حرّة أو طاجن 1 كغ",
+          "ثلاثة أنواع سلطة من اختياركم: تبولة، فتوش، سيزر بالدجاج، سلطة باذنجان أو سلطة كراب",
+          "معجنات مشكّلة 3 دزينات",
+          "طبقان رئيسيان من اختياركم: رز عالدجاج، رز عاللحمة، صيادية، باييلا، دجاج كاجون مع رز أبيض، بيف ستروغانوف، فريكة باللحمة أو فريكة بالدجاج"
+        ],
+        "img": "images/catering/christmas-formula-2.webp"
+      },
+      {
+        "id": "offer-xmas-formula-3",
+        "name": "Christmas Formula 3",
+        "nameAr": "باقة الميلاد الثالثة",
+        "badge": "10–15 persons",
+        "badgeAr": "10 إلى 15 شخصًا",
+        "desc": "For 10 to 15 persons, with 3 salads and 3 main courses of your choice.",
+        "descAr": "لـ 10 إلى 15 شخصًا، مع ثلاثة أنواع سلطة وثلاثة أطباق رئيسية من اختياركم.",
+        "price": 300,
+        "unit": "10–15 persons",
+        "unitAr": "10 إلى 15 شخصًا",
+        "includes": [
+          "Hummus or beetroot hummus 1 kg",
           "Moutabal or raheb 1 kg",
-          "Tajen samak or samke harra 1 kg",
-          "Fattoush or tabbouleh",
-          "Mixed mo3ajanet 5 dozens",
-          "2 main dishes of your choice: rice with chicken, rice with meat, sayadieh or paella"
+          "Wara2 3enab or dolma 1 kg",
+          "Chanklich 1 kg",
+          "Samke harra 1 kg",
+          "Tajen 1 kg",
+          "3 salads of your choice: tabbouleh, fattoush, chicken caesar, chicken teriyaki, aubergine salad or crab salad",
+          "Mixed mo3ajanet 4 dozens",
+          "Kebbe 1 dozen",
+          "Sambousek 1 dozen",
+          "Rkakat 1 dozen",
+          "3 main courses of your choice: rice with chicken, rice with meat, freekeh with chicken, freekeh with meat, tagliatelle Alfredo, sayadieh, paella, chicken cajun, beef stroganoff or chicken stroganoff"
         ],
-        includesAr: [
-          "ورق عنب أو شنكليش 1 كغ",
-          "حمص أو حمص بالبيستو أو حمص بيروتي 1 كغ",
+        "includesAr": [
+          "حمص أو حمص بالشمندر 1 كغ",
           "متبّل أو راهب 1 كغ",
-          "طاجن سمك أو سمكة حرّة 1 كغ",
-          "فتوش أو تبولة",
-          "معجنات مشكّلة 5 دزينات",
-          "طبقان رئيسيان من اختياركم: رز عالدجاج، رز عاللحمة، صيادية أو باييلا"
+          "ورق عنب أو دولمة 1 كغ",
+          "شنكليش 1 كغ",
+          "سمكة حرّة 1 كغ",
+          "طاجن 1 كغ",
+          "ثلاثة أنواع سلطة من اختياركم: تبولة، فتوش، سيزر بالدجاج، دجاج ترياكي، سلطة باذنجان أو سلطة كراب",
+          "معجنات مشكّلة 4 دزينات",
+          "كبة دزينة واحدة",
+          "سمبوسك دزينة واحدة",
+          "رقاقات دزينة واحدة",
+          "ثلاثة أطباق رئيسية من اختياركم: رز عالدجاج، رز عاللحمة، فريكة بالدجاج، فريكة باللحمة، تالياتيلي ألفريدو، صيادية، باييلا، دجاج كاجون، بيف ستروغانوف أو ستروغانوف دجاج"
         ],
-        img: "images/pages/packages.webp"
-      },
-      {
-        id: "offer-xmas-200",
-        name: "Grand Christmas Feast",
-        nameAr: "وليمة الميلاد الكبرى",
-        badge: "10–15 persons",
-        badgeAr: "10 إلى 15 شخصًا",
-        desc: "Christmas & New Year offer for 10 to 15 persons, with 3 main dishes of your choice.",
-        descAr: "عرض الميلاد ورأس السنة لـ 10 إلى 15 شخصًا، مع ثلاثة أطباق رئيسية من اختياركم.",
-        price: 200,
-        unit: "10–15 persons",
-        unitAr: "10 إلى 15 شخصًا",
-        includes: [
-          "Aubergine salad, quinoa or tabbouleh",
-          "Chicken salad, chicken caesar, Greek or fattoush",
-          "Wara2 3enab",
-          "Chanklich",
-          "Hummus, hummus pesto or hummus Beiruti",
-          "Moutabal or raheb",
-          "Tajen samak or samke harra",
-          "Mixed mo3ajanet 5 dozens",
-          "Batata harra, potatoes with coriander or mashed potatoes",
-          "3 main dishes of your choice: rice with meat, rice with chicken, sayadieh, beef stroganoff, tagliatelle Alfredo, freekeh with chicken, freekeh with meat, chicken cajun, Mexican beef or Mexican chicken"
-        ],
-        includesAr: [
-          "سلطة باذنجان أو كينوا أو تبولة",
-          "سلطة دجاج أو سيزر بالدجاج أو سلطة يونانية أو فتوش",
-          "ورق عنب",
-          "شنكليش",
-          "حمص أو حمص بالبيستو أو حمص بيروتي",
-          "متبّل أو راهب",
-          "طاجن سمك أو سمكة حرّة",
-          "معجنات مشكّلة 5 دزينات",
-          "بطاطا حرّة أو بطاطا بالكزبرة أو بطاطا مهروسة",
-          "ثلاثة أطباق رئيسية من اختياركم: رز عاللحمة، رز عالدجاج، صيادية، بيف ستروغانوف، تالياتيلي ألفريدو، فريكة بالدجاج، فريكة باللحمة، دجاج كاجون، لحم مكسيكي أو دجاج مكسيكي"
-        ],
-        img: "images/catering/hero-1.webp"
+        "img": "images/catering/christmas-formula-3.webp"
       }
     ]
   },
