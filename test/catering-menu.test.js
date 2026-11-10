@@ -149,3 +149,15 @@ test('saved old Christmas offers are replaced by the published ones, owner offer
   assert.equal(up.show, false, 'the owner’s show / hide choice is kept');
   assert.equal(upgradeSpecialOffers(up, published), up, 'runs once');
 });
+
+test('a version 2 section gets the real turkey photo unless the owner changed it', async () => {
+  const { upgradeSpecialOffers } = await load();
+  const published = { items: [{ id: 'offer-xmas-turkey', img: 'images/catering/oriental-turkey.webp' }] };
+  const standIn = { id: 'offer-xmas-turkey', img: 'images/catering/hero-4.webp' };
+  const own = { id: 'offer-xmas-turkey', img: '/uploads/owner.jpg' };
+  assert.equal(
+    upgradeSpecialOffers({ offersVersion: 2, items: [standIn] }, published).items[0].img,
+    published.items[0].img
+  );
+  assert.equal(upgradeSpecialOffers({ offersVersion: 2, items: [own] }, published).items[0].img, '/uploads/owner.jpg');
+});
